@@ -525,9 +525,9 @@ package org.asclub.ui
 		{
 			var arr:Array = datas.split(",");
 			arr.forEach(function(element:*, index:int, arr:Array):void
-				{
-					element = uint(element);
-				}
+			{
+				element = uint(element);
+			}
 			);
 			return drawIconByArray(arr);
 		}

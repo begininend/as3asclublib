@@ -28,19 +28,31 @@ public class ObjectUtils
 	}
 	
 	/**
-			Creates an Array comprised of all the keys in an Object.
-			
-			@param obj: Object in which to find keys.
-			@return Array containing all the string key names.
-		*/
-		public static function getKeys(obj:Object):Array {
-			var keys:Array = new Array();
-			
-			for (var i:String in obj)
-				keys.push(i);
-			
-			return keys;
+	 * 合并两个Object
+	 * @param	obj1
+	 * @param	obj2
+	 * @return  Object
+	 */
+	public static function mergeObjects(obj1:Object, obj2:Object):Object
+	{
+		//var obj:Object = baseClone(obj1);
+		for (var k:String in obj2)
+		{
+			if (obj1.hasOwnProperty(k))
+			{
+				if (typeof obj2[k] == 'object')
+				{
+					mergeObjects(obj1[k], obj2[k]);
+				}
+			}
+			else
+			{
+				obj1[k] = obj2[k];
+			}
 		}
+		return obj1;
+	}
+
 	
 	/**
 	 * Checks wherever passed-in value is <code>String</code>.

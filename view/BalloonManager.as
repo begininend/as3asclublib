@@ -8,7 +8,7 @@
 	 */
 	public final class BalloonManager
 	{
-		private static var _Balloons:Array = [];
+		private static var _balloons:Array = [];
 		public function BalloonManager(privateClass:PrivateClass)
 		{
 			//请不要实例化此类
@@ -58,12 +58,37 @@
 			
 			
 			base.addChild(balloon);
-			_Balloons.push(balloon);
+			_balloons.push(balloon);
 		}
 		
-		public static function editItem():void
+		/**
+		 * 编辑指定的泡泡。
+		 * @param	balloonName        泡泡名称
+		 * @param	key                属性名称
+		 * @param	value              值
+		 */
+		public static function editItem(balloonName:String, key:String, value:*):void
 		{
-			
+			var index:int = getIndexByName(balloonName);
+			if (index != -1)
+			{
+				var balloon:Balloon = _balloons[index];
+				switch (key) 
+				{
+					//泡泡提示内容
+					case "labelName":
+					
+					break;
+					//提供组件背景的外观的类
+					case "skin":
+						balloon.setRendererStyle("skin", value);
+					break;
+					//用于呈现组件标签的 TextFormat 对象
+					case "textFormat":
+						balloon.setRendererStyle("textFormat", value);
+					break;
+				}
+			}
 		}
 		
 		/**
@@ -75,9 +100,9 @@
 			var index:int = getIndexByName(balloonName);
 			if (index != -1)
 			{
-				_Balloons[index].dispose();
-				_Balloons[index] = null;
-				_Balloons.splice(index, 1);
+				_balloons[index].dispose();
+				_balloons[index] = null;
+				_balloons.splice(index, 1);
 			}
 		}
 		
@@ -86,20 +111,20 @@
 		 */
 		public static function removeAll():void
 		{
-			for (var i in _Balloons)
+			for (var i in _balloons)
 			{
-				_Balloons[i].dispose();
-				_Balloons[i] = null;
+				_balloons[i].dispose();
+				_balloons[i] = null;
 			}
-			_Balloons.length = 0;
+			_balloons.length = 0;
 		}
 		
 		//通过泡泡名称获取泡泡在数组中的索引
 		private static function getIndexByName(name:String):int
 		{
-			for (var i in _Balloons)
+			for (var i in _balloons)
 			{
-				if (_Balloons[i]["name"] == name)
+				if (_balloons[i]["name"] == name)
 				{
 					return i;
 				}

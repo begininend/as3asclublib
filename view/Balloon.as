@@ -85,7 +85,7 @@
 			trace();
 			var leftCorner:Point = new Point(tipAnglePoint.x - 4,tipAnglePoint.y - 4);
 			var rightCorner:Point = new Point(tipAnglePoint.x + 4,tipAnglePoint.y - 4);
-			DrawUtil.drawGradientRect(this.graphics, [0xDE0201, 0xAF0000], [100, 100], [0, 255], 6 + _label.width, 4 + _label.height, 8, "linear", 90);
+			DrawUtil.drawGradientRoundRect(this.graphics, [0xDE0201, 0xAF0000], [100, 100], [0, 255], 6 + _label.width, 4 + _label.height, 0, 0, 8, "linear", 90);
 			
 			DrawUtil.drawShape(this.graphics, 0xAF0000, 0xAF0000, [tipAnglePoint,leftCorner,rightCorner]);
 		}

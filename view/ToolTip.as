@@ -16,6 +16,8 @@
 	import flash.text.TextFormat;
 	import flash.utils.setTimeout;
 	import flash.utils.clearTimeout;
+	
+	import org.asclub.display.DrawUtil;
 	/**
 	 * @link kinglong@gmail.com
 	 * @author Kinglong
@@ -58,7 +60,9 @@
 		*/
 		private function redraw():void {
 			var w:Number = 6 + label.width;
-			var h:Number = 4 + label.height;			
+			var h:Number = 4 + label.height;	
+			
+			/*
 			this.graphics.clear();
 			this.graphics.beginFill(0x000000, 0.3);
 			this.graphics.drawRoundRect(2, 2, w, h, 7, 7);				
@@ -87,6 +91,12 @@
 			//this.graphics.lineTo(10, 5 + h);
 			//this.graphics.lineTo(7, h);
 			this.graphics.endFill();
+			*/
+			
+			
+			this.graphics.clear();
+			DrawUtil.drawRoundRect(this.graphics, w, h, 0x333333, -1, 2, 2, 0.3,8);
+			DrawUtil.drawGradientRoundRect(this.graphics, [0xDE0201, 0xAF0000], [100, 100], [0, 255], w, h, 0, 0, 8, "linear", 90);
 		}
 		
 		//初始化
@@ -103,7 +113,25 @@
 			label.defaultTextFormat = tf;
 		}
 		
-		//注册
+		/**
+		 * 设置文本描述
+		 * @param	area
+		 * @param	msg
+		 */
+		public static function setDescription(area:DisplayObject,msg:String):void
+		{
+			if (area.accessibilityProperties != null)
+			{
+				area.accessibilityProperties.description = msg;
+			}
+		}
+		
+		/**
+		 * 注册
+		 * @param	area
+		 * @param	msg
+		 * @param	delayTime
+		 */
 		public static function register(area:DisplayObject,msg:String,delayTime:int = 0):void 
 		{
 			if(instance != null)

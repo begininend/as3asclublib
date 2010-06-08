@@ -35,21 +35,22 @@
 		/**
 		 * 绘制圆角矩形
 		 * @param	graphics    绘制对象
-		 * @param	bgColor     填充颜色
-		 * @param	lineColor   笔触颜色
 		 * @param	w           宽度
 		 * @param	h           高度
+		 * @param	bgColor     填充颜色(当值为负数时不进行填充)
+		 * @param	lineColor   笔触颜色(当值为负数时不进行填充)
 		 * @param	x           x坐标
 		 * @param	y           y坐标
 		 * @param	ellipse     矩形圆角半径
-		 * @param	thickness   笔触粗细
+		 * @param	thickness   笔触粗细(当thickness 的值为NaN时，则不进行线条填充)
 		 * @return
 		 */
-		public static function drawRoundRect(graphics:Graphics,bgColor:uint, lineColor:uint, w:int, h:int, x:Number = 0, y:Number = 0,ellipse:Number = 5, thickness:Number = 1):void
+		public static function drawRoundRect(graphics:Graphics, w:int, h:int, bgColor:int = -1, lineColor:int = -1, x:Number = 0, y:Number = 0,alpha:Number = 1,ellipse:Number = 5, thickness:Number = 1):void
 		{
-			graphics.beginFill(bgColor);
-			graphics.lineStyle(thickness,lineColor,1,true);
-			graphics.drawRoundRect(x,y,w,h,ellipse);
+			graphics.beginFill(bgColor, alpha);
+			graphics.lineStyle(NaN);
+			if(lineColor > 0) graphics.lineStyle(thickness,lineColor,alpha,true);
+			if(bgColor > 0) graphics.drawRoundRect(x,y,w,h,ellipse);
 			graphics.endFill();
 		}
 		
@@ -74,7 +75,7 @@
   			var matrix:Matrix = new Matrix();
 			rotation = ((rotation % 360) / 180) * Math.PI;
   			matrix.createGradientBox(w, h, rotation, tx, ty);
-			//graphics.lineStyle(1,0x000000);
+			//graphics.lineStyle(1,colors[0],alphas[0],true);
   			graphics.beginGradientFill(type, colors, alphas, ratios,matrix, spreadMethod);
  			graphics.drawRoundRect(x, y, w, h, ellipse);
 			graphics.endFill();

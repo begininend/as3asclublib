@@ -1,0 +1,1 @@
+package org.asclub.text.highlight.style {	import flash.display.Sprite;	import flash.geom.Rectangle;			/**	 * @author Martin Raedlinger	 */	public interface IHighlightStyle 	{		function create(target_:Sprite, rect_:Rectangle) : void;				function clear(target_:Sprite) : void;		}}

@@ -16,8 +16,6 @@
 	import flash.text.TextFormat;
 	import flash.utils.setTimeout;
 	import flash.utils.clearTimeout;
-	
-	import org.asclub.display.DrawUtil;
 	/**
 	 * @link kinglong@gmail.com
 	 * @author Kinglong
@@ -29,23 +27,23 @@
 	public class ToolTip extends Sprite	
 	{
 		private static var instance:ToolTip = null;
-		private static var label:TextField;
+		private static var _label:TextField;
 		private static var _delayTime:int;
 		private var IntervarID:int;
 		private static var tipAlign:String;
 		
-		public function ToolTip(privateClass:PrivateClass)
+		public function ToolTip()
 		{
-			label = new TextField();
-			label.autoSize = TextFieldAutoSize.LEFT;
-			label.selectable = false;
-			label.multiline = false;
-			label.wordWrap = false;
-			label.defaultTextFormat = new TextFormat("宋体", 12, 0xffffff);
-			label.text = "提示信息";
-			label.x = 5;
-			label.y = 2;
-			addChild(label);
+			_label = new TextField();
+			_label.autoSize = TextFieldAutoSize.LEFT;
+			_label.selectable = false;
+			_label.multiline = false;
+			_label.wordWrap = false;
+			_label.defaultTextFormat = new TextFormat("宋体", 12, 0xffffff);
+			_label.text = "提示信息";
+			_label.x = 5;
+			_label.y = 2;
+			addChild(_label);
 			redraw();
 			mouseEnabled = mouseChildren = false;
 		}
@@ -59,10 +57,8 @@
 		*
 		*/
 		private function redraw():void {
-			var w:Number = 6 + label.width;
-			var h:Number = 4 + label.height;	
-			
-			/*
+			var w:Number = 6 + _label.width;
+			var h:Number = 4 + _label.height;			
 			this.graphics.clear();
 			this.graphics.beginFill(0x000000, 0.3);
 			this.graphics.drawRoundRect(2, 2, w, h, 7, 7);				
@@ -91,18 +87,12 @@
 			//this.graphics.lineTo(10, 5 + h);
 			//this.graphics.lineTo(7, h);
 			this.graphics.endFill();
-			*/
-			
-			
-			this.graphics.clear();
-			DrawUtil.drawRoundRect(this.graphics, w, h, 0x333333, -1, 2, 2, 0.3,8);
-			DrawUtil.drawGradientRoundRect(this.graphics, [0xDE0201, 0xAF0000], [100, 100], [0, 255], w, h, 0, 0, 8, "linear", 90);
 		}
 		
 		//初始化
 		public static function init():void {
 			if (instance == null) {
-				instance = new ToolTip(new PrivateClass());
+				instance = new ToolTip();
 				instance.name = "toolTip";
 			}
 		}
@@ -110,28 +100,10 @@
 		//设置字体样式
 		public static function setTextFormat(tf:TextFormat):void
 		{
-			label.defaultTextFormat = tf;
+			_label.defaultTextFormat = tf;
 		}
 		
-		/**
-		 * 设置文本描述
-		 * @param	area
-		 * @param	msg
-		 */
-		public static function setDescription(area:DisplayObject,msg:String):void
-		{
-			if (area.accessibilityProperties != null)
-			{
-				area.accessibilityProperties.description = msg;
-			}
-		}
-		
-		/**
-		 * 注册
-		 * @param	area
-		 * @param	msg
-		 * @param	delayTime
-		 */
+		//注册
 		public static function register(area:DisplayObject,msg:String,delayTime:int = 0):void 
 		{
 			if(instance != null)
@@ -161,17 +133,17 @@
 			area.stage.addEventListener(MouseEvent.MOUSE_MOVE,stageMouseOverHandler);
 			area.addEventListener(MouseEvent.ROLL_OUT,handler);
 			area.addEventListener(MouseEvent.MOUSE_MOVE,handler);
-			label.text = area.accessibilityProperties.description;
-			if(label.width > area.stage.stageWidth)
+			_label.text = area.accessibilityProperties.description;
+			if(_label.width > area.stage.stageWidth)
 			{
-				var scaleWidth:int = Math.ceil(label.width / area.width);
-				var msg:String = label.text;
+				var scaleWidth:int = Math.ceil(_label.width / area.width);
+				var msg:String = _label.text;
 				var breakPoint:int = msg.length / 2 >> 0;
-				label.text = msg.substr(0,breakPoint) + "\n" + msg.substr(breakPoint,msg.length - breakPoint);
+				_label.text = msg.substr(0,breakPoint) + "\n" + msg.substr(breakPoint,msg.length - breakPoint);
 				/*
 				for(var i:int = 0;i < scaleWidth * 2 - 1;i++)
 				{
-					label.appendText();
+					_label.appendText();
 				}*/
 			}
 			redraw();
@@ -206,18 +178,18 @@
 				{
 					case "BOTTOM_LEFT":
 						this.x = lp.x + 15;
-						this.y = lp.y - label.height - 8;
+						this.y = lp.y - _label.height - 8;
 					break;
 					case "TOP_LEFT":
 						this.x = lp.x + 15;
 						this.y = lp.y + 22;
 					break;
 					case "BOTTOM_RIGHT":
-						this.x = lp.x - label.width - 15;
-						this.y = lp.y - label.height - 8;
+						this.x = lp.x - _label.width - 15;
+						this.y = lp.y - _label.height - 8;
 					break;
 					case "TOP_RIGHT":
-						this.x = lp.x - label.width - 15;
+						this.x = lp.x - _label.width - 15;
 						this.y = lp.y + 22;
 					break;
 				}
@@ -270,5 +242,3 @@
 		
 	}//end of class
 }
-
-class PrivateClass{}

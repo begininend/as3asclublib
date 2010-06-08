@@ -218,7 +218,7 @@ package org.asclub.data
 			return arr.sort(sort);
 		}
 		
-		private static function sort(a:Object, b:Object):Number
+		private function sort(a:Object, b:Object):Number
 		{
 			return (Math.random() < 0.5) ? -1 : 1;
 		}

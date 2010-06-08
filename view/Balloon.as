@@ -33,11 +33,22 @@
 		//泡泡尖角的Y坐标(相对于泡泡的父级)
 		public var tipAngleY:Number;
 		
+		public override function get width():Number
+		{
+			return 6 + _label.width;
+		}
 		
-		public function Balloon(name:String,w:Number,msg:String,delay:Number = 0,handler:Function = null,...alt)
+		public override function get height():Number
+		{
+			return 8 + _label.height;
+		}
+		
+		public function Balloon(name:String,w:Number,msg:String,x:Number,y:Number,delay:Number = 0,handler:Function = null,...alt)
 		{
 			this.name = name;
 			_handler = handler;
+			tipAngleX = x;
+			tipAngleY = y;
 			_alt = alt;
 			init(w, msg);
 			if (delay != 0) setTimeout(dispose, delay * 1000);
@@ -61,7 +72,7 @@
 			_label.x = 3;
 			_label.y = 2;
 			addChild(_label);
-			updateBG();
+			//updateBG();
 			
 			this.addEventListener(MouseEvent.CLICK, clickedHandler);
 		}
@@ -69,8 +80,9 @@
 		//重绘制背景
 		private function drawBG():void
 		{
-			trace();
+			trace("tipAngleX:" + tipAngleX + "tipAngleY" + tipAngleY);
 			var tipAnglePoint:Point = this.globalToLocal(new Point(tipAngleX, tipAngleY));
+			trace();
 			var leftCorner:Point = new Point(tipAnglePoint.x - 4,tipAnglePoint.y - 4);
 			var rightCorner:Point = new Point(tipAnglePoint.x + 4,tipAnglePoint.y - 4);
 			DrawUtil.drawGradientRect(this.graphics, [0xDE0201, 0xAF0000], [100, 100], [0, 255], 6 + _label.width, 4 + _label.height, 8, "linear", 90);

@@ -33,11 +33,30 @@
 			{
 				throw new Error("此名称的泡泡已经存在，请使用其他名称");
 			}
-			var balloon:Balloon = new Balloon(balloonName, balloonWidth, msg);
-			balloon.tipAngleX = x;
-			balloon.tipAngleY = y;
-			balloon.x = x - 100;
-			balloon.y = y - balloon.height;
+			var balloon:Balloon = new Balloon(balloonName, balloonWidth, msg, x, y);
+			trace("balloon.height:" + balloon.height);
+			trace("balloon.width:" + balloon.width);
+			balloon.x = x;
+			balloon.y = y;
+			
+			if(x < balloon.width)
+			{
+				balloon.x = 0;
+				if(y < balloon.height)
+				{
+					balloon.y = y - balloon.height;
+				}
+			}
+			else
+			{
+				balloon.x = x - 20;
+				if((base.stage.stageHeight - y) > balloon.height)
+				{
+					balloon.y = y;
+				}
+			}
+			
+			
 			base.addChild(balloon);
 			_Balloons.push(balloon);
 		}

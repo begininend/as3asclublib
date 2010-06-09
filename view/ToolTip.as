@@ -6,11 +6,8 @@
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.display.Graphics;
-	import flash.display.GradientType;
-	import flash.display.SpreadMethod;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
-	import flash.geom.Matrix;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
@@ -33,20 +30,23 @@
 		private static var _delayTime:int;
 		private var IntervarID:int;
 		private static var tipAlign:String;
+		//文本样式
+		private static var _textFormat:TextFormat;
+		//文本宽度
+		public static var textWidth:Number;
+		
 		
 		public function ToolTip(privateClass:PrivateClass)
 		{
 			label = new TextField();
 			label.autoSize = TextFieldAutoSize.LEFT;
 			label.selectable = false;
-			label.multiline = false;
-			label.wordWrap = false;
+			label.multiline = true;
 			label.defaultTextFormat = new TextFormat("宋体", 12, 0xffffff);
 			label.text = "提示信息";
-			label.x = 5;
+			label.x = 3;
 			label.y = 2;
 			addChild(label);
-			redraw();
 			mouseEnabled = mouseChildren = false;
 		}
 		
@@ -60,43 +60,11 @@
 		*/
 		private function redraw():void {
 			var w:Number = 6 + label.width;
-			var h:Number = 4 + label.height;	
-			
-			/*
-			this.graphics.clear();
-			this.graphics.beginFill(0x000000, 0.3);
-			this.graphics.drawRoundRect(2, 2, w, h, 7, 7);				
-			//this.graphics.moveTo(10, 2 + h);  //画尖角
-			//this.graphics.lineTo(16, 2 + h);
-			//this.graphics.lineTo(13, 7 + h);
-			//this.graphics.lineTo(10, 2 + h);
-			this.graphics.endFill();
-			
-			var fillType:String = GradientType.LINEAR;   //GradientType.LINEAR  指定线性渐变填充    GradientType.RADIAL  指定放射状渐变填充
-  			var colors:Array = [0xDE0201, 0xAF0000];
-  			var alphas:Array = [100, 100];
-  			var ratios:Array = [0, 255];
-  			var matrix:Matrix = new Matrix();
-  			var boxWidth:Number = w;  //渐变框宽度
-  			var boxHeight:Number = h; //渐变框高度
-  			var boxRotation:Number = Math.PI/2;   //Math.PI 为180°
-  			var tx:Number = 0; //渐变框中心点x位置
-  			var ty:Number = 0; //渐变框中心点y位置
-  			matrix.createGradientBox(boxWidth, boxHeight, boxRotation, tx, ty);
-  			var spreadMethod:String = SpreadMethod.PAD;
-  			this.graphics.beginGradientFill(fillType, colors, alphas, ratios,matrix, spreadMethod);  
- 			this.graphics.drawRoundRect(0, 0, w, h, 7, 7);
-  			//this.graphics.moveTo(7, h);  //画尖角
-			//this.graphics.lineTo(13, h);
-			//this.graphics.lineTo(10, 5 + h);
-			//this.graphics.lineTo(7, h);
-			this.graphics.endFill();
-			*/
-			
+			var h:Number = 4 + label.height;
 			
 			this.graphics.clear();
-			DrawUtil.drawRoundRect(this.graphics, w, h, 0x333333, -1, 2, 2, 0.3,8);
-			DrawUtil.drawGradientRoundRect(this.graphics, [0xDE0201, 0xAF0000], [100, 100], [0, 255], w, h, 0, 0, 8, "linear", 90);
+			DrawUtil.drawRoundRect(this.graphics, w, h, 0x333333, -1, 2, 2, 0.3,9);
+			DrawUtil.drawGradientRoundRect(this.graphics, [0xDE0201, 0xAF0000], [100, 100], [0, 255], w, h, 0, 0, 9, "linear", 90);
 		}
 		
 		//初始化
@@ -107,10 +75,14 @@
 			}
 		}
 		
-		//设置字体样式
+		/**
+		 * 设置字体样式
+		 * @param	tf    字体样式
+		 */
 		public static function setTextFormat(tf:TextFormat):void
 		{
 			label.defaultTextFormat = tf;
+			_textFormat = tf;
 		}
 		
 		/**
@@ -145,7 +117,10 @@
 			}
 		}
 		
-		//反注册
+		/**
+		 * 反注册
+		 * @param	area
+		 */
 		public static function unregister(area:DisplayObject):void
 		{
 			if (instance != null)
@@ -161,19 +136,21 @@
 			area.stage.addEventListener(MouseEvent.MOUSE_MOVE,stageMouseOverHandler);
 			area.addEventListener(MouseEvent.ROLL_OUT,handler);
 			area.addEventListener(MouseEvent.MOUSE_MOVE,handler);
+			var targetTextFormat:TextFormat = new TextFormat();
+			targetTextFormat.leading = 0;
+			label.defaultTextFormat = targetTextFormat;
 			label.text = area.accessibilityProperties.description;
-			if(label.width > area.stage.stageWidth)
+			label.wordWrap = false;
+			if (textWidth > 0 && label.textWidth > textWidth) 
 			{
-				var scaleWidth:int = Math.ceil(label.width / area.width);
-				var msg:String = label.text;
-				var breakPoint:int = msg.length / 2 >> 0;
-				label.text = msg.substr(0,breakPoint) + "\n" + msg.substr(breakPoint,msg.length - breakPoint);
-				/*
-				for(var i:int = 0;i < scaleWidth * 2 - 1;i++)
-				{
-					label.appendText();
-				}*/
+				var leading:int = 3;
+				if (_textFormat != null && _textFormat.leading != null) leading = ((int(_textFormat.leading) > 3 ? int(_textFormat.leading) : 3));
+				label.wordWrap = true;
+				label.width = textWidth;
+				targetTextFormat.leading = leading;
+				label.setTextFormat(targetTextFormat);
 			}
+			
 			redraw();
 			move(area,point);
 			if (area.stage.getChildByName("toolTip") == null)

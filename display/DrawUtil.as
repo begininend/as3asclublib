@@ -16,24 +16,7 @@
 		}
 		
 		/**
-		 * 绘制一个直角矩形
-		 * @param	graphics     绘制对象
-		 * @param	bgColor      背景颜色
-		 * @param	lineColor    线条颜色
-		 * @param	w            宽度
-		 * @param	h            高度
-		 * @param	thickness    线条粗细
-		 */
-		public static function drawRect(graphics:Graphics,bgColor:uint,lineColor:uint,w:int,h:int,thickness:Number = 1):void
-		{
-			graphics.beginFill(bgColor);
-			graphics.lineStyle(thickness,lineColor);
-			graphics.drawRect(0,0,w,h);
-			graphics.endFill();
-		}
-		
-		/**
-		 * 绘制圆角矩形
+		 * 绘制圆(直)角矩形
 		 * @param	graphics    绘制对象
 		 * @param	w           宽度
 		 * @param	h           高度
@@ -49,13 +32,13 @@
 		{
 			graphics.beginFill(bgColor, alpha);
 			graphics.lineStyle(NaN);
-			if(lineColor > 0) graphics.lineStyle(thickness,lineColor,alpha,true);
-			if(bgColor > 0) graphics.drawRoundRect(x,y,w,h,ellipse);
+			if(lineColor >= 0) graphics.lineStyle(thickness,lineColor,alpha,true);
+			if(bgColor >= 0) graphics.drawRoundRect(x,y,w,h,ellipse);
 			graphics.endFill();
 		}
 		
 		/**
-		 * 绘制圆角渐变矩形
+		 * 绘制圆(直)角渐变矩形
 		 * @param	graphics  绘制对象
 		 * @param	colors    要在渐变中使用的 RGB 十六进制颜色值数组（例如，红色为 0xFF0000，蓝色为 0x0000FF，等等）。 可以至多指定 15 种颜色。 对于每种颜色，请确保在 alphas 和 ratios 参数中指定对应的值。
 		 * @param	alphas    colors 数组中对应颜色的 alpha 值数组；有效值为 0 到 1。 如果值小于 0，则默认值为 0。 如果值大于 1，则默认值为 1。 
@@ -164,7 +147,7 @@
 		 * @param	lineColor
 		 * @param	thickness
 		 */
-		public static function drawShape(graphics:Graphics, bgColor:uint, lineColor:uint, points:Array, thickness:Number = 1):void
+		public static function drawShape(graphics:Graphics, bgColor:int, lineColor:int, points:Array, thickness:Number = 1):void
 		{
 			var i:uint = points.length;
 			while (i--)
@@ -175,7 +158,8 @@
 				throw new Error("At least three Points are needed to draw a shape.");
 			
 			graphics.beginFill(bgColor);
-			graphics.lineStyle(thickness,lineColor);
+			graphics.lineStyle(NaN);
+			if(lineColor >= 0) graphics.lineStyle(thickness,lineColor);
 			graphics.moveTo(points[0].x, points[0].y);
 			
 			i = 0;

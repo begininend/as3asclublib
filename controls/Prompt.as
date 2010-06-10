@@ -26,6 +26,7 @@
 		private static var _bottom_mc:Sprite;
 		private static var _textInputBG_mc:Sprite;
 		private static var _close_btn:SimpleButton;
+		private static var _cancel_btn:SimpleButton;
 		private static var _ok_btn:SimpleButton;
 		private static var Tl:TweenLite;
 		private static var _title_txt:TextField;
@@ -70,16 +71,21 @@
 				
 				//确认按钮
 				_ok_btn = _myPrompt["__ok_btn"];
-				_ok_btn.addEventListener(MouseEvent.CLICK,_closeHandler);
+				_ok_btn.addEventListener(MouseEvent.CLICK,okBtnClickedHandler);
 				
 				//关闭按钮
 				_close_btn = _myPrompt["__close_btn"];
-				_close_btn.addEventListener(MouseEvent.CLICK,_closeHandler);
+				_close_btn.addEventListener(MouseEvent.CLICK, closeBtnClickedHandler);
+				
+				//取消按钮
+				_cancel_btn = _myPrompt["__cancel_btn"];
+				_cancel_btn.addEventListener(MouseEvent.CLICK, closeBtnClickedHandler);
 				
 				//信息文本框
 				var format:TextFormat = new TextFormat();
-				format.align = TextFormatAlign.CENTER;
+				format.align = TextFormatAlign.LEFT;
 				_message_txt = new TextField();
+				//_message_txt.border = true;
 				_message_txt.width = 223;
 				_message_txt.selectable = false;
 				_message_txt.mouseEnabled = false;
@@ -94,6 +100,26 @@
 				DrawUtil.drawRoundRect(_maskSprite.graphics, _base.stage.stageWidth, _base.stage.stageWidth, 0xffffff, -1, 0, 0, 0.3, 0);
 				_myPrompt.addChildAt(_maskSprite, 0);
 			
+			}
+		}
+		
+		public static function show(title:String,messages:String, handler:Function = null,...alt):void 
+		{
+			if (_base == null) {
+				trace("Alert class has not been initialised!");
+				return;
+			}
+			
+			if (_myPrompt != null)
+			{
+				_base.stage.addChild(_myPrompt);
+				_title_txt.htmlText = title;
+				_message_txt.htmlText = messages;
+				_message_txt.height = _message_txt.textHeight + 4;
+				_alt = alt;
+				_handler = handler;
+				//showTween();
+				updateView();
 			}
 		}
 		
@@ -131,29 +157,45 @@
 			_maskSprite.x = zeroPoint.x;
 			_maskSprite.y = zeroPoint.y;
 			
-			_top_mc.x = zeroPoint.x + (stages.stageWidth - _top_mc.width) / 2;
-			_top_mc.y = zeroPoint.y + (stages.stageHeight - _top_mc.height - _message_txt.textHeight - _bottom_mc.height - 15) / 2;
+			_top_mc.x = zeroPoint.x + (_base.stage.stageWidth - _top_mc.width) / 2;
+			_top_mc.y = zeroPoint.y + (_base.stage.stageHeight - _top_mc.height - _message_txt.textHeight - _bottom_mc.height - 15) / 2;
+			
+			_message_txt.x = (_top_mc.x + (_top_mc.width - _message_txt.width) * 0.5) >> 0;
+			_message_txt.y = _top_mc.y + 33;
+			
+			_textInputBG_mc.x = (_top_mc.x + (_top_mc.width - _textInputBG_mc.width) * 0.5) >> 0;
+			_textInputBG_mc.y = (_message_txt.y + _message_txt.height) >> 0;
+			
+			_ok_btn.x = _top_mc.x + (_top_mc.width - _ok_btn.width - _cancel_btn.width - 20) * 0.5 >> 0;
+			_ok_btn.y = _textInputBG_mc.y + _textInputBG_mc.height + 5;
+			
+			_cancel_btn.x = _ok_btn.x + _ok_btn.width + 20;
+			_cancel_btn.y = _textInputBG_mc.y + _textInputBG_mc.height + 5;
 			
 			_box_mc.x = _top_mc.x;
 			_box_mc.y = _top_mc.y + _top_mc.height;
-			_box_mc.height = _message_txt.textHeight + 15;
+			_box_mc.height = _textInputBG_mc.y + _textInputBG_mc.height - _message_txt.y + 10;
 			
 			_bottom_mc.x = _top_mc.x;
 			_bottom_mc.y = _box_mc.y + _box_mc.height;
-			
-			_message_txt.x = (_box_mc.x + (_box_mc.width - _message_txt.width) * 0.5) >> 0;
-			_message_txt.y = _top_mc.y + 33;
-			
-			_textInputBG_mc.x = (_box_mc.x + (_box_mc.width - _textInputBG_mc.width) * 0.5) >> 0;
-			_textInputBG_mc.y = _message_txt.y + 15;
-			
-			_ok_btn.x = (_box_mc.x + (_box_mc.width - _ok_btn.width) * 0.5 ) >> 0;
-			_ok_btn.y = (_bottom_mc.y + _bottom_mc.height -_ok_btn.height - 14) >> 0;
 			
 			_close_btn.x = _top_mc.x + _top_mc.width - 20;
 			_close_btn.y = _top_mc.y + 10;
 			
 		}
+		
+		//ok按钮被点击
+		private static function okBtnClickedHandler(evt:MouseEvent):void
+		{
+			
+		}
+		
+		//close按钮被点击
+		private static function closeBtnClickedHandler(evt:MouseEvent):void
+		{
+			
+		}
+		
 		
 	}//end of class
 }

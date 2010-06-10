@@ -102,6 +102,7 @@
 		{
 			_title_txt.text = title;
 			_message_txt.htmlText = messages;
+			_message_txt.height = _message_txt.textHeight + 4;
 			_updateView();
 		}
 		

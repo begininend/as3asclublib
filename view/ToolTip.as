@@ -95,6 +95,7 @@
 			if (area.accessibilityProperties != null)
 			{
 				area.accessibilityProperties.description = msg;
+				label.htmlText = msg;
 			}
 		}
 		

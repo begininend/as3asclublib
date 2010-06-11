@@ -33,7 +33,6 @@
 		private static var _message_txt:TextField;
 		private static var _textInput_txt:TextField;
 		private static var _maskSprite:Sprite;
-		private static var states:String;
 		
 		
 		public function Prompt(privateClass:PrivateClass)
@@ -67,7 +66,7 @@
 				_textInputBG_mc = _myPrompt["__textInputBG_mc"];
 				
 				//文本输入框
-				
+				_textInput_txt = _myPrompt["__textInput_txt"];
 				
 				//确认按钮
 				_ok_btn = _myPrompt["__ok_btn"];
@@ -93,7 +92,7 @@
 				_message_txt.wordWrap = true;
 				_message_txt.defaultTextFormat = format;
 				_message_txt.setTextFormat(format);
-				_myPrompt.addChildAt(_message_txt, _myPrompt.getChildIndex(_close_btn));
+				_myPrompt.addChild(_message_txt);
 				
 				//白色背景遮罩
 				_maskSprite = new Sprite();
@@ -112,13 +111,17 @@
 			
 			if (_myPrompt != null)
 			{
-				_base.stage.addChild(_myPrompt);
+				if (! _base.stage.contains(_myPrompt))
+				{
+					_base.stage.addChild(_myPrompt);
+				}
 				_title_txt.htmlText = title;
 				_message_txt.htmlText = messages;
+				//字体与边框有个2像素的槽，上下相加刚好为4
 				_message_txt.height = _message_txt.textHeight + 4;
 				_alt = alt;
 				_handler = handler;
-				//showTween();
+				showTween();
 				updateView();
 			}
 		}
@@ -132,7 +135,6 @@
 		{
 			
 		}
-		
 		
 		
 		/////////------------------------------------PRIVATE FUNCTION(私有方法)----------------------------------------------------
@@ -166,6 +168,9 @@
 			_textInputBG_mc.x = (_top_mc.x + (_top_mc.width - _textInputBG_mc.width) * 0.5) >> 0;
 			_textInputBG_mc.y = (_message_txt.y + _message_txt.height) >> 0;
 			
+			_textInput_txt.x = _textInputBG_mc.x + (_textInputBG_mc.width - _textInput_txt.width) * 0.5 >> 0;
+			_textInput_txt.y = _textInputBG_mc.y + (_textInputBG_mc.height - _textInput_txt.height) * 0.5 >> 0;
+			
 			_ok_btn.x = _top_mc.x + (_top_mc.width - _ok_btn.width - _cancel_btn.width - 20) * 0.5 >> 0;
 			_ok_btn.y = _textInputBG_mc.y + _textInputBG_mc.height + 5;
 			
@@ -187,15 +192,54 @@
 		//ok按钮被点击
 		private static function okBtnClickedHandler(evt:MouseEvent):void
 		{
-			
+			closeTween(evt.currentTarget.name);
 		}
 		
 		//close按钮被点击
 		private static function closeBtnClickedHandler(evt:MouseEvent):void
 		{
-			
+			closeTween(evt.currentTarget.name);
 		}
 		
+		//缓动显示对话框
+		private static function showTween():void
+		{
+			_myPrompt.alpha = 0;
+			_message_txt.visible = true;
+			_textInput_txt.text = "";
+			_textInput_txt.visible = true;
+			_ok_btn.mouseEnabled = _close_btn.mouseEnabled = true;
+			Tl = new TweenLite(_myPrompt, 0.3, {alpha:1});
+			TweenLite.delayedCall(Tl.duration,tweenHandler,["show"]);
+		}
+		
+		//缓动关闭对话框
+		private static function closeTween(target:String):void
+		{
+			_ok_btn.mouseEnabled = _close_btn.mouseEnabled = false;
+			_message_txt.visible = false;
+			_textInput_txt.visible = false;
+			Tl = new TweenLite(_myPrompt, 0.3, {alpha:0});
+			TweenLite.delayedCall(Tl.duration, tweenHandler, ["close",target]);
+		}
+		
+		//缓动结束处理
+		private static function tweenHandler(state:String,target:String = ""):void
+		{
+			if (state == "close") 
+			{
+				if (target == "__ok_btn") 
+				{
+					if (_handler != null)
+					{
+						var alt:Array = [_textInput_txt.text];
+						_handler.apply(null, alt.concat(_alt));
+						_handler = null;
+					}
+				}
+				_base.stage.removeChild(_myPrompt);
+			}
+		}
 		
 	}//end of class
 }

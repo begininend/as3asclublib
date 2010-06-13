@@ -175,5 +175,78 @@
 			return (value < 10) ? '0' + value : value.toString();
 		}
 		
+		/**
+		 * 获取某个概率内的项
+		 * values的结构为[{value:*,probability:Number},{value:*,probability:Number}...],其中probability 为 0 到 100的浮点数
+		 * @param	   values:*   参与抽取的所有项
+		 * @return     某个概率内的项
+		 */
+		public static function getValueInProbability(values:Array):*
+		{
+			//概率总和
+			var sumProbability:Number = 0;
+			//概率容器(数量 <= 所有项总数)
+			var probabilitys:Object = { };
+			var hasEqualProbability:Boolean = false;
+			for (var i:String in values)
+			{
+				probabilitys[values[i]["probability"]] = int(probabilitys[values[i]["probability"]]);
+				sumProbability += values[i]["probability"];
+				probabilitys[values[i]["probability"]] ++;
+			}
+			if (sumProbability != 100) throw new Error("数组中所包含的概率总和不等于100");
+			
+			//检查是否有概率相同的项
+			for (var k:String in probabilitys)
+			{
+				if (probabilitys[k] > 1)
+				{
+					hasEqualProbability = true;
+					break;
+				}
+			}
+			
+			//如果没有概率相同的项
+			if (! hasEqualProbability)
+			{
+				values.sort(sortOnProbability);
+				return getValue(values);
+			}
+			
+			//如果有两个或两个以上概率相同的项
+			
+			
+			
+			
+			
+			
+		}
+		
+		private static function getValue(values:Array):*
+		{
+			var item:Number = Math.random() * 100;
+			for (var i:String in values)
+			{
+				if (item < values[i]["probability"])
+				{
+					return values[i]["value"];
+				}
+			}
+			return getValue(values);
+		}
+		
+		//排序规则(按概率大小从小到大排列)
+		private static function sortOnProbability(a:Object, b:Object):Number {
+			var probability1:Number = a.probability;
+			var probability2:Number = b.probability;
+			if(probability1 > probability2) {
+				return 1;
+			} else if(probability1 < probability2) {
+				return -1;
+			} else  {
+				return 0;
+			}
+		}
+		
 	}//end of class
 }

@@ -215,11 +215,25 @@
 			
 			//如果有两个或两个以上概率相同的项
 			
+			//假设a有80%的概率，b和c各有10%的概率，而概率数组[a,a,a,a,a,a,a,a,b,c]
+			var probabilityArray:Array = [];
+			//小数点后小数位数(小数位数最多)
+			var numDecimal:int = 0;
 			
+			for (var j:String in values)
+			{
+				String(values[j]["probability"]).split(".").length < 2 ? 0 : (numDecimal = String(values[j]["probability"]).split(".")[1].length > numDecimal ? String(values[j]["probability"]).split(".")[1].length : numDecimal);
+			}
 			
+			for (var l:String in values)
+			{
+				for (var m:int = 0; m < values[l]["probability"] * Math.pow(10, numDecimal); m++)
+				{
+					probabilityArray.push(values[l]["value"]);
+				}
+			}
 			
-			
-			
+			return probabilityArray[Math.random() * Math.pow(10, numDecimal + 2) >> 0];
 		}
 		
 		private static function getValue(values:Array):*

@@ -194,7 +194,10 @@
 				sumProbability += values[i]["probability"];
 				probabilitys[values[i]["probability"]] ++;
 			}
-			if (sumProbability != 100) throw new Error("数组中所包含的概率总和不等于100");
+			if (sumProbability != 100) 
+			{
+				throw new Error("数组中所包含的概率总和不等于100");
+			}
 			
 			//检查是否有概率相同的项
 			for (var k:String in probabilitys)
@@ -222,14 +225,17 @@
 			
 			for (var j:String in values)
 			{
-				String(values[j]["probability"]).split(".").length < 2 ? 0 : (numDecimal = String(values[j]["probability"]).split(".")[1].length > numDecimal ? String(values[j]["probability"]).split(".")[1].length : numDecimal);
+				var decimalArray:Array = String(values[j]["probability"]).split(".");
+				if(decimalArray.length > 1) numDecimal = decimalArray[1].length > numDecimal ? decimalArray[1].length : numDecimal;
 			}
 			
 			for (var l:String in values)
 			{
-				for (var m:int = 0; m < values[l]["probability"] * Math.pow(10, numDecimal); m++)
+				var numItem:int = values[l]["probability"] * Math.pow(10, numDecimal);
+				var value:* = values[l]["value"];
+				for (var m:int = 0; m < numItem; m++)
 				{
-					probabilityArray.push(values[l]["value"]);
+					probabilityArray.push(value);
 				}
 			}
 			
@@ -250,7 +256,8 @@
 		}
 		
 		//排序规则(按概率大小从小到大排列)
-		private static function sortOnProbability(a:Object, b:Object):Number {
+		private static function sortOnProbability(a:Object, b:Object):Number 
+		{
 			var probability1:Number = a.probability;
 			var probability2:Number = b.probability;
 			if(probability1 > probability2) {

@@ -33,7 +33,7 @@
 		//文本样式
 		private static var _textFormat:TextFormat;
 		//文本宽度
-		public static var textWidth:Number;
+		public static var textWidth:Number = NaN;
 		
 		
 		public function ToolTip(privateClass:PrivateClass)
@@ -142,7 +142,7 @@
 			label.defaultTextFormat = targetTextFormat;
 			label.text = area.accessibilityProperties.description;
 			label.wordWrap = false;
-			if (textWidth > 0 && label.textWidth > textWidth) 
+			if (! isNaN(textWidth) && label.textWidth > textWidth) 
 			{
 				var leading:int = 3;
 				if (_textFormat != null && _textFormat.leading != null) leading = ((int(_textFormat.leading) > 3 ? int(_textFormat.leading) : 3));

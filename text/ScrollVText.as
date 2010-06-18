@@ -9,22 +9,16 @@
 	import flash.text.TextFormatAlign;
 	import flash.text.StyleSheet;
 	import flash.utils.Timer;
-	
-	import fl.transitions.Tween;
-	import fl.transitions.easing.None;
-	import fl.transitions.TweenEvent;
 
 	
 	import com.greensock.TweenLite;
+	import com.greensock.easing.*;
 	
 	public class ScrollVText extends Sprite
 	{
 		private var _tf1:TextField;
 		private var _tf2:TextField;
 		private var _textFormat:TextFormat;
-		private var Tl:TweenLite;
-		private var T2:TweenLite;
-		private var _tween:Tween;
 		private var _prevPointY:Number;
 		private var _nextPointY:Number;
 		private var _width:Number;
@@ -32,6 +26,7 @@
 		private var _currentMsgIndex:int;
 		private var _textTimer:Timer;
 		public var _interval:Number;
+		public var ease:Function;
 		
 		/**
 		 * 构造函数
@@ -53,12 +48,9 @@
 			_msgInfo = [];
 			_currentMsgIndex = 0;
 			_tf1 = createTextField();
-			_tf1.name = "_tf1";
-			_tf1.htmlText = "设置遮罩";
 			_tf2 = createTextField();
-			_tf2.name = "_tf2";
 			_tf2.y = _tf1.y + _tf1.height;
-			this.scrollRect = new Rectangle(0, 0, _width, _tf1.height);
+			//this.scrollRect = new Rectangle(0, 0, _width, _tf1.height);
 			_prevPointY = - _tf1.height;
 			_nextPointY = _tf1.height;
 			addChild(_tf1);
@@ -91,6 +83,7 @@
 			
 			getPrevTextField().alpha = 0.2;
 			getPrevTextField().htmlText = _msgInfo[0];
+			_tf2.y = _tf1.y + _tf1.height;
 		}
 		
 		public function stop():void
@@ -121,31 +114,18 @@
 		{
 			_currentMsgIndex >= _msgInfo.length - 1 ? (_currentMsgIndex = 0) : _currentMsgIndex++;
 			getNextTextField().htmlText = _msgInfo[_currentMsgIndex];
-			//TweenLite.to(getPrevTextField(), 1.2, {y: _prevPointY} );
-			//TweenLite.to(getNextTextField(), 1.2, {y:0} );
-			//TweenLite.delayedCall(1.2,tweenLiteFinishHandler,null);
 			
-			_tween = null;
-			_tween = new Tween(getPrevTextField(), "y", None.easeInOut, 0, _prevPointY, 1.2, true);
-			_tween = new Tween(getNextTextField(), "y", None.easeInOut, _nextPointY, 0, 1.2, true);
-			_tween.addEventListener(TweenEvent.MOTION_FINISH, tweenFinishHandler);
-		}
-		
-		//tween
-		private function tweenFinishHandler(evt:TweenEvent):void
-		{
-			_tween.removeEventListener(TweenEvent.MOTION_FINISH, tweenFinishHandler);
-			getPrevTextField().y = _nextPointY;
+			trace(Back.easeInOut);
+			
+			TweenLite.to(getPrevTextField(), 1.2, {y: - getPrevTextField().height,ease:Back.easeInOut} );
+			TweenLite.to(getNextTextField(), 1.2, {y:0,ease:Back.easeInOut} );
+			TweenLite.delayedCall(1.3,tweenLiteFinishHandler,null);
 		}
 		
 		//tween
 		private function tweenLiteFinishHandler():void
 		{
-			trace("tweenFinishHandler");
-			trace(getPrevTextField().name);
-			//trace("_nextPointY:" + _nextPointY);
-			getPrevTextField().alpha += 0.1;
-			getPrevTextField().y += 36;
+			getPrevTextField().y = getNextTextField().height;
 		}
 		
 		//获取排在上面的文本
@@ -182,14 +162,14 @@
 			}
 			var tf:TextField = new TextField();
 			tf.width = _width;
-			//tf.autoSize = (_textFormat.align == null ? TextFormatAlign.CENTER : _textFormat.align);
+			tf.autoSize = (_textFormat.align == null ? TextFormatAlign.CENTER : _textFormat.align);
 			tf.defaultTextFormat = _textFormat;
 			tf.selectable = false;
-			tf.multiline = false;
-			tf.wordWrap = false;
+			tf.multiline = true;
+			tf.wordWrap = true;
 			tf.text = " ";
-			tf.height = tf.textHeight + 4;
-			//tf.border = true;
+			//tf.height = tf.textHeight + 4;
+			tf.border = true;
 			return tf;
 		}
 		
@@ -198,9 +178,7 @@
 		 */
 		public function dispose():void
 		{
-			//_targetTF.removeEventListener(MouseEvent.ROLL_OVER, targetTFRollOverHandler);
-			//_targetTF.removeEventListener(MouseEvent.ROLL_OUT, targetTFRollOutHandler);
-			//if(_textTimer) _textTimer.removeEventListener(TimerEvent.TIMER, textTimerHandler);
+			if(_textTimer) _textTimer.removeEventListener(TimerEvent.TIMER, textTimerHandler);
 		}
 		
 	}//end of class

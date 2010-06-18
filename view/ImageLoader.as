@@ -99,7 +99,7 @@
 		//------------private function
 		private function loadCompleteHandler(evt:Event): void
 		{
-			//dispatchEvent(evt);
+			dispatchEvent(evt);
 			autoResize(_loader.content as DisplayObject);
 		}
 		

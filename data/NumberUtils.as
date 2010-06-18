@@ -176,6 +176,50 @@
 		}
 		
 		/**
+			Determines if index is included within the collection length otherwise the index loops to the beginning or end of the range and continues.
+			循环下标
+			@param index: Index to loop if needed.
+			@param length: The total elements in the collection.集合中元素的数量
+			@return A valid zero-based index.
+			@example
+				<code>
+					var colors:Array = new Array("Red", "Green", "Blue");
+					
+					trace(colors[NumberUtil.loopIndex(2, colors.length)]); // Traces Blue
+					trace(colors[NumberUtil.loopIndex(4, colors.length)]); // Traces Green
+					trace(colors[NumberUtil.loopIndex(-6, colors.length)]); // Traces Red
+				</code>
+		*/
+		public static function loopIndex(index:int, length:uint):uint {
+			if (index < 0)
+				index = length + index % length;
+			
+			if (index >= length)
+				return index % length;
+			
+			return index;
+		}
+		
+		/**
+		 *  将某个数约束在某个范围内
+			Determines if value falls within a range; if not it is snapped to the nearest range value.
+			
+			@param value: Number to determine if it is included in the range.
+			@param firstValue: First value of the range.范围内的第一个数
+			@param secondValue: Second value of the range.范围内的第二个数
+			@return Returns either the number as passed, or its value once snapped to nearest range value.
+			@usage  Note The constraint values do not need to be in order.
+			@example
+				<code>
+					trace(NumberUtil.constrain(3, 0, 5)); // Traces 3
+					trace(NumberUtil.constrain(7, 0, 5)); // Traces 5
+				</code>
+		*/
+		public static function constrain(value:Number, firstValue:Number, secondValue:Number):Number {
+			return Math.min(Math.max(value, Math.min(firstValue, secondValue)), Math.max(firstValue, secondValue));
+		}
+		
+		/**
 		 * 获取某个概率内的项
 		 * values的结构为[{value:*,probability:Number},{value:*,probability:Number}...],其中probability 为 0 到 100的浮点数
 		 * @param	   values:*   参与抽取的所有项

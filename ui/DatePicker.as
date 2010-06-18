@@ -2,6 +2,7 @@
 {
 	import flash.display.DisplayObject;
 	import flash.display.GradientType;
+	import flash.display.Shape;
 	import flash.display.SpreadMethod;
 	import flash.display.Sprite;
 	import flash.events.Event;
@@ -11,11 +12,14 @@
 	import flash.filters.DropShadowFilter;
 	import flash.filters.GlowFilter;
 	import flash.geom.Matrix;
+	import flash.geom.Point;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
 	import flash.text.TextFormatAlign;
+	import flash.utils.getTimer;
 	
+	import org.asclub.display.DrawUtil;
 	import org.asclub.date.DateUtil;
 	import org.asclub.events.DatePickerEvent;
 
@@ -34,8 +38,7 @@
 		private var _selectableRangeEnd : Date = new Date(2999, 11, 31);
 		private var _selectedDate : Date = new Date();  //选中的Date，默认是今天，可能和显示的月份不同
 		private var _todayDate : Date = new Date();  //指示今天
-
-		private var daysMonthArray : Array = new Array(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31);
+		
 		private var mCount : Number;
 		private var yCount : Number;	
 		
@@ -137,6 +140,8 @@
 			var boardBg:DisplayObject;
 			if (board == null)
 			{
+				//var bg : Sprite = new Sprite();
+				
 				boardBg = drawRadialBackground(240, 175);
 			}
 			else
@@ -145,13 +150,24 @@
 			}
 			addChild(boardBg);
 			
-			nextBtn = this.addChild(drawArrow(this.width - 25, 12, 0)) as Sprite;
+			//下一页按钮
+			nextBtn = new Sprite();
+			DrawUtil.drawShape(nextBtn.graphics, arrowColor, 0x000000, [new Point(0, -7.5), new Point(7.5, 0), new Point(0, 7.5)]);
+			nextBtn.x = this.width - 25;
+			nextBtn.y = 12;
+			this.addChild(nextBtn);
 			nextBtn.buttonMode = true;
 			nextBtn.addEventListener(MouseEvent.CLICK, onNextClick);
 			nextBtn.addEventListener(MouseEvent.MOUSE_OVER, onOver);
 			nextBtn.addEventListener(MouseEvent.MOUSE_OUT, onOut);
 			
-			prevBtn = this.addChild(drawArrow(25, 12, 180)) as Sprite;
+			//上一页按钮
+			prevBtn = new Sprite();
+			DrawUtil.drawShape(prevBtn.graphics, arrowColor, 0x000000, [new Point(0, -7.5), new Point(7.5, 0), new Point(0, 7.5)]);
+			prevBtn.x = 25;
+			prevBtn.y = 12;
+			prevBtn.rotation = 180;
+			this.addChild(prevBtn);
 			prevBtn.buttonMode = true;
 			prevBtn.addEventListener(MouseEvent.CLICK, onPrevClick);
 			prevBtn.addEventListener(MouseEvent.MOUSE_OVER, onOver);
@@ -265,7 +281,9 @@
 			var cont : Sprite = new Sprite();
 			cont.x = tx;
 			cont.y = ty;
-			cont.addChild(drawRoundRect(this.width - 15, 22, bgColorDayNameRow, .8));
+			var s:Shape = new Shape();
+			DrawUtil.drawRoundRect(s.graphics, this.width - 15, 22, bgColorDayNameRow, -1, 0, 0, 0.8, 10);
+			cont.addChild(s);
 			//一周的七天
 			for( var i : int = 0;i < 7;i++)
 			{
@@ -282,19 +300,6 @@
 			return cont;
 		}
 
-		/**
-		 * 画一个圆角矩形，返回Sprite
-		 */
-		private function drawRoundRect(w : Number,h : Number,col : uint, alph : Number) : Sprite
-		{  
-			// creates a simple rect with a color-fill
-			var s : Sprite = new Sprite();
-			s.graphics.beginFill(col, alph);
-			s.graphics.drawRoundRect(0, 0, w, h, 10);
-			s.graphics.endFill();
-			return s;
-		}
-
 		//绘制日期控件
 		private function drawDateGrid(mm : Number, yy : Number) : void
 		{
@@ -305,7 +310,8 @@
 			
 			//**日期行
 			//每四年二月闰年
-			var daysNr : int = (yy % 4 == 0 && mm == 1) ? 29 : daysMonthArray[mm]; 
+			//var daysNr : int = (yy % 4 == 0 && mm == 1) ? 29 : daysMonthArray[mm];
+			var daysNr : int = DateUtil.getDaysInMonth(yy,mm);
 			var myDate : Date = new Date(yy, mm, 1);								
 			// dayNameNr 用来确定该月第一天在第几格
 			var dayNameNr : int = (myDate.getDay() - firstDayOfWeek) ;
@@ -379,7 +385,9 @@
 				var itemBg:DisplayObject;
 				if (gridItemBg == null)
 				{
-					itemBg = drawRoundRect(27, 18, bgrColor, bgrAlpha);
+					var s:Sprite = new Sprite();
+					DrawUtil.drawRoundRect(s.graphics, 27, 18, bgrColor, -1, 0, 0, bgrAlpha, 10);
+					itemBg = s;
 				}
 				else
 				{
@@ -446,6 +454,7 @@
 			}
 		}
 
+		//日期被选中
 		private function onDateClick(e : MouseEvent) : void
 		{
 			var dateEle : Array = (e.target as DisplayObject).name.split(".");
@@ -472,23 +481,6 @@
 		public function hide() : void
 		{
 			visible = false;
-		}
-
-		//绘制箭头
-		private function drawArrow(__x : Number,__y : Number,__rot : Number) : Sprite
-		{  
-			// creates Arrows for prevBtn & nextBtn
-			var spr : Sprite = new Sprite();
-			spr.graphics.lineStyle(1, 0);
-			spr.graphics.beginFill(arrowColor);
-			spr.graphics.lineTo(0, -7.5);
-			spr.graphics.lineTo(7.5, 0);
-			spr.graphics.lineTo(0, 7.5);
-			spr.graphics.endFill();
-			spr.x = __x;
-			spr.y = __y;
-			spr.rotation = __rot;
-			return spr;
 		}
 
 		private function drawRadialBackground(tw : Number, th : Number) : Sprite
@@ -726,6 +718,11 @@
 			_tfmToday = tfmToday;
 		}
 		
+		/**
+		 * 设置样式
+		 * @param	style   样式属性的名称。
+		 * @param	value   样式的值。
+		 */
 		public function setStyle(style:String, value:*):void
 		{
 			switch(style)

@@ -16,6 +16,47 @@
 		}
 		
 		/**
+		 * 绘制一个圆。
+		 * @param	graphics    绘制对象
+		 * @param	radius      圆的半径（以像素为单位）。
+		 * @param	bgColor     填充颜色(当值为负数时不进行填充)
+		 * @param	lineColor   笔触颜色(当值为负数时不进行填充)
+		 * @param	x           相对于父显示对象注册点的圆心的 x 位置（以像素为单位）。 
+		 * @param	y           相对于父显示对象注册点的圆心的 y 位置（以像素为单位）。 
+		 * @param	alpha       透明度
+		 * @param	thickness   笔触粗细(当thickness 的值为NaN时，则不进行线条填充)
+		 */
+		public static function drawCircle(graphics:Graphics, radius:Number, bgColor:int = -1, lineColor:int = -1, x:Number = 0, y:Number = 0, alpha:Number = 1, thickness:Number = 1):void
+		{
+			graphics.lineStyle(NaN);
+			if(lineColor >= 0) graphics.lineStyle(thickness,lineColor,alpha);
+			graphics.beginFill(bgColor,alpha);
+			if(bgColor >= 0) graphics.drawCircle(x, y, radius);
+			graphics.endFill();
+		}
+		
+		/**
+		 * 绘制一个椭圆。
+		 * @param	graphics    绘制对象
+		 * @param	w           椭圆的宽度（以像素为单位）。 
+		 * @param	h           椭圆的高度（以像素为单位）。
+		 * @param	bgColor     填充颜色(当值为负数时不进行填充)
+		 * @param	lineColor   笔触颜色(当值为负数时不进行填充)
+		 * @param	x           相对于父显示对象注册点的圆心的 x 位置（以像素为单位）。 
+		 * @param	y           相对于父显示对象注册点的圆心的 y 位置（以像素为单位）。
+		 * @param	alpha       透明度
+		 * @param	thickness   笔触粗细(当thickness 的值为NaN时，则不进行线条填充)
+		 */
+		public static function drawEllipse(graphics:Graphics, w:int, h:int, bgColor:int = -1, lineColor:int = -1, x:Number = 0, y:Number = 0,alpha:Number = 1, thickness:Number = 1):void
+		{
+			graphics.beginFill(bgColor, alpha);
+			graphics.lineStyle(NaN);
+			if(lineColor >= 0) graphics.lineStyle(thickness,lineColor,alpha,true);
+			if(bgColor >= 0) graphics.drawEllipse(x,y,w,h);
+			graphics.endFill();
+		}
+		
+		/**
 		 * 绘制圆(直)角矩形
 		 * @param	graphics    绘制对象
 		 * @param	w           宽度
@@ -55,6 +96,7 @@
 		 */
 		public static function drawGradientRoundRect(graphics:Graphics,colors:Array,alphas:Array,ratios:Array,w:int,h:int, x:Number = 0, y:Number = 0,ellipse:Number = 5,type:String = "linear",rotation:Number = 0,tx:Number = 0,ty:Number = 0,spreadMethod:String = "pad"):void
 		{
+			graphics.lineStyle(NaN);
   			var matrix:Matrix = new Matrix();
 			rotation = ((rotation % 360) / 180) * Math.PI;
   			matrix.createGradientBox(w, h, rotation, tx, ty);

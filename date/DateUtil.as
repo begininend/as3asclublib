@@ -114,7 +114,7 @@ package org.asclub.date {
 		/**
 		 * 老外写的 获取指定月份的天数（很淫荡）.
 		 * @param	year     年份.
-		 * @param	month    月份.
+		 * @param	month    月份(从0开始).
 		 * @return  uint     该月的天数.
 		 */
 		public static function getDaysInMonth(year:Number, month:Number):uint {

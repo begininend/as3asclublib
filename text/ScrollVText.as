@@ -12,20 +12,25 @@
 
 	
 	import com.greensock.TweenLite;
-	import com.greensock.easing.*;
+	import com.greensock.plugins.TweenPlugin;
+	import com.greensock.plugins.ScrollRectPlugin;
 	
 	public class ScrollVText extends Sprite
 	{
 		private var _tf1:TextField;
 		private var _tf2:TextField;
 		private var _textFormat:TextFormat;
-		private var _prevPointY:Number;
-		private var _nextPointY:Number;
 		private var _width:Number;
 		private var _msgInfo:Array;
 		private var _currentMsgIndex:int;
+		
+		//计时器
 		private var _textTimer:Timer;
+		
+		//缓动间隔时间
 		public var _interval:Number;
+		
+		//缓动类型
 		public var ease:Function;
 		
 		/**
@@ -45,14 +50,15 @@
 		 */
 		private function init():void
 		{
+			//activation is permanent in the SWF, so this line only needs to be run once.
+			TweenPlugin.activate([ScrollRectPlugin]);
+			
 			_msgInfo = [];
 			_currentMsgIndex = 0;
 			_tf1 = createTextField();
 			_tf2 = createTextField();
 			_tf2.y = _tf1.y + _tf1.height;
-			//this.scrollRect = new Rectangle(0, 0, _width, _tf1.height);
-			_prevPointY = - _tf1.height;
-			_nextPointY = _tf1.height;
+			
 			addChild(_tf1);
 			addChild(_tf2);
 		}
@@ -66,6 +72,10 @@
 			_tf2.styleSheet = css;
 		}
 		
+		/**
+		 * 开始滚动
+		 * @param	delay    每次间隔时间(以毫秒为单位)
+		 */
 		public function start(delay:Number):void
 		{
 			if (_msgInfo.length < 2) 
@@ -80,10 +90,14 @@
 				_textTimer.addEventListener(TimerEvent.TIMER,textTimerHandler);
 				_textTimer.start();
 			}
-			
-			getPrevTextField().alpha = 0.2;
+			else 
+			{
+				_textTimer.delay = _interval;
+			}
 			getPrevTextField().htmlText = _msgInfo[0];
+			_tf1.y = 0;
 			_tf2.y = _tf1.y + _tf1.height;
+			this.scrollRect = new Rectangle(0, 0, _width, _tf1.height);
 		}
 		
 		public function stop():void
@@ -115,10 +129,9 @@
 			_currentMsgIndex >= _msgInfo.length - 1 ? (_currentMsgIndex = 0) : _currentMsgIndex++;
 			getNextTextField().htmlText = _msgInfo[_currentMsgIndex];
 			
-			trace(Back.easeInOut);
-			
-			TweenLite.to(getPrevTextField(), 1.2, {y: - getPrevTextField().height,ease:Back.easeInOut} );
-			TweenLite.to(getNextTextField(), 1.2, {y:0,ease:Back.easeInOut} );
+			TweenLite.to(getPrevTextField(), 1.2, {y: - getPrevTextField().height,ease:ease} );
+			TweenLite.to(getNextTextField(), 1.2, { y:0, ease:ease } );
+			TweenLite.to(this, 1, {scrollRect:{x:0, y:0, width:_width, height:getNextTextField().height}, ease:ease}); 
 			TweenLite.delayedCall(1.3,tweenLiteFinishHandler,null);
 		}
 		
@@ -169,7 +182,7 @@
 			tf.wordWrap = true;
 			tf.text = " ";
 			//tf.height = tf.textHeight + 4;
-			tf.border = true;
+			//tf.border = true;
 			return tf;
 		}
 		

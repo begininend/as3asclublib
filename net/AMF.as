@@ -10,7 +10,7 @@
 		public static var netStatus:String;
 		public function AMF()
 		{
-			
+			trace("构造函数不能执行");
 		}
 		
 		/**
@@ -18,10 +18,10 @@
 		 * @param	amfURL     连接地址
 		 * @param	Encoding   对象编码
 		 */
-		public static function connect(amfURL:String,Encoding:uint = 3):void
+		public static function connect(amfURL:String,encoding:uint = 3):void
 		{
 			amfNetConnection = new NetConnection();
-			amfNetConnection.objectEncoding = Encoding;
+			amfNetConnection.objectEncoding = encoding;
 			amfNetConnection.connect(amfURL);
 			amfNetConnection.addEventListener(NetStatusEvent.NET_STATUS, netStatusHandler);
 		}
@@ -29,12 +29,14 @@
 		//call
 		public static function call(command:String, resultHandler:Function, ...arg):void
 		{
-			var arguments:Array = [command, new Responder(resultHandler, onFault)];
+			var args:Array = [command, new Responder(resultHandler, onFault)];
+			/*
 			for (var i:int = 0; i < arg.length; i++)
 			{
 				arguments.push(arg[i]);
 			}
-			amfNetConnection.call.apply(null, arguments);
+			*/
+			amfNetConnection.call.apply(null, args.concat(arg));
 		}
 		
 		//监听

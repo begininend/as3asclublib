@@ -86,12 +86,16 @@
 			var overState:Shape = new Shape();
 			var downState:Shape = new Shape();
 			var hitTestState:Shape = new Shape();
-			DrawUtil.drawRect(overState.graphics,0xE0E8F3,0x96B5DA,w,h);
-			DrawUtil.drawRect(downState.graphics,0xE0E8F3,0x96B5DA,w,h);
-			DrawUtil.drawRect(hitTestState.graphics,0xE0E8F3,0x96B5DA,w,h);
+			DrawUtil.drawRoundRect(overState.graphics,w,h,0xE0E8F3,0x96B5DA,0,0,1,0);
+			DrawUtil.drawRoundRect(downState.graphics,w,h,0xE0E8F3,0x96B5DA,0,0,1,0);
+			DrawUtil.drawRoundRect(hitTestState.graphics,w,h,0xE0E8F3,0x96B5DA,0,0,1,0);
+			//DrawUtil.drawRoundRect(overState.graphics,0xE0E8F3,0x96B5DA,w,h);
+			//DrawUtil.drawRect(downState.graphics,0xE0E8F3,0x96B5DA,w,h);
+			//DrawUtil.drawRect(hitTestState.graphics,0xE0E8F3,0x96B5DA,w,h);
 			simpleButton.overState = overState;
 			simpleButton.downState = downState;
 			simpleButton.hitTestState = hitTestState;
+			simpleButton.trackAsMenu = true;
 			simpleButton.useHandCursor = false;
 			return simpleButton;
 		}
@@ -116,9 +120,11 @@
 				
 				menuContainer = new Sprite();
 				var bg:Shape = new Shape();
-				DrawUtil.drawRect(bg.graphics, 0xFCFCFC, 0x8A867A, rowWidth, rowHeight * itemLength);
+				//DrawUtil.drawRect(bg.graphics, 0xFCFCFC, 0x8A867A, rowWidth, rowHeight * itemLength);
+				DrawUtil.drawRoundRect(bg.graphics, rowWidth, rowHeight * itemLength, 0xFCFCFC, 0x8A867A, 0, 0, 1, 0);
 				var side:Shape = new Shape();
-				DrawUtil.drawGradientRect(side.graphics, [0xE5E3DA, 0xF7F6F1], [100, 100], [0, 255], 22, rowHeight * itemLength - 2,"linear",180);
+				DrawUtil.drawGradientRoundRect(side.graphics, [0xE5E3DA, 0xF7F6F1], [100, 100], [0, 255], 22, rowHeight * itemLength - 2, 0, 0, 0, "linear", 180);
+				//DrawUtil.drawGradientRect(side.graphics, [0xE5E3DA, 0xF7F6F1], [100, 100], [0, 255], 22, rowHeight * itemLength - 2,"linear",180);
 				side.x = 1;
 				side.y = 1;
 				menuContainer.addChild(bg);

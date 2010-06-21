@@ -33,6 +33,30 @@
 			
 		}
 		
+		/**
+         * 匹配半角字符
+         * 
+         * @param str
+         * @return 
+         * 
+         */        
+        public static function matchAscii(str:String):Array
+        {
+        	return str.match(/[\x00-\xFF]*/g);
+        }
+		
+		/**
+         * 将文件路径字符串切分为数组。最后两个将会是文件名和扩展名。
+         * 
+         * @param url	路径
+         * @return 
+         * 
+         */        
+        public static function splitUrl(url:String):Array
+        {
+        	return url.split(/\/+|\\+|\.|\?/ig);
+        }
+		
 		
 		
 	}//end of class

@@ -72,6 +72,7 @@ package org.asclub.net
 	import flash.media.Sound;
 	import flash.net.URLRequest;
 	import flash.system.LoaderContext;
+	import flash.text.Font;
 
 	public class SWFLibrary extends EventDispatcher
 	{
@@ -169,7 +170,7 @@ package org.asclub.net
 		
 		/**
 		 * retrieves an instance of the specified Sound
-		 * 
+		 * 检索一个指定的声音实例
 		 * @param		linkage		name of the class that extends Sound
 		 * @return						an instance of that sound, or null if not found
 		 */
@@ -178,6 +179,19 @@ package org.asclub.net
 			var Asset:Class = getAsset( linkage );
 			
 			if ( Asset ) return Sound( new Asset() );
+			return null;
+		}
+		
+		/**
+		 * 获取一个指定的字体实例
+		 * @param	linkage   
+		 * @return  字体实例
+		 */
+		public function getFont(linkage:String):Font
+		{
+			var Asset:Class = getAsset( linkage );
+			
+			if ( Asset ) return Font( new Asset() );
 			return null;
 		}
 		

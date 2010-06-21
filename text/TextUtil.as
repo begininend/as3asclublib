@@ -82,6 +82,20 @@
             tf.htmlText = str;
             return tf.text;
         }
+        
+        /**
+		 * 根据TextFormat附加HTML文本
+		 * @param v
+		 * @param format
+		 * 
+		 */
+		public static function applyTextFormat(v:String,format:TextFormat):String
+		{
+			var t:TextField = new TextField();
+			t.defaultTextFormat = format;
+			t.text = v;
+			return t.htmlText;
+		}
 		
 		
 	}//end of class

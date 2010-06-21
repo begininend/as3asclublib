@@ -97,9 +97,16 @@
 			getPrevTextField().htmlText = _msgInfo[0];
 			_tf1.y = 0;
 			_tf2.y = _tf1.y + _tf1.height;
-			this.scrollRect = new Rectangle(0, 0, _width, _tf1.height);
+			//在外部设置遮罩会跟scrollRect起冲突
+			if (this.mask == null)
+			{
+				this.scrollRect = new Rectangle(0, 0, _width, _tf1.height);
+			}
 		}
 		
+		/**
+		 * 文本停止滚动
+		 */
 		public function stop():void
 		{
 			
@@ -131,7 +138,10 @@
 			
 			TweenLite.to(getPrevTextField(), 1.2, {y: - getPrevTextField().height,ease:ease} );
 			TweenLite.to(getNextTextField(), 1.2, { y:0, ease:ease } );
-			TweenLite.to(this, 1, {scrollRect:{x:0, y:0, width:_width, height:getNextTextField().height}, ease:ease}); 
+			if (this.mask == null)
+			{
+				TweenLite.to(this, 1, {scrollRect:{x:0, y:0, width:_width, height:getNextTextField().height}, ease:ease}); 
+			}
 			TweenLite.delayedCall(1.3,tweenLiteFinishHandler,null);
 		}
 		

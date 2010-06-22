@@ -20,6 +20,8 @@
 		public var displayRectHeight:Number;             //显示区域高度
 		private var scrollThumbScrollSpace:Rectangle;    //滚动条可滚动的距离(横向/纵向)
 		private var scrollThumbHeightLowerLimit:Number;  //滚动条最小高度
+		private var spacebetween:Number; //内容实例和滚条实例的间隔
+		private var _scrollDrag:Boolean;
 
 		public var content:DisplayObject;//内容实例
 		private var contentHeight:Number; //内容实例的高
@@ -30,7 +32,6 @@
 		private var scrollThumb_mc : Sprite;
 		private var bg_sprite : Sprite;
 
-		private var spacebetween:Number; //内容实例和滚条实例的间隔
 		
 		////上下滚动按钮按钮下时间
 		private var putTime : Number;
@@ -209,6 +210,22 @@
 			if (scrollThumb_mc.height < scrollThumbHeightLowerLimit ) scrollThumb_mc.height = scrollThumbHeightLowerLimit;
 			scrollThumbScrollSpace.height = displayRectHeight - scrollThumb_mc.height - up_btn.height - down_btn.height;
 			updateContent();
+		}
+		
+		/**
+		 * 获取或设置一个值，该值指示当用户在滚动窗格中拖动内容时是否发生滚动。
+		 */
+		public function get scrollDrag():Boolean
+		{
+			return _scrollDrag;
+		}
+		
+		/**
+		 * 获取或设置一个值，该值指示当用户在滚动窗格中拖动内容时是否发生滚动。
+		 */
+		public function set scrollDrag (value:Boolean):void
+		{
+			
 		}
 	  
 		private function eventHandler(e:MouseEvent):void

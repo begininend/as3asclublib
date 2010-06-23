@@ -62,7 +62,7 @@
 		//初始化
 		private function init():void
 		{
-			content.scrollRect = new Rectangle(0, 0, displayRectWidth, displayRectHeight);
+			//content.scrollRect = new Rectangle(0, 0, displayRectWidth, displayRectHeight);
 			scrollThumbHeightLowerLimit = 20;
 			
 			scrollThumbScrollSpace = new Rectangle(bg_sprite.x, bg_sprite.y + up_btn.height, 0, displayRectHeight - scrollThumb_mc.height - up_btn.height - down_btn.height);
@@ -82,7 +82,7 @@
 			scrollThumb_mc.addEventListener(MouseEvent.MOUSE_DOWN, scrollThumbEventHandler);
 			scrollThumb_mc.addEventListener(MouseEvent.MOUSE_UP, scrollThumbEventHandler);
 			
-			//背景
+			//滚动条背景
 			bg_sprite.addEventListener(MouseEvent.MOUSE_DOWN, bgMouseDownHandler);
 			
 			//向下按钮
@@ -127,7 +127,6 @@
 					updateContent();
 			}
 		}
-		
 		
 		//滑块事件处理
 		private function scrollThumbEventHandler(evt:MouseEvent):void
@@ -201,7 +200,10 @@
 		 */
 		public function update():void
 		{
+			content.scrollRect = null;
 			contentHeight = content.height;
+			trace("contentHeight:" + contentHeight);
+			content.scrollRect = new Rectangle(0, 0, displayRectWidth, displayRectHeight);
 			scrollBar_mc.x = displayRectWidth + spacebetween;
 			scrollBar_mc.y = content.y;
 			bg_sprite.height = displayRectHeight;

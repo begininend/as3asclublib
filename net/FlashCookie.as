@@ -21,7 +21,7 @@
 		{
 		}
 		
-		public static function Init(CookieName:String):void
+		public static function init(CookieName:String):void
 		{
 			Name = CookieName;
 			_so = SharedObject.getLocal(Name, "/");

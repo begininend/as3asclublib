@@ -36,7 +36,7 @@
 		}
 		
 		//初始化
-		public static function Init(stageReference:Stage):void
+		public static function init(stageReference:Stage):void
 		{
 			stages = stageReference;
 			stages.addEventListener(Event.RESIZE, stageResizeHandler);

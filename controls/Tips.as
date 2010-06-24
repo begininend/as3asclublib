@@ -42,7 +42,7 @@
 		}
 		
 		//初始化
-		public static function Init(stageReference:DisplayObject):void
+		public static function init(stageReference:DisplayObject):void
 		{
 			base = stageReference;
 			base.stage.addEventListener(Event.RESIZE, stageResizeHandler);

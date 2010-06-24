@@ -1,8 +1,8 @@
 ﻿package org.asclub.data
 {
-	public class NumberUtils
+	public class NumberUtil
 	{
-		public function NumberUtils()
+		public function NumberUtil()
 		{
 			
 		}

@@ -65,6 +65,7 @@
 		 * @param	lineColor   笔触颜色(当值为负数时不进行填充)
 		 * @param	x           x坐标
 		 * @param	y           y坐标
+		 * @param	alpha       透明度
 		 * @param	ellipse     矩形圆角半径
 		 * @param	thickness   笔触粗细(当thickness 的值为NaN时，则不进行线条填充)
 		 * @return
@@ -75,6 +76,31 @@
 			graphics.lineStyle(NaN);
 			if(lineColor >= 0) graphics.lineStyle(thickness,lineColor,alpha,true);
 			if(bgColor >= 0) graphics.drawRoundRect(x,y,w,h,ellipse);
+			graphics.endFill();
+		}
+		
+		/**
+		 * 绘制复杂圆角矩形(不完全圆角矩形)
+		 * @param	graphics    绘制对象
+		 * @param	w           宽度
+		 * @param	h           高度
+		 * @param	bgColor     填充颜色(当值为负数时不进行填充)
+		 * @param	lineColor   笔触颜色(当值为负数时不进行填充)
+		 * @param	x           x坐标
+		 * @param	y           y坐标
+		 * @param	alpha       透明度
+		 * @param	ellipseTL   左上角圆角半径
+		 * @param	ellipseTR   右上角圆角半径
+		 * @param	ellipseBR   右下角圆角半径
+		 * @param	ellipseBL   左下角圆角半径
+		 * @param	thickness   笔触粗细(当thickness 的值为NaN时，则不进行线条填充)
+		 */
+		public static function drawRoundRectComplex(graphics:Graphics, w:int, h:int, bgColor:int = -1, lineColor:int = -1, x:Number = 0, y:Number = 0, alpha:Number = 1, ellipseTL:Number = 0, ellipseTR:Number = 0, ellipseBR:Number = 0, ellipseBL:Number = 0, thickness:Number = 1):void
+		{
+			graphics.beginFill(bgColor, alpha);
+			graphics.lineStyle(NaN);
+			if (lineColor >= 0) graphics.lineStyle(thickness, lineColor, alpha, true);
+			if (bgColor >= 0) graphics.drawRoundRectComplex(x, y, w, h, ellipseTL, ellipseTR, ellipseBR, ellipseBL);
 			graphics.endFill();
 		}
 		

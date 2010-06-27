@@ -56,10 +56,10 @@
 		}
 		
 		/**
-		 * 获取一个空白所占的宽度
+		 * 获取字符所占的宽度
 		 * @return
 		 */
-		public static function getSingleWhitespaceWidth(textFormat:TextFormat):Number
+		public static function getTextWidth(str:String,textFormat:TextFormat):Number
 		{
 			var targetTextFormat:TextFormat = new TextFormat();
 			targetTextFormat.size = textFormat.size;
@@ -67,7 +67,7 @@
 			var textField:TextField = new TextField();
 			textField.defaultTextFormat = targetTextFormat;
 			textField.setTextFormat(targetTextFormat);
-			textField.text = " ";
+			textField.text = str;
 			return textField.textWidth;
 		}
 		

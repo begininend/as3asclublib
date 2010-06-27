@@ -35,6 +35,7 @@
 
 package org.asclub.data
 {
+	import org.asclub.data.NumberUtil;
 	
 	/**
 	* 	Class that contains static utility methods for manipulating and working
@@ -52,7 +53,7 @@ package org.asclub.data
 				
 		/**
 		*	Determines whether the specified array contains the specified value.	
-		* 
+		* 	数组中是否包含某项
 		* 	@param arr The array that will be checked for the specified value.
 		*
 		*	@param value The object which will be searched for within the array
@@ -155,7 +156,7 @@ package org.asclub.data
 		/**
 		*	Compares two arrays and returns a boolean indicating whether the arrays
 		*	contain the same values at the same indexes.
-		* 
+		*   两个数组是否相同
 		* 	@param arr1 The first array that will be compared to the second.
 		*
 		* 	@param arr2 The second array that will be compared to the first.
@@ -188,7 +189,27 @@ package org.asclub.data
 		}
 		
 		/**
-		 * ??
+		 * 互换数组中两个元素的位置
+		 * @param	arr        数组
+		 * @param	index1     索引1
+		 * @param	index2     索引2
+		 * @return
+		 */
+		public static function swap(arr:Array, index1:int, index2:int) : Boolean
+        {
+            var temp:Object;
+            if (arr == null || index1 < 0 || index1 >= arr.length || index2 < 0 || index2 >= arr.length)
+            {
+                return false;
+            }
+            temp = arr[index1];
+            arr[index1] = arr[index2];
+            arr[index2] = temp;
+            return true;
+        }
+		
+		/**
+		 * 去除数组中的重复项
 		 * @param	arr
 		 * @return
 		 */
@@ -207,6 +228,37 @@ package org.asclub.data
 			}
 			return newArray;
 		}
+		
+		/**
+		 * 获取某个数之内的随机不重复数组，比如8 =》 7,6,3,0,2,5,1,4
+		 * @param	value   某个数 
+		 * @return
+		 */
+		public static function getRandomArray(value:int) : Array
+        {
+            var arr:Array = [];
+            var _loc_3:int;
+            var _loc_4:int;
+            var _loc_5:int;
+            var _loc_6:int;
+            while (_loc_6 < value)
+            {
+                arr.push(_loc_6);
+                _loc_6++;
+            }
+            _loc_6 = 0;
+            while (_loc_6 < value)
+            {
+                _loc_3 = NumberUtil.randomIntegerWithinRange(0,value);
+                _loc_4 = NumberUtil.randomIntegerWithinRange(0,value);
+                if (_loc_3 != _loc_4)
+                {
+                    swap(arr, _loc_3, _loc_4);
+                }
+                _loc_6++;
+            }
+            return arr;
+        }
 		
 		/**
 		 * 将数组随机排序

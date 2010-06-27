@@ -15,8 +15,8 @@
 		 * @return  Boolean
 		 * @example
 		 * 			<code>
-		 * 					trace(NumberUtils.isEqual(3.042, 3, 0)); // Traces false
-		 * 					trace(NumberUtils.isEqual(3.042, 3, 0.5)); // Traces true
+		 * 					trace(NumberUtil.isEqual(3.042, 3, 0)); // Traces false
+		 * 					trace(NumberUtil.isEqual(3.042, 3, 0.5)); // Traces true
 		 * 			</code>
 		 */
 		public static function isEqual(val1:Number, val2:Number, precision:Number = 0):Boolean {
@@ -53,7 +53,7 @@
 		 * @return  int   随机值(整数)
 		 */
 		public static function randomIntegerWithinRange(min:int, max:int):int {
-			return Math.round(NumberUtils.randomWithinRange(min, max));
+			return Math.round(NumberUtil.randomWithinRange(min, max));
 		}
 		
 		/**
@@ -71,7 +71,7 @@
 		 * @return
 		 */
 		public static function isOdd(value:Number):Boolean {
-			return !NumberUtils.isEven(value);
+			return !NumberUtil.isEven(value);
 		}
 		
 		/**
@@ -103,8 +103,8 @@
 		 * @return  Array       某个范围内的步进点
 		 * @example 
 		 * 		<code>
-		 * 			trace(NumberUtils.createStepsBetween(0, 5, 4)); // Traces 1,2,3,4
-		 * 			trace(NumberUtils.createStepsBetween(1, 3, 3)); // Traces 1.5,2,2.5
+		 * 			trace(NumberUtil.createStepsBetween(0, 5, 4)); // Traces 1,2,3,4
+		 * 			trace(NumberUtil.createStepsBetween(1, 3, 3)); // Traces 1.5,2,2.5
 		 * 		</code>
 		 */
 		public static function createStepsBetween(begin:Number, end:Number, steps:Number):Array {
@@ -129,7 +129,7 @@
 		 * @return  String
 		 * @example
 		 * 		<code>
-		 * 			trace(NumberUtils.format(1234567, 8, ",")); // Traces 01,234,567
+		 * 			trace(NumberUtil.format(1234567, 8, ",")); // Traces 01,234,567
 		 * 		</code>
 		 */
 		public static function format(value:Number, minLength:uint, thouDelim:String = null, fillChar:String = null):String {

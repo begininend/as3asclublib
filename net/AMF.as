@@ -29,7 +29,7 @@
 		 */
 		public static function get uri():String
 		{
-			return (amfNetConnection == null ? "" : amfNetConnection.uri);
+			return (_amfNetConnection == null ? "" : _amfNetConnection.uri);
 		}
 		
 		/**

@@ -11,7 +11,7 @@
 package org.asclub.string{
 	
 	import flash.utils.ByteArray;
-	import org.asclub.data.NumberUtils;
+	import org.asclub.data.NumberUtil;
 	
 	public class StringUtil{
 				
@@ -618,7 +618,7 @@ package org.asclub.string{
 			radix                  = (radix > 61) ? 61 : radix;
 			
 			while (length--) {
-				id.push(characters[NumberUtils.randomIntegerWithinRange(0, radix)]);
+				id.push(characters[NumberUtil.randomIntegerWithinRange(0, radix)]);
 			}
 			
 			return id.join('');

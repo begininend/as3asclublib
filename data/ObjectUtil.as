@@ -9,7 +9,7 @@ import flash.net.registerClassAlias;
 import flash.utils.ByteArray;
 
 
-public class ObjectUtils
+public class ObjectUtil
 {
 	/**
 	 * Deep clone object using thiswind@gmail.com 's solution
@@ -19,7 +19,7 @@ public class ObjectUtils
         var packageName:String = typeName.split("::")[1];
         var type:Class = Class(getDefinitionByName(typeName));
 
-        registerClassAlias(packageName, type);
+        //registerClassAlias(packageName, type);
         
         var copier:ByteArray = new ByteArray();
         copier.writeObject(source);

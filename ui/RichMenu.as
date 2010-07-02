@@ -1,5 +1,6 @@
 ﻿package org.asclub.ui
 {
+	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
 	import flash.display.Stage;
 	import flash.display.Shape;
@@ -15,15 +16,16 @@
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	
-	import org.asclub.system.MyGC;
+	import org.asclub.data.FunctionUtil;
 	import org.asclub.display.DrawUtil;
+	import org.asclub.system.MyGC;
 
 
 	public class RichMenu extends Sprite
 	{
 		public static var rowHeight:Number;
 		private static var rowWidth:Number;
-		private static var items:Array;
+		private static var menuItems:Array;
 		private static var intervalID:uint;
 		private static var displayObjectContainer:Stage;
 		private static var menuContainer:Sprite;
@@ -38,18 +40,43 @@
 			//行高
 			rowHeight = 22;
 			displayObjectContainer = base;
-			items = [];
+			menuItems = [];
 		}
 		
 		
 		public static function addItems(items:Array):void
 		{
+			//menuItems = menuItems.concat(items);
+			var numItem:int = items.length;
+			var item:Object;
+			var itemLabel:String;
+			var callBackFun:Function;
 			
+			for (var i:int = 0; i < numItem; i++)
+			{
+				var arg:Array = [];
+				item = items[i];
+				itemLabel = item["label"];
+				callBackFun = item["callBack"];
+				delete item["label"];
+				delete item["callBack"];
+				for (var j:String in item)
+				{
+					arg.push(item[j]);
+				}
+				menuItems.push({label:itemLabel,callBack:FunctionUtil.eventDelegate(callBackFun,arg)});
+			}
 		}
 		
+		/**
+		 * 添加菜单项
+		 * @param	itemLabel         菜单标签
+		 * @param	callBackFun       回调函数
+		 * @param	...alt            用于回调函数的参数集
+		 */
 		public static function addItem(itemLabel:String, callBackFun:Function, ...alt):void
 		{
-			items.push({label:itemLabel,callBack:getFun(callBackFun,alt)});
+			menuItems.push({label:itemLabel,callBack:FunctionUtil.eventDelegate(callBackFun,alt)});
 		}
 		
 		/**
@@ -69,7 +96,7 @@
 				mouseEnabled = false;
 				defaultTextFormat = new TextFormat("宋体", 12, 0x000000);
 				text = labelField;
-				height = textField.textHeight;
+				height = textField.textHeight + 4;
 			}
 			return textField;
 		}
@@ -89,9 +116,6 @@
 			DrawUtil.drawRoundRect(overState.graphics,w,h,0xE0E8F3,0x96B5DA,0,0,1,0);
 			DrawUtil.drawRoundRect(downState.graphics,w,h,0xE0E8F3,0x96B5DA,0,0,1,0);
 			DrawUtil.drawRoundRect(hitTestState.graphics,w,h,0xE0E8F3,0x96B5DA,0,0,1,0);
-			//DrawUtil.drawRoundRect(overState.graphics,0xE0E8F3,0x96B5DA,w,h);
-			//DrawUtil.drawRect(downState.graphics,0xE0E8F3,0x96B5DA,w,h);
-			//DrawUtil.drawRect(hitTestState.graphics,0xE0E8F3,0x96B5DA,w,h);
 			simpleButton.overState = overState;
 			simpleButton.downState = downState;
 			simpleButton.hitTestState = hitTestState;
@@ -108,38 +132,42 @@
 				return;
 			}
 			
+			//displayObjectContainer.stage.addEventListener(MouseEvent.CLICK, stageClickedHandler);
+			
 			if (!menuContainer)
 			{
 				var large:String = "";
-				var itemLength:int = items.length;
+				var itemLength:int = menuItems.length;
 				for (var i:int = 0; i < itemLength; i++)
 				{
-					large = items[i].label.length > large.length ? items[i].label : large;
+					large = menuItems[i].label.length > large.length ? menuItems[i].label : large;
 				}
 				rowWidth = createTextField(large).textWidth + 40;
 				
 				menuContainer = new Sprite();
 				var bg:Shape = new Shape();
-				//DrawUtil.drawRect(bg.graphics, 0xFCFCFC, 0x8A867A, rowWidth, rowHeight * itemLength);
-				DrawUtil.drawRoundRect(bg.graphics, rowWidth, rowHeight * itemLength, 0xFCFCFC, 0x8A867A, 0, 0, 1, 0);
+				DrawUtil.drawRoundRect(bg.graphics, rowWidth, rowHeight * itemLength + 4, 0xFCFCFC, 0x8A867A, 0, 0, 1, 0);
 				var side:Shape = new Shape();
-				DrawUtil.drawGradientRoundRect(side.graphics, [0xE5E3DA, 0xF7F6F1], [100, 100], [0, 255], 22, rowHeight * itemLength - 2, 0, 0, 0, "linear", 180);
-				//DrawUtil.drawGradientRect(side.graphics, [0xE5E3DA, 0xF7F6F1], [100, 100], [0, 255], 22, rowHeight * itemLength - 2,"linear",180);
+				DrawUtil.drawGradientRoundRect(side.graphics, [0xE5E3DA, 0xF7F6F1], [100, 100], [0, 255], 22, bg.height - 2, 0, 0, 0, "linear", 180);
 				side.x = 1;
 				side.y = 1;
 				menuContainer.addChild(bg);
 				menuContainer.addChild(side);
+				//逐个生成按钮并添加
 				for (var j:int = 0; j < itemLength; j++)
 				{
-					var menuItem:Sprite = new Sprite;
-					var labelButton:SimpleButton = drawSimpleButton(rowWidth, rowHeight);
-					labelButton.addEventListener(MouseEvent.CLICK, items[j].callBack);
-					var label:TextField = createTextField(items[j].label);
+					var menuItem:Sprite = new Sprite();
+					var labelButton:SimpleButton = drawSimpleButton(rowWidth - 4, rowHeight);
+					labelButton.x = (bg.width - labelButton.overState.width) * 0.5 >> 0;
+					//labelButton.addEventListener(MouseEvent.CLICK, menuItems[j].callBack);
+					var label:TextField = createTextField(menuItems[j].label);
 					label.x = 25;
 					label.y = (rowHeight - label.height) * 0.5;
 					menuItem.addChild(labelButton);
 					menuItem.addChild(label);
-					menuItem.y = j * rowHeight;
+					menuItem.name = j.toString();
+					menuItem.y = j * rowHeight + 2;
+					menuItem.addEventListener(MouseEvent.CLICK, menuItems[j].callBack);
 					menuContainer.addChild(menuItem);
 				}
 				menuContainer.x = displayObjectContainer.mouseX;
@@ -160,7 +188,7 @@
 		//延迟添加事件
 		private static function addListenerOffset():void
 		{
-			displayObjectContainer.addEventListener(MouseEvent.CLICK, stageClickedHandler);
+			displayObjectContainer.stage.addEventListener(MouseEvent.CLICK, stageClickedHandler);
 			clearTimeout(intervalID);
 		}
 		
@@ -169,24 +197,25 @@
 		{
 			if (menuContainer != null)
 			{
-				//for (var i:int = 0; i < items.length; i ++)
-				//{
-					//delete items[i];
-				//}
-				items = [];
 				
-				trace("子项数目:" + menuContainer.numChildren);
+				//trace("子项数目:" + menuContainer.numChildren);
 				var numChildren:int = menuContainer.numChildren;
+				var item:DisplayObject;
 				for (var j:int = menuContainer.numChildren - 1; j > -1 ; j--)
 				{
-						trace(menuContainer.getChildAt(j));
-						menuContainer.removeChild(menuContainer.getChildAt(j));
+					item = menuContainer.getChildAt(j);
+					if (item.hasEventListener(MouseEvent.CLICK))
+					{
+						item.removeEventListener(MouseEvent.CLICK, menuItems[int(item.name)].callBack);
+					}
+					menuContainer.removeChild(menuContainer.getChildAt(j));
 				}
-				trace("removeChild后子项数目:" + menuContainer.numChildren);
+				//trace("removeChild后子项数目:" + menuContainer.numChildren);
 				
 				displayObjectContainer.removeChild(menuContainer);
-				displayObjectContainer.removeEventListener(MouseEvent.CLICK, stageClickedHandler);
+				displayObjectContainer.stage.removeEventListener(MouseEvent.CLICK, stageClickedHandler);
 				menuContainer = null;
+				menuItems.length = 0;
 				MyGC.gc();
 			}
 		}
@@ -196,21 +225,5 @@
 		{
 			dispose();
 		}
-		
-		/**
-		 * 代理函数
-		 * @param	_function   函数
-		 * @param	alt         参数集
-		 * @return
-		 */
-		private static function getFun(_function:Function,alt:Array):Function
-		{
-			var _fun:Function = function (e:*):void
-			{
-				var _alt:Array = new Array()
-				_function.apply(null,_alt.concat(e,alt));
-			}
-			return _fun;
-		}
-	}
+	}//end of class
 }

@@ -12,7 +12,13 @@
 			
 		}
 		
-		
+		/**
+		 * 设置按钮标签(如果经过状态和按下状态的文本未指明，则跟弹起状态的文本相同)
+		 * @param	button        按钮
+		 * @param	upLabel       弹起状态的文本
+		 * @param	overLabel     经过状态的文本
+		 * @param	downLabel	  按下状态的文本
+		 */
 		public static function setLabel(button:SimpleButton,upLabel:String,overLabel:String = null,downLabel:String = null):void
 		{
 			searchAndSet(button.upState as Sprite, upLabel);

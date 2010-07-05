@@ -253,10 +253,11 @@
 				}
 			}
 			
-			//如果没有概率相同的项
+			//如果没有概率相同的项,则按概率大小从小到大升序排列
 			if (! hasEqualProbability)
 			{
-				values.sort(sortOnProbability);
+				//values.sort(sortOnProbability);
+				values.sortOn("probability", Array.NUMERIC);
 				return getValue(values);
 			}
 			
@@ -297,20 +298,6 @@
 				}
 			}
 			return getValue(values);
-		}
-		
-		//排序规则(按概率大小从小到大排列)
-		private static function sortOnProbability(a:Object, b:Object):Number 
-		{
-			var probability1:Number = a.probability;
-			var probability2:Number = b.probability;
-			if(probability1 > probability2) {
-				return 1;
-			} else if(probability1 < probability2) {
-				return -1;
-			} else  {
-				return 0;
-			}
 		}
 		
 	}//end of class

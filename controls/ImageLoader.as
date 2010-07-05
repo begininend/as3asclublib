@@ -1,4 +1,4 @@
-﻿package org.asclub.view
+﻿package org.asclub.controls
 {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;

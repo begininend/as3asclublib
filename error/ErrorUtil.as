@@ -5,7 +5,7 @@
  * NOTICE: You can use, modify, and distribute this file 
  * in accordance with the terms of the license agreement accompanying it.
 */
-package org.asclub.error {
+package org.asclub.errors {
 
 	//--------------------------------------
 	//  Class description

@@ -1,4 +1,4 @@
-﻿package org.asclub.view
+﻿package org.asclub.controls
 {
 	import flash.accessibility.AccessibilityProperties;
 	import flash.display.Stage;

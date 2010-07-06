@@ -24,6 +24,7 @@
 		
 		public static var client:Object;
 		
+		//单例模式
 		public function FMSConnection(privateClass:PrivateClass)
 		{
 			
@@ -71,6 +72,10 @@
             return _instance;
 		}
 		
+		/**
+		 * 返回连接对象，仅供调试时使用
+		 * @return
+		 */
 		public static function getNetConnection():NetConnection
 		{
 			return _fmsNetConnection;
@@ -106,7 +111,7 @@
 					if(args) args.push(rest[i]);
 				}
 				args == null ? (_fmsNetConnection.connect(null)) : (_fmsNetConnection.connect.apply(null, args));
-				trace("args::" + args);
+				trace("args  ::" + args);
 			}
 			
 			//var xnURL:String = protocol + ((_serverName == null) ? "" : "/" + _serverName + ((port == null) ? "" : (":" + port)) + "/") + ((_wrappedURL == null) ? "" : _wrappedURL + "/") + _appName;
@@ -158,8 +163,8 @@
 		private static function netStatusHandler(evt:NetStatusEvent):void
 		{
 			if(_instance) _instance.dispatchEvent(evt);
-			trace("netStatusHandler");
-			trace(evt.info.code);
+			//trace("netStatusHandler");
+			//trace(evt.info.code);
 			switch(evt.info.code)
 			{
 				case "NetConnection.Call.BadVersion":

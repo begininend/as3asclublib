@@ -9,6 +9,7 @@
 	public class CustomUIComponent extends Sprite
     {
 		
+		//抽象类
 		public function CustomUIComponent()
 		{
 			
@@ -59,6 +60,8 @@
 			trace("classDef is Object");
             return new classDef as DisplayObject;
 		}
+		
+		public function setStyle(style:String, value:Object):void {};
 	
 	}//end of class
 }

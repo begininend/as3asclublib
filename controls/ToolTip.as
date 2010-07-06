@@ -1,11 +1,7 @@
 ﻿package org.asclub.controls
 {
 	import flash.accessibility.AccessibilityProperties;
-	import flash.display.Stage;
-	import flash.display.DisplayObjectContainer;
 	import flash.display.DisplayObject;
-	import flash.display.Sprite;
-	import flash.display.Graphics;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.text.TextField;
@@ -23,10 +19,13 @@
 	 * @playerversion fp9+
 	 * 热区提示
 	 */	
-	public class ToolTip extends Sprite	
+	public class ToolTip extends CustomUIComponent	
 	{
 		private static var instance:ToolTip = null;
 		private static var label:TextField;
+		//组件背景的外观
+		private static var _skin:DisplayObject;
+		
 		private static var _delayTime:int;
 		private var IntervarID:int;
 		private static var tipAlign:String;
@@ -50,39 +49,12 @@
 			mouseEnabled = mouseChildren = false;
 		}
 		
-		
-		/**
-		*
-		*绘制提示框
-		*
-		*方位:TOP_LEFT  TOP_RIGHT  BOTTOM_LEFT  BOTTOM_RIGHT
-		*
-		*/
-		private function redraw():void {
-			var w:Number = 6 + label.width;
-			var h:Number = 4 + label.height;
-			
-			this.graphics.clear();
-			DrawUtil.drawRoundRect(this.graphics, w, h, 0x333333, -1, 2, 2, 0.3,9);
-			DrawUtil.drawGradientRoundRect(this.graphics, [0xDE0201, 0xAF0000], [100, 100], [0, 255], w, h, 0, 0, 9, "linear", 90);
-		}
-		
 		//初始化
 		public static function init():void {
 			if (instance == null) {
 				instance = new ToolTip(new PrivateClass());
 				instance.name = "toolTip";
 			}
-		}
-		
-		/**
-		 * 设置字体样式
-		 * @param	tf    字体样式
-		 */
-		public static function setTextFormat(tf:TextFormat):void
-		{
-			label.defaultTextFormat = tf;
-			_textFormat = tf;
 		}
 		
 		/**
@@ -131,6 +103,59 @@
 			}
 		}
 		
+		/**
+		 * 对此组件实例设置样式属性。
+		 * @param	style    样式名称
+		 * @param	value	 样式值
+		 */
+		public static function setStyle(style:String, value:Object):void
+		{
+			switch(style)
+			{
+				//组件背景的外观
+				case "skin":
+					if (instance != null)
+					{
+						_skin = instance.getDisplayObjectInstance(value);
+						_skin.name = "skin";
+						if (instance.getChildByName("skin") != null) 
+						{
+							instance.removeChildAt(0);
+						}
+						instance.addChildAt(_skin,0);
+					}
+				break;
+				//设置字体样式
+				case "textFormat":
+					label.setTextFormat(value as TextFormat);
+					label.defaultTextFormat = value as TextFormat;
+					_textFormat = value as TextFormat;
+				break;
+			}
+			redrawSkin();
+		}
+		
+		
+		//----------------------------------------private function-----------------------------------------
+		
+		/**
+		 * 重新调整皮肤
+		 */
+		private static function redrawSkin():void
+		{
+			var w:Number = 6 + label.width;
+			var h:Number = 4 + label.height;
+			instance.graphics.clear();
+			if (_skin)
+			{
+				_skin.width = w;
+				_skin.height = h;
+				return;
+			}
+			DrawUtil.drawRoundRect(instance.graphics, w, h, 0x333333, -1, 2, 2, 0.3,9);
+			DrawUtil.drawGradientRoundRect(instance.graphics, [0xDE0201, 0xAF0000], [100, 100], [0, 255], w, h, 0, 0, 9, "linear", 90);
+		}
+		
 		//显示提示框
 		private function show(area:DisplayObject,point:Point):void
 		{
@@ -152,13 +177,12 @@
 				label.setTextFormat(targetTextFormat);
 			}
 			
-			redraw();
-			move(area,point);
+			redrawSkin();
 			if (area.stage.getChildByName("toolTip") == null)
 			{
 				area.stage.addChild(instance);
-				instance.visible = false;
 			}
+			move(area,point);
 		}
 
 		//隐藏提示框
@@ -166,7 +190,7 @@
 		{
 			if (area.stage.getChildByName("toolTip") != null)
 			{
-				area.stage.addEventListener(MouseEvent.MOUSE_MOVE,stageMouseOverHandler);
+				area.stage.removeEventListener(MouseEvent.MOUSE_MOVE,stageMouseOverHandler);
 				area.stage.removeChild(instance);
 				area.removeEventListener(MouseEvent.ROLL_OUT,handler);
 				area.removeEventListener(MouseEvent.MOUSE_MOVE,handler);
@@ -176,29 +200,25 @@
 		//移动
 		private function move(area:DisplayObject,point:Point):void
 		{
-			if (this.parent != null)
+			var lp:Point = this.parent.globalToLocal(point);
+			switch(tipAlign)
 			{
-				instance.visible = true;
-				var lp:Point = this.parent.globalToLocal(point);
-				switch(tipAlign)
-				{
-					case "BOTTOM_LEFT":
-						this.x = lp.x + 15;
-						this.y = lp.y - label.height - 8;
-					break;
-					case "TOP_LEFT":
-						this.x = lp.x + 15;
-						this.y = lp.y + 22;
-					break;
-					case "BOTTOM_RIGHT":
-						this.x = lp.x - label.width - 15;
-						this.y = lp.y - label.height - 8;
-					break;
-					case "TOP_RIGHT":
-						this.x = lp.x - label.width - 15;
-						this.y = lp.y + 22;
-					break;
-				}
+				case "BOTTOM_LEFT":
+					this.x = lp.x + 15;
+					this.y = lp.y - label.height - 8;
+				break;
+				case "TOP_LEFT":
+					this.x = lp.x + 15;
+					this.y = lp.y + 22;
+				break;
+				case "BOTTOM_RIGHT":
+					this.x = lp.x - label.width - 15;
+					this.y = lp.y - label.height - 8;
+				break;
+				case "TOP_RIGHT":
+					this.x = lp.x - label.width - 15;
+					this.y = lp.y + 22;
+				break;
 			}
 		}
 		
@@ -209,29 +229,29 @@
 				case MouseEvent.ROLL_OUT:
 					clearTimeout(IntervarID);
 					this.hide(event.currentTarget as DisplayObject);
-					break;
+				break;
 				case MouseEvent.MOUSE_MOVE:
 					this.move(event.currentTarget as DisplayObject,new Point(event.stageX, event.stageY));
 					//event.updateAfterEvent();   //虽然会及时呈现结果，但是会耗更多的cpu(更好的用户体验，更大的代价)
-					break;
+				break;
 				case MouseEvent.ROLL_OVER:
+					stageMouseOverHandler(event);
 					var targetObject:DisplayObject = event.currentTarget as DisplayObject;
 					var newPoint:Point = new Point(event.stageX, event.stageY);
 					var times:int = int(targetObject.accessibilityProperties.shortcut);
 					IntervarID = setTimeout(show,times,targetObject,newPoint);
-					//trace(targetObject.accessibilityProperties.shortcut);
-					//trace("targetObject.x:" + targetObject.localToGlobal(new Point(targetObject.x,targetObject.y)));
-					break;
+				break;
 			}
 		}
 		
 		//鼠标在舞台上移动时
-		private static function stageMouseOverHandler(evt:MouseEvent):void
+		//方位:TOP_LEFT  TOP_RIGHT  BOTTOM_LEFT  BOTTOM_RIGHT
+		private static function stageMouseOverHandler(event:MouseEvent):void
 		{
-			if(evt.stageX < evt.currentTarget.stageWidth * 0.5)
+			if(event.stageX < event.currentTarget.stage.stageWidth * 0.5)
 			{
 				tipAlign = "BOTTOM_LEFT";
-				if(evt.stageY < evt.currentTarget.stageHeight * 0.5)
+				if(event.stageY < event.currentTarget.stage.stageHeight * 0.5)
 				{
 					tipAlign = "TOP_LEFT";
 				}
@@ -239,7 +259,7 @@
 			else
 			{
 				tipAlign = "BOTTOM_RIGHT";
-				if(evt.stageY < evt.currentTarget.stageHeight * 0.5)
+				if(event.stageY < event.currentTarget.stage.stageHeight * 0.5)
 				{
 					tipAlign = "TOP_RIGHT";
 				}

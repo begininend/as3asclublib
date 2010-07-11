@@ -7,6 +7,7 @@
 	
 	/**
 	 * MouseWheelTrap - Simultaneous browser/Flash mousewheel scroll issue work-around
+	 * 鼠标滚轮捕获，当flash嵌入网页中，用于防止在flash中滚动时，网页也跟着滚动
 	 * @version 0.1
 	 * @author Liam O'Donnell
 	 * @usage Simply call the static method MouseWheelTrap.setup(stage)

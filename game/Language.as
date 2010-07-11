@@ -44,6 +44,7 @@
 			var linelength:int = lines.length;
 			for(var i:int = linelength; i > -1;i--)
 			{
+				//如果是空白行或者是注释行则去掉
 				if(StringUtil.isWhitespace(lines[i]) || isAnnotate(lines[i]))
 				{
 					lines.splice(i,1);

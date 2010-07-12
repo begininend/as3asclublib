@@ -6,15 +6,15 @@
 	import flash.display.Shape;
 	import flash.display.Sprite;
 	import flash.display.SimpleButton;
+	import flash.events.Event;
+	import flash.events.MouseEvent;
 	import flash.geom.Point;
-	import flash.geom.Matrix;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
 	import flash.utils.clearTimeout;
 	import flash.utils.setTimeout;
-	import flash.events.Event;
-	import flash.events.MouseEvent;
+	import flash.utils.getTimer;
 	
 	import org.asclub.data.FunctionUtil;
 	import org.asclub.display.DrawUtil;
@@ -43,10 +43,28 @@
 			menuItems = [];
 		}
 		
+		/**
+		 * 添加菜单项
+		 * @param	itemLabel         菜单标签
+		 * @param	callBackFun       回调函数
+		 * @param	...alt            用于回调函数的参数集
+		 */
+		public static function addItem(itemLabel:String, callBackFun:Function, ...alt):void
+		{
+			menuItems.push({label:itemLabel,callBack:FunctionUtil.eventDelegate(callBackFun,alt)});
+		}
 		
+		/**
+		 * 添加多个菜单项
+		 * @param	items
+		 * @example
+		 * <code>
+		 * 		RichMenu.addItems([{label:"点餐",callBack:labelCallBack},{label:"付账",callBack:labelCallBack},{label:"吃霸王餐",callBack:labelCallBack2,ispare:"附带参数"}]);
+		 * </code>
+		 */
 		public static function addItems(items:Array):void
 		{
-			//menuItems = menuItems.concat(items);
+			var d1:int = getTimer();
 			var numItem:int = items.length;
 			var item:Object;
 			var itemLabel:String;
@@ -58,25 +76,19 @@
 				item = items[i];
 				itemLabel = item["label"];
 				callBackFun = item["callBack"];
-				delete item["label"];
-				delete item["callBack"];
+				//标签和回调不纳入回调函数的参数集中..  setPropertyIsEnumerable 为 设置循环操作动态属性的可用性。
+				item.setPropertyIsEnumerable("label",false);
+				item.setPropertyIsEnumerable("callBack",false);
+				//delete item["label"];
+				//delete item["callBack"];
 				for (var j:String in item)
 				{
 					arg.push(item[j]);
 				}
+				trace("arg:" + arg);
+				trace(getTimer() - d1);
 				menuItems.push({label:itemLabel,callBack:FunctionUtil.eventDelegate(callBackFun,arg)});
 			}
-		}
-		
-		/**
-		 * 添加菜单项
-		 * @param	itemLabel         菜单标签
-		 * @param	callBackFun       回调函数
-		 * @param	...alt            用于回调函数的参数集
-		 */
-		public static function addItem(itemLabel:String, callBackFun:Function, ...alt):void
-		{
-			menuItems.push({label:itemLabel,callBack:FunctionUtil.eventDelegate(callBackFun,alt)});
 		}
 		
 		/**

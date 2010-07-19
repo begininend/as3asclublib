@@ -7,8 +7,10 @@
 	import flash.events.MouseEvent;
 	import flash.events.TimerEvent;
 	
+	import org.asclub.core.IDestroyable;
 	
-	public class ButtonEffect extends Sprite
+	
+	public class ButtonEffect implements IDestroyable
 	{
 		private var _instance:Object;
 		private var _currentPropValue:Object;
@@ -29,15 +31,6 @@
 			_instance = instance;
 			_instance.addEventListener(MouseEvent.ROLL_OVER, instanceRollOverHandler);
 			_instance.addEventListener(MouseEvent.ROLL_OUT, instanceRollOutHandler);
-		}
-		
-		/**
-		 * 反注册元件
-		 * @param	instance
-		 */
-		public function unregister(instance:DisplayObject):void
-		{
-			
 		}
 		
 		/**
@@ -63,6 +56,17 @@
 			_instance[propType] = beginNum;
 		}
 		
+		/**
+		 * 删除任何事件侦听器,帮助以便及时收集垃圾。
+		 */
+		public function destroy():void
+		{
+			if (_instance != null)
+			{
+				_instance.removeEventListener(MouseEvent.ROLL_OVER, instanceRollOverHandler);
+				_instance.removeEventListener(MouseEvent.ROLL_OUT, instanceRollOutHandler);
+			}
+		}
 		
 		//鼠标移上元件时
 		private function instanceRollOverHandler(evt:MouseEvent):void

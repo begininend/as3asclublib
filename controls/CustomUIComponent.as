@@ -9,7 +9,7 @@
 	public class CustomUIComponent extends Sprite
     {
 		
-		//抽象类
+		//抽象类(抽象类不允许实例化，只运行继承)
 		public function CustomUIComponent()
 		{
 			
@@ -61,6 +61,11 @@
             return new classDef as DisplayObject;
 		}
 		
+		/**
+		 * 设置样式
+		 * @param	style   样式名称
+		 * @param	value   样式值
+		 */
 		public function setStyle(style:String, value:Object):void {};
 	
 	}//end of class

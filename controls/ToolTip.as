@@ -27,7 +27,7 @@
 		private static var _skin:DisplayObject;
 		
 		private static var _delayTime:int;
-		private var IntervarID:int;
+		private var intervarID:int;
 		private static var tipAlign:String;
 		//文本样式
 		private static var _textFormat:TextFormat;
@@ -247,7 +247,7 @@
 				case MouseEvent.ROLL_OUT:
 				{
 					
-					clearTimeout(IntervarID);
+					clearTimeout(intervarID);
 					this.hide(event.currentTarget as DisplayObject);
 					break;
 				}
@@ -265,7 +265,7 @@
 					var targetObject:DisplayObject = event.currentTarget as DisplayObject;
 					var newPoint:Point = new Point(event.stageX, event.stageY);
 					var times:int = int(targetObject.accessibilityProperties.shortcut);
-					IntervarID = setTimeout(show,times,targetObject,newPoint);
+					intervarID = setTimeout(show,times,targetObject,newPoint);
 					break;
 				}
 			}

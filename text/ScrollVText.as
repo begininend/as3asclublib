@@ -10,14 +10,15 @@
 	import flash.text.StyleSheet;
 	import flash.utils.Timer;
 
+	import org.asclub.core.IDestroyable;
 	
 	import com.greensock.TweenLite;
 	import com.greensock.plugins.TweenPlugin;
 	import com.greensock.plugins.ScrollRectPlugin;
 	
-	public class ScrollVText extends Sprite
+	public class ScrollVText extends Sprite implements IDestroyable
 	{
-		private var _tf1:TextField;
+		public var _tf1:TextField;
 		private var _tf2:TextField;
 		private var _textFormat:TextFormat;
 		private var _width:Number;
@@ -130,7 +131,7 @@
 			
 		}
 		
-		//计时器
+		//计时器运行时，使用TweenLite将两个文本框在Y轴上提高，缓动结束后将上面的文本框放到下面的文本框的下面，随着计时器的运行如此往复。
 		private function textTimerHandler(evt:TimerEvent):void
 		{
 			_currentMsgIndex >= _msgInfo.length - 1 ? (_currentMsgIndex = 0) : _currentMsgIndex++;
@@ -142,6 +143,8 @@
 			{
 				TweenLite.to(this, 1, {scrollRect:{x:0, y:0, width:_width, height:getNextTextField().height}, ease:ease}); 
 			}
+			//在这里时间要设为1.3，之所以要比缓动的总时间1.2长0.1秒的原因其实我也不知道，但是缓动结束回调的时间如果设为跟缓动的总时间一样长
+			//的话，会出现缓动尚未完全结束，缓动结束回调函数就被调用,从而产生干扰
 			TweenLite.delayedCall(1.3,tweenLiteFinishHandler,null);
 		}
 		
@@ -199,7 +202,7 @@
 		/**
 		 * 在不需要此实例时销毁掉，由外部调用
 		 */
-		public function dispose():void
+		public function destroy():void
 		{
 			if(_textTimer) _textTimer.removeEventListener(TimerEvent.TIMER, textTimerHandler);
 		}

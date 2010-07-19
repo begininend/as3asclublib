@@ -165,11 +165,14 @@
 			if(_instance) _instance.dispatchEvent(evt);
 			//trace("netStatusHandler");
 			//trace(evt.info.code);
-			switch(evt.info.code)
+			switch (evt.info.code)
 			{
 				case "NetConnection.Call.BadVersion":
+				{
+					
 					trace("不能识别的格式编码的数据包");
-				break;
+					break;
+				}
 				case "NetConnection.Connect.Failed":
 					//连接失败时，改用别的协议连接
 					_timeOutIntervalID = setTimeout(reconnect, _timeOut);

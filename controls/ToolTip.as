@@ -110,10 +110,12 @@
 		 */
 		public static function setStyle(style:String, value:Object):void
 		{
-			switch(style)
+			switch (style)
 			{
 				//组件背景的外观
 				case "skin":
+				{
+					
 					if (instance != null)
 					{
 						_skin = instance.getDisplayObjectInstance(value);
@@ -124,13 +126,17 @@
 						}
 						instance.addChildAt(_skin,0);
 					}
-				break;
+					break;
+				}
 				//设置字体样式
 				case "textFormat":
+				{
+					
 					label.setTextFormat(value as TextFormat);
 					label.defaultTextFormat = value as TextFormat;
 					_textFormat = value as TextFormat;
-				break;
+					break;
+				}
 			}
 			redrawSkin();
 		}
@@ -201,46 +207,67 @@
 		private function move(area:DisplayObject,point:Point):void
 		{
 			var lp:Point = this.parent.globalToLocal(point);
-			switch(tipAlign)
+			switch (tipAlign)
 			{
 				case "BOTTOM_LEFT":
+				{
+					
 					this.x = lp.x + 15;
 					this.y = lp.y - label.height - 8;
-				break;
+					break;
+				}
 				case "TOP_LEFT":
+				{
+					
 					this.x = lp.x + 15;
 					this.y = lp.y + 22;
-				break;
+					break;
+				}
 				case "BOTTOM_RIGHT":
+				{
+					
 					this.x = lp.x - label.width - 15;
 					this.y = lp.y - label.height - 8;
-				break;
+					break;
+				}
 				case "TOP_RIGHT":
+				{
+					
 					this.x = lp.x - label.width - 15;
 					this.y = lp.y + 22;
-				break;
+					break;
+				}
 			}
 		}
 		
 		//事件处理
 		private function handler(event:MouseEvent):void	{
-			switch(event.type) 
+			switch (event.type) 
 			{
 				case MouseEvent.ROLL_OUT:
+				{
+					
 					clearTimeout(IntervarID);
 					this.hide(event.currentTarget as DisplayObject);
-				break;
+					break;
+				}
 				case MouseEvent.MOUSE_MOVE:
+				{
+					
 					this.move(event.currentTarget as DisplayObject,new Point(event.stageX, event.stageY));
 					//event.updateAfterEvent();   //虽然会及时呈现结果，但是会耗更多的cpu(更好的用户体验，更大的代价)
-				break;
+					break;
+				}
 				case MouseEvent.ROLL_OVER:
+				{
+					
 					stageMouseOverHandler(event);
 					var targetObject:DisplayObject = event.currentTarget as DisplayObject;
 					var newPoint:Point = new Point(event.stageX, event.stageY);
 					var times:int = int(targetObject.accessibilityProperties.shortcut);
 					IntervarID = setTimeout(show,times,targetObject,newPoint);
-				break;
+					break;
+				}
 			}
 		}
 		

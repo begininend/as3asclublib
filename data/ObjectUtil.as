@@ -51,26 +51,26 @@ package org.asclub.data
 		 * 合并两个Object
 		 * @param	obj1
 		 * @param	obj2
-		 * @return  Object
+		 * @return  Object     返回合并后的新的Object
 		 */
 		public static function mergeObjects(obj1:Object, obj2:Object):Object
 		{
-			//var obj:Object = baseClone(obj1);
+			var obj:Object = baseClone(obj1);
 			for (var k:String in obj2)
 			{
-				if (obj1.hasOwnProperty(k))
+				if (obj.hasOwnProperty(k))
 				{
 					if (typeof obj2[k] == 'object')
 					{
-						mergeObjects(obj1[k], obj2[k]);
+						mergeObjects(obj[k], obj2[k]);
 					}
 				}
 				else
 				{
-					obj1[k] = obj2[k];
+					obj[k] = obj2[k];
 				}
 			}
-			return obj1;
+			return obj;
 		}
 
 		

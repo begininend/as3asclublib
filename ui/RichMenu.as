@@ -137,7 +137,7 @@
 		}
 		
 		//显示
-		public static function show():void
+		public static function show(x:Number = NaN,y:Number = NaN):void
 		{
 			if (displayObjectContainer == null) {
 				trace("Alert class has not been initialised!");
@@ -182,15 +182,21 @@
 					menuItem.addEventListener(MouseEvent.CLICK, menuItems[j].callBack);
 					menuContainer.addChild(menuItem);
 				}
-				menuContainer.x = displayObjectContainer.mouseX;
-				menuContainer.y = displayObjectContainer.mouseY;
-				if (displayObjectContainer.stageWidth - displayObjectContainer.mouseX < menuContainer.width)
+				var targetPointX:int = isNaN(x) ? displayObjectContainer.mouseX : x;
+				var targetPointY:int = isNaN(y) ? displayObjectContainer.mouseY : y;
+				menuContainer.x = targetPointX;
+				menuContainer.y = targetPointY;
+				if (displayObjectContainer.stageWidth - targetPointX < menuContainer.width)
 				{
-					menuContainer.x = displayObjectContainer.mouseX - menuContainer.width;
+					menuContainer.x = targetPointX - menuContainer.width;
+					if (! isNaN(x))
+					{
+						menuContainer.x = displayObjectContainer.stageWidth - menuContainer.width;
+					}
 				}
-				if (displayObjectContainer.stageHeight - displayObjectContainer.mouseY < menuContainer.height)
+				if (displayObjectContainer.stageHeight - targetPointY < menuContainer.height)
 				{
-					menuContainer.y = displayObjectContainer.mouseY - menuContainer.height;
+					menuContainer.y = targetPointY - menuContainer.height;
 				}
 				displayObjectContainer.addChild(menuContainer);
 				intervalID = setTimeout(addListenerOffset, 100);

@@ -1,4 +1,4 @@
-﻿package org.asclub.ui
+﻿package org.asclub.controls
 {
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
@@ -21,13 +21,13 @@
 	import org.asclub.system.MyGC;
 
 
-	public class RichMenu extends Sprite
+	public class RichMenu extends CustomUIComponent
 	{
 		public static var rowHeight:Number;
 		private static var rowWidth:Number;
 		private static var menuItems:Array;
 		private static var intervalID:uint;
-		private static var displayObjectContainer:Stage;
+		private static var displayObjectContainer:DisplayObjectContainer;
 		private static var menuContainer:Sprite;
 		public function RichMenu()
 		{
@@ -35,7 +35,7 @@
 		}
 		
 		//初始化
-		public static function init(base:Stage):void
+		public static function init(base:DisplayObjectContainer):void
 		{
 			//行高
 			rowHeight = 22;
@@ -182,21 +182,35 @@
 					menuItem.addEventListener(MouseEvent.CLICK, menuItems[j].callBack);
 					menuContainer.addChild(menuItem);
 				}
+				//此菜单的目标坐标。如果有指定，则位于指定点，如果未指定，则相应的跟随鼠标位置
 				var targetPointX:int = isNaN(x) ? displayObjectContainer.mouseX : x;
 				var targetPointY:int = isNaN(y) ? displayObjectContainer.mouseY : y;
+				//容纳此菜单的容器的舞台边缘的X坐标，因为随着容器的不同相对应的舞台边缘坐标也不一样
+				var localStageEdgeX:int = displayObjectContainer.globalToLocal(new Point(displayObjectContainer.stage.stageWidth, 0)).x;
+				var localStageEdgeY:int = displayObjectContainer.globalToLocal(new Point(0, displayObjectContainer.stage.stageHeight)).y;
 				menuContainer.x = targetPointX;
 				menuContainer.y = targetPointY;
-				if (displayObjectContainer.stageWidth - targetPointX < menuContainer.width)
+				if (localStageEdgeX - targetPointX < menuContainer.width)
 				{
-					menuContainer.x = targetPointX - menuContainer.width;
 					if (! isNaN(x))
 					{
-						menuContainer.x = displayObjectContainer.stageWidth - menuContainer.width;
+						menuContainer.x = localStageEdgeX - menuContainer.width;
+					}
+					else
+					{
+						menuContainer.x = targetPointX - menuContainer.width;
 					}
 				}
-				if (displayObjectContainer.stageHeight - targetPointY < menuContainer.height)
+				if (localStageEdgeY - targetPointY < menuContainer.height)
 				{
-					menuContainer.y = targetPointY - menuContainer.height;
+					if (! isNaN(y))
+					{
+						menuContainer.y = localStageEdgeY - menuContainer.height;
+					}
+					else
+					{
+						menuContainer.y = targetPointY - menuContainer.height;
+					}
 				}
 				displayObjectContainer.addChild(menuContainer);
 				intervalID = setTimeout(addListenerOffset, 100);

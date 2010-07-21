@@ -4,7 +4,9 @@
 	import flash.display.InteractiveObject;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.events.TimerEvent;
 	import flash.utils.getTimer;
+	import flash.utils.Timer;
 	
 	import com.greensock.TweenMax;
 	
@@ -19,20 +21,29 @@
 		//缓动效果器
 		private var _tweenMax:TweenMax;
 		
-		//缓动总持续时间
+		//缓动总持续时间，以毫秒为单位
 		private var _duration:Number;
 		
 		//当前缓动已运行到的时间点
-		private var _targetTime:Number;
+		private var _currentTime:Number = 0;
 		
 		//起始时效果
-		private var _fromVars:Object;
+		private var _fromVars:Object = {};
 		
 		//结束时效果
-		private var _toVars:Object;
+		private var _toVars:Object = {};
 		
 		//缓动类型
 		public var ease:Function;
+		
+		//正向计时器
+		private var _increaseTimer:Timer;
+		
+		//反向计时器
+		private var _decreaseTimer:Timer;
+		
+		//计时器事件间的延迟（以毫秒为单位）。 
+		private var _delay:int = 40;
 		
 		private var t1:int;
 		
@@ -43,9 +54,6 @@
 		public function ButtonEffectPlugin(instance:InteractiveObject)
 		{
 			_instance = instance;
-			_fromVars = { };
-			_toVars = { };
-			_targetTime = 0;
 			_instance.addEventListener(MouseEvent.ROLL_OVER, instanceRollOverHandler);
 			_instance.addEventListener(MouseEvent.ROLL_OUT, instanceRollOutHandler);
 		}
@@ -60,7 +68,8 @@
 		{
 			if (isNaN(_duration))
 			{
-				_duration = duration;
+				//_duration以毫秒为单位，因为在下面的计时器中会一直使用_duration，如果不以毫秒为单位，每次计时器运算_duration都要X1000,影响效率
+				_duration = duration * 1000;
 			}
 			_fromVars = ObjectUtil.mergeObjects(fromVars,_fromVars);
 			_toVars = ObjectUtil.mergeObjects(toVars,_toVars);
@@ -78,21 +87,47 @@
 				_instance.removeEventListener(MouseEvent.ROLL_OVER, instanceRollOverHandler);
 				_instance.removeEventListener(MouseEvent.ROLL_OUT, instanceRollOutHandler);
 			}
+			if (_increaseTimer != null)
+			{
+				_increaseTimer.removeEventListener(TimerEvent.TIMER, increaseTimerHandler);
+				_increaseTimer = null;
+			}
+			if (_decreaseTimer != null)
+			{
+				_decreaseTimer.removeEventListener(TimerEvent.TIMER,decreaseTimerHandler);
+				_decreaseTimer = null;
+			}
 		}
 		
 		//鼠标移上元件时
 		private function instanceRollOverHandler(event:MouseEvent):void
 		{
+			/*
 			trace("鼠标移上元件时");
 			trace("_targetTime:" + _targetTime);
 			t1 = getTimer();
 			_instance.removeEventListener(Event.ENTER_FRAME, enterFrameHandler);
 			_tweenMax = TweenMax.to(_instance, _duration - _targetTime, _toVars);
+			*/
+			
+			
+			_increaseTimer = new Timer(_delay);
+			_increaseTimer.addEventListener(TimerEvent.TIMER,increaseTimerHandler);
+			_increaseTimer.start();
+			if(_decreaseTimer != null)
+			{
+				_decreaseTimer.reset();
+				_decreaseTimer = null;
+			}
+			trace("鼠标移上元件时:" + _currentTime * 0.001);
+			_tweenMax = TweenMax.to(_instance,(_duration - _currentTime) / 1000, _toVars);
+			
 		}
 		
 		//鼠标移开元件时
 		private function instanceRollOutHandler(event:MouseEvent):void
 		{
+			/*
 			trace("鼠标移开元件时", "逗留时间:" ,(getTimer() - t1));
 			
 			if (TweenMax.isTweening(_instance))
@@ -109,17 +144,45 @@
 			trace("_targetTime:" + _targetTime);
 			_tweenMax = TweenMax.to(_instance, _targetTime, _fromVars);
 			_instance.addEventListener(Event.ENTER_FRAME, enterFrameHandler);
+			
+			*/
+			
+			_decreaseTimer = new Timer(_delay);
+			_decreaseTimer.addEventListener(TimerEvent.TIMER,decreaseTimerHandler);
+			_decreaseTimer.start();
+			if(_increaseTimer != null)
+			{
+				_increaseTimer.reset();
+				_increaseTimer = null;
+			}
+			trace(_currentTime * 0.001);
+			_tweenMax = TweenMax.to(_instance, _currentTime * 0.001, _fromVars);
 		}
 		
-		//帧频计时器
-		private function enterFrameHandler(event:Event):void
+		//正向计时器
+		private function increaseTimerHandler(event:TimerEvent):void
 		{
-			if (_tweenMax.currentProgress == 1)
+			_currentTime += _delay;
+			if(_currentTime >= _duration)
 			{
-				_instance.removeEventListener(Event.ENTER_FRAME, enterFrameHandler);
+				_increaseTimer.reset();
+				_increaseTimer = null;
+				_currentTime = _duration;
 			}
-			_targetTime = _duration - _tweenMax.currentTime;
-			
+			//trace(_currentTime);
+		}
+
+		//反向计时器
+		private function decreaseTimerHandler(event:TimerEvent):void
+		{
+			_currentTime -= _delay;
+			if(_currentTime <= 0)
+			{
+				_decreaseTimer.reset();
+				_decreaseTimer = null;
+				_currentTime = 0;
+			}
+			//trace(_currentTime);
 		}
 		
 	}//end of class

@@ -21,26 +21,31 @@
 	import org.asclub.system.MyGC;
 
 
-	public class RichMenu extends CustomUIComponent
+	public class CustomContextMenu extends CustomUIComponent
 	{
-		public static var rowHeight:Number;
-		private static var rowWidth:Number;
-		private static var menuItems:Array;
-		private static var intervalID:uint;
 		private static var displayObjectContainer:DisplayObjectContainer;
 		private static var menuContainer:Sprite;
-		public function RichMenu()
+		private static var _textFormat:TextFormat;
+		public static var rowHeight:Number;
+		private static var rowWidth:Number;
+		private static var _menuItems:Array;
+		private static var _intervalID:uint;
+		public function CustomContextMenu()
 		{
 			
 		}
 		
-		//初始化
+		/**
+		 * 初始化
+		 * @param	base
+		 */
 		public static function init(base:DisplayObjectContainer):void
 		{
 			//行高
 			rowHeight = 22;
 			displayObjectContainer = base;
-			menuItems = [];
+			_textFormat = new TextFormat("宋体", 12, 0x000000);
+			_menuItems = [];
 		}
 		
 		/**
@@ -51,7 +56,7 @@
 		 */
 		public static function addItem(itemLabel:String, callBackFun:Function, ...alt):void
 		{
-			menuItems.push({label:itemLabel,callBack:FunctionUtil.eventDelegate(callBackFun,alt)});
+			_menuItems.push({label:itemLabel,callBack:FunctionUtil.eventDelegate(callBackFun,alt)});
 		}
 		
 		/**
@@ -64,7 +69,6 @@
 		 */
 		public static function addItems(items:Array):void
 		{
-			var d1:int = getTimer();
 			var numItem:int = items.length;
 			var item:Object;
 			var itemLabel:String;
@@ -86,57 +90,16 @@
 					arg.push(item[j]);
 				}
 				trace("arg:" + arg);
-				trace(getTimer() - d1);
-				menuItems.push({label:itemLabel,callBack:FunctionUtil.eventDelegate(callBackFun,arg)});
+				_menuItems.push({label:itemLabel,callBack:FunctionUtil.eventDelegate(callBackFun,arg)});
 			}
 		}
 		
-		/**
-		 * 绘制一文本
-		 * @param	labelField  文本内容
-		 * @return
-		 */
-		private static function createTextField(labelField:String):TextField
-		{
-			var textField:TextField = new TextField();
-			with (textField)
-			{
-				autoSize = TextFieldAutoSize.LEFT;
-				selectable = false;
-				multiline = false;
-				wordWrap = false;
-				mouseEnabled = false;
-				defaultTextFormat = new TextFormat("宋体", 12, 0x000000);
-				text = labelField;
-				height = textField.textHeight + 4;
-			}
-			return textField;
-		}
 		
 		/**
-		 * 绘制按钮
-		 * @param	w 宽
-		 * @param	h 高
-		 * @return
+		 * 显示菜单
+		 * @param	x    此菜单的目标X坐标。如果有指定，则位于指定点，如果未指定，则相应的跟随鼠标X位置(默认不指定)
+		 * @param	y	 此菜单的目标Y坐标。如果有指定，则位于指定点，如果未指定，则相应的跟随鼠标Y位置(默认不指定)
 		 */
-		private static function drawSimpleButton(w:int,h:int):SimpleButton
-		{
-			var simpleButton:SimpleButton = new SimpleButton();
-			var overState:Shape = new Shape();
-			var downState:Shape = new Shape();
-			var hitTestState:Shape = new Shape();
-			DrawUtil.drawRoundRect(overState.graphics,w,h,0xE0E8F3,0x96B5DA,0,0,1,0);
-			DrawUtil.drawRoundRect(downState.graphics,w,h,0xE0E8F3,0x96B5DA,0,0,1,0);
-			DrawUtil.drawRoundRect(hitTestState.graphics,w,h,0xE0E8F3,0x96B5DA,0,0,1,0);
-			simpleButton.overState = overState;
-			simpleButton.downState = downState;
-			simpleButton.hitTestState = hitTestState;
-			simpleButton.trackAsMenu = true;
-			simpleButton.useHandCursor = false;
-			return simpleButton;
-		}
-		
-		//显示
 		public static function show(x:Number = NaN,y:Number = NaN):void
 		{
 			if (displayObjectContainer == null) {
@@ -149,10 +112,10 @@
 			if (!menuContainer)
 			{
 				var large:String = "";
-				var itemLength:int = menuItems.length;
+				var itemLength:int = _menuItems.length;
 				for (var i:int = 0; i < itemLength; i++)
 				{
-					large = menuItems[i].label.length > large.length ? menuItems[i].label : large;
+					large = _menuItems[i].label.length > large.length ? _menuItems[i].label : large;
 				}
 				rowWidth = createTextField(large).textWidth + 40;
 				
@@ -171,15 +134,15 @@
 					var menuItem:Sprite = new Sprite();
 					var labelButton:SimpleButton = drawSimpleButton(rowWidth - 4, rowHeight);
 					labelButton.x = (bg.width - labelButton.overState.width) * 0.5 >> 0;
-					//labelButton.addEventListener(MouseEvent.CLICK, menuItems[j].callBack);
-					var label:TextField = createTextField(menuItems[j].label);
+					//labelButton.addEventListener(MouseEvent.CLICK, _menuItems[j].callBack);
+					var label:TextField = createTextField(_menuItems[j].label);
 					label.x = 25;
 					label.y = (rowHeight - label.height) * 0.5;
 					menuItem.addChild(labelButton);
 					menuItem.addChild(label);
 					menuItem.name = j.toString();
 					menuItem.y = j * rowHeight + 2;
-					menuItem.addEventListener(MouseEvent.CLICK, menuItems[j].callBack);
+					menuItem.addEventListener(MouseEvent.CLICK, _menuItems[j].callBack);
 					menuContainer.addChild(menuItem);
 				}
 				//此菜单的目标坐标。如果有指定，则位于指定点，如果未指定，则相应的跟随鼠标位置
@@ -213,18 +176,43 @@
 					}
 				}
 				displayObjectContainer.addChild(menuContainer);
-				intervalID = setTimeout(addListenerOffset, 100);
+				_intervalID = setTimeout(addListenerOffset, 100);
 			}
 		}
 		
-		//延迟添加事件
-		private static function addListenerOffset():void
+		/**
+		 * 对此组件实例设置样式属性。
+		 * @param	style    样式名称
+		 * @param	value	 样式值
+		 */
+		public static function setStyle(style:String, value:Object):void
 		{
-			displayObjectContainer.stage.addEventListener(MouseEvent.CLICK, stageClickedHandler);
-			clearTimeout(intervalID);
+			switch (style)
+			{
+				//组件背景的外观
+				case "skin":
+				{
+					
+					break;
+				}
+				//
+				case "cellRenderer":
+				{
+					
+					break;
+				}
+				//设置字体样式
+				case "textFormat":
+				{
+					_textFormat = value as TextFormat;
+					break;
+				}
+			}
 		}
 		
-		//注销
+		/**
+		 * 注销  删除任何事件侦听器,帮助以便及时收集垃圾。
+		 */
 		public static function dispose():void
 		{
 			if (menuContainer != null)
@@ -238,7 +226,7 @@
 					item = menuContainer.getChildAt(j);
 					if (item.hasEventListener(MouseEvent.CLICK))
 					{
-						item.removeEventListener(MouseEvent.CLICK, menuItems[int(item.name)].callBack);
+						item.removeEventListener(MouseEvent.CLICK, _menuItems[int(item.name)].callBack);
 					}
 					menuContainer.removeChild(menuContainer.getChildAt(j));
 				}
@@ -247,9 +235,61 @@
 				displayObjectContainer.removeChild(menuContainer);
 				displayObjectContainer.stage.removeEventListener(MouseEvent.CLICK, stageClickedHandler);
 				menuContainer = null;
-				menuItems.length = 0;
+				_menuItems.length = 0;
 				MyGC.gc();
 			}
+		}
+		
+		/**
+		 * 绘制一文本
+		 * @param	labelField  文本内容
+		 * @return
+		 */
+		private static function createTextField(labelField:String):TextField
+		{
+			var textField:TextField = new TextField();
+			with (textField)
+			{
+				autoSize = TextFieldAutoSize.LEFT;
+				selectable = false;
+				multiline = false;
+				wordWrap = false;
+				mouseEnabled = false;
+				defaultTextFormat = _textFormat;
+				text = labelField;
+				height = textField.textHeight + 4;
+			}
+			return textField;
+		}
+		
+		/**
+		 * 绘制按钮
+		 * @param	w 宽
+		 * @param	h 高
+		 * @return
+		 */
+		private static function drawSimpleButton(w:int,h:int):SimpleButton
+		{
+			var simpleButton:SimpleButton = new SimpleButton();
+			var overState:Shape = new Shape();
+			var downState:Shape = new Shape();
+			var hitTestState:Shape = new Shape();
+			DrawUtil.drawRoundRect(overState.graphics,w,h,0xE0E8F3,0x96B5DA,0,0,1,0);
+			DrawUtil.drawRoundRect(downState.graphics,w,h,0xE0E8F3,0x96B5DA,0,0,1,0);
+			DrawUtil.drawRoundRect(hitTestState.graphics,w,h,0xE0E8F3,0x96B5DA,0,0,1,0);
+			simpleButton.overState = overState;
+			simpleButton.downState = downState;
+			simpleButton.hitTestState = hitTestState;
+			simpleButton.trackAsMenu = true;
+			simpleButton.useHandCursor = false;
+			return simpleButton;
+		}
+		
+		//延迟添加事件
+		private static function addListenerOffset():void
+		{
+			displayObjectContainer.stage.addEventListener(MouseEvent.CLICK, stageClickedHandler);
+			clearTimeout(_intervalID);
 		}
 		
 		//舞台被点击

@@ -9,7 +9,7 @@
 	public class CustomUIComponent extends Sprite
     {
 		
-		//抽象类(抽象类不允许实例化，只运行继承)
+		//抽象类(抽象类不允许实例化，只允许继承)
 		public function CustomUIComponent()
 		{
 			

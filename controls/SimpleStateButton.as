@@ -2,6 +2,8 @@
 {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
+	import flash.display.DisplayObject;
+	import flash.events.MouseEvent;
 	
 	
 	/**
@@ -26,6 +28,7 @@
 		private var has_down:Boolean = false;
 		private var hovering:Boolean = false;
 		private var is_selected:Boolean = false;
+		private var _enabled:Boolean = false;
 		
 		private var instance:Bitmap;
 		
@@ -58,6 +61,17 @@
 		 */
 		public function set enabled(value:Boolean):void
 		{
+			_enabled = value;
+			this.mouseEnabled = _enabled;
+			this.tabEnabled = _enabled;
+			if (_enabled)
+			{
+				updateState(state_normal);
+			}
+			else
+			{
+				updateState(state_disabled);
+			}
 			
 		}
 		
@@ -66,24 +80,43 @@
 		 */
 		public function get enabled():Boolean
 		{
-			
+			return _enabled;
 		}
 		
-		public function SimpleStateButton(normal:BitmapData, hover:BitmapData = null, down:BitmapData = null)
+		/**
+		 * 构造函数
+		 * @param	normal   
+		 * @param	hover
+		 * @param	down
+		 */
+		public function SimpleStateButton(normal:BitmapData, hover:BitmapData = null, down:BitmapData = null, disabled:BitmapData = null)
 		{
 			state_normal = normal.clone();
 			
+			//是否有“悬停”状态下的皮肤
 			if(hover) {
 				has_hover = true;
 				state_hover = hover.clone();
 			} else {
 				state_hover = normal.clone();
 			}
+			
+			//是否有“按下”状态下的皮肤
 			if(down) {
 				has_down = true;
 				state_down = down.clone();
 			} else {
 				state_down = normal.clone();
+			}
+			
+			//是否有“禁用”状态下的皮肤
+			if (disabled)
+			{
+				state_disabled = disabled.clone();
+			}
+			else
+			{
+				state_disabled = normal.clone();
 			}
 			
 			if(state_normal.rect.equals(state_hover.rect) && state_normal.rect.equals(state_down.rect)) {
@@ -104,7 +137,33 @@
 		 */
 		override public function setStyle(style:String, value:Object):void 
 		{
-			
+		
+			var skin:DisplayObject = getDisplayObjectInstance(value);
+			var skinBitmapData:BitmapData = new BitmapData(skin.width, skin.height);
+			skinBitmapData.draw(skin);
+			switch (style)
+			{
+				case "upSkin":
+				{
+					state_normal = skinBitmapData;
+					break;
+				}
+				case "overSkin":
+				{
+					state_hover = skinBitmapData;
+					break;
+				}
+				case "downSkin":
+				{
+					state_down = skinBitmapData;
+					break;
+				}
+				case "disabledSkin":
+				{
+					state_disabled = skinBitmapData;
+					break;
+				}
+			}
 		}
 		
 		
@@ -121,6 +180,7 @@
 			buttonMode = true;
 			useHandCursor = true;
 			instance = new Bitmap();
+			instance.bitmapData = state_normal;
 			addChild(instance);
 			if(has_hover) {
 				addEventListener(MouseEvent.ROLL_OVER, onStateRollOver);
@@ -130,7 +190,6 @@
 				addEventListener(MouseEvent.MOUSE_DOWN, onStateMouseDown);
 				addEventListener(MouseEvent.MOUSE_UP,onStateMouseUp);
 			}
-			addEventListener(MouseEvent.CLICK,onStateClick);
 		}
 		
 		/**
@@ -141,7 +200,7 @@
 		private function onStateRollOver(evt:MouseEvent):void {
 			hovering = true;
 			if(!is_selected) {
-				instance.updateState(state_hover);
+				updateState(state_hover);
 			}
 		}
 		
@@ -153,7 +212,7 @@
 		private function onStateRollOut(evt:MouseEvent):void {
 			hovering = false;
 			if(!is_selected) {
-				instance.updateState(state_normal);
+				updateState(state_normal);
 			}
 		}
 		
@@ -163,7 +222,7 @@
 		 */
 		
 		private function onStateMouseDown(evt:MouseEvent):void {
-			instance.updateState(state_down);
+			updateState(state_down);
 		}
 		
 		/**
@@ -174,9 +233,9 @@
 		private function onStateMouseUp(evt:MouseEvent):void {
 			if(!selected) {
 				if(hovering) {
-					instance.updateState(state_hover);
+					updateState(state_hover);
 				} else {
-					instance.updateState(state_normal);
+					updateState(state_normal);
 				}
 			}
 		}

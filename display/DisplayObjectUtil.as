@@ -18,7 +18,7 @@
 		 * @param	autoAdd
 		 * @return
 		 */
-		public function duplicateDisplayObject(target:DisplayObject, autoAdd:Boolean = false):DisplayObject
+		public static function duplicateDisplayObject(target:DisplayObject, autoAdd:Boolean = false):DisplayObject
 		{
 			// create duplicate(创建显示对象)
 			var targetClass:Class = Object(target).constructor;

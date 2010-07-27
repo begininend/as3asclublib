@@ -15,6 +15,17 @@
  * 
  *  对位图进行九宫格缩放
  *  displayObject.scale9Grid 九宫格缩放只对flash内部的元素有效,想外部导入的位图就失效报错，所以就有人(不是我)写了此类才处理位图的九宫格
+ * 
+ * @example
+ * <code>
+ * 		//bitmapAsset为库中位图
+ * 		var myScaleBitmap:ScaleBitmap=new ScaleBitmap(new bitmapAsset(0,0));
+		myScaleBitmap.x=260;
+		myScaleBitmap.y=280;
+		myScaleBitmap.scale9Grid=new Rectangle(20,20,80,80);
+		myScaleBitmap.setSize(200,64);
+		addChild(myScaleBitmap);
+ * </code>
  */
 
 package org.asclub.display {

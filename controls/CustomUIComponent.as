@@ -22,7 +22,7 @@
 		 * @return
 		 */
 		//protected
-		public function getDisplayObjectInstance(value:Object) : DisplayObject
+		protected function getDisplayObjectInstance(value:Object) : DisplayObject
         {
             var classDef:Object;
             var skin:* = value;

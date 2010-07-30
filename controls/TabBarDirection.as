@@ -12,6 +12,11 @@
 		 */
 		public static const VERTICAL:String = "vertical";
 		
+		/**
+		 * 标签页是交叉排列
+		 */
+		public static const ALTERNATE:String = "alternate";
+		
 		public function TabBarDirection()
 		{
 			

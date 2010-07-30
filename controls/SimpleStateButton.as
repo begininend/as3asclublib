@@ -4,6 +4,9 @@
 	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
 	import flash.events.MouseEvent;
+	import flash.text.TextField;
+	import flash.text.TextFieldAutoSize;
+	import flash.text.TextFormat;
 	
 	
 	/**
@@ -31,12 +34,16 @@
 		private var _enabled:Boolean = false;
 		
 		private var instance:Bitmap;
+		private var _textLabel:TextField;
+		private var _label:String;
+		private var _textFormat = new TextFormat("宋体", 12, 0x000000);
 		
 		/**
 		 * Boolean "selected" allows to toggle the button. 
 		 * 当“selected”设置为true，只有“下”按钮的状态显示。
 		 */
-		public function set selected(value:Boolean):void {
+		public function set selected(value:Boolean):void 
+		{
 			is_selected = value;
 			if(is_selected) {
 				updateState(state_down);
@@ -81,6 +88,17 @@
 		public function get enabled():Boolean
 		{
 			return _enabled;
+		}
+		
+		public function get label():String
+		{
+			return _label;
+		}
+		
+		public function set label(value:String):void
+		{
+			_label = value;
+			_textLabel.text = _label;
 		}
 		
 		/**
@@ -138,7 +156,7 @@
 		override public function setStyle(style:String, value:Object):void 
 		{
 		
-			var skin:DisplayObject = getDisplayObjectInstance(value);
+			var skin:DisplayObject = super.getDisplayObjectInstance(value);
 			var skinBitmapData:BitmapData = new BitmapData(skin.width, skin.height);
 			skinBitmapData.draw(skin);
 			switch (style)
@@ -164,6 +182,22 @@
 					break;
 				}
 			}
+			//更换皮肤后更新
+			if (is_selected)
+			{
+				updateState(state_down);
+			} 
+			else 
+			{
+				if (hovering) 
+				{
+					updateState(state_hover);
+				} 
+				else
+				{
+					updateState(state_normal);
+				}
+			}
 		}
 		
 		
@@ -181,6 +215,13 @@
 			useHandCursor = true;
 			instance = new Bitmap();
 			instance.bitmapData = state_normal;
+			_textLabel = new TextField();
+			_textLabel.autoSize = TextFieldAutoSize.LEFT;
+			_textLabel.selectable = false;
+			_textLabel.text = "";
+			_textLabel.width = instance.width;
+			_textLabel.height = _textLabel.textHeight + 4;
+			
 			addChild(instance);
 			if(has_hover) {
 				addEventListener(MouseEvent.ROLL_OVER, onStateRollOver);

@@ -99,6 +99,7 @@
 		{
 			_label = value;
 			_textLabel.text = _label;
+			resize();
 		}
 		
 		/**
@@ -155,47 +156,39 @@
 		 */
 		override public function setStyle(style:String, value:Object):void 
 		{
-		
-			var skin:DisplayObject = super.getDisplayObjectInstance(value);
-			var skinBitmapData:BitmapData = new BitmapData(skin.width, skin.height);
-			skinBitmapData.draw(skin);
 			switch (style)
 			{
+				case "textFormat":
+				{
+					_textFormat = value;
+					_textLabel.setTextFormat(_textFormat);
+					_textLabel.defaultTextFormat = _textFormat;
+					resize();
+					break;
+				}
 				case "upSkin":
 				{
-					state_normal = skinBitmapData;
+					state_normal = getSkinBitmapData(value);
+					updateSkin();
 					break;
 				}
 				case "overSkin":
 				{
-					state_hover = skinBitmapData;
+					state_hover = getSkinBitmapData(value);
+					updateSkin();
 					break;
 				}
 				case "downSkin":
 				{
-					state_down = skinBitmapData;
+					state_down = getSkinBitmapData(value);
+					updateSkin();
 					break;
 				}
 				case "disabledSkin":
 				{
-					state_disabled = skinBitmapData;
+					state_disabled = getSkinBitmapData(value);
+					updateSkin();
 					break;
-				}
-			}
-			//更换皮肤后更新
-			if (is_selected)
-			{
-				updateState(state_down);
-			} 
-			else 
-			{
-				if (hovering) 
-				{
-					updateState(state_hover);
-				} 
-				else
-				{
-					updateState(state_normal);
 				}
 			}
 		}
@@ -216,13 +209,12 @@
 			instance = new Bitmap();
 			instance.bitmapData = state_normal;
 			_textLabel = new TextField();
-			_textLabel.autoSize = TextFieldAutoSize.LEFT;
+			_textLabel.autoSize = TextFieldAutoSize.CENTER;
 			_textLabel.selectable = false;
-			_textLabel.text = "";
-			_textLabel.width = instance.width;
-			_textLabel.height = _textLabel.textHeight + 4;
+			_textLabel.mouseEnabled = false;
 			
 			addChild(instance);
+			addChild(_textLabel);
 			if(has_hover) {
 				addEventListener(MouseEvent.ROLL_OVER, onStateRollOver);
 				addEventListener(MouseEvent.ROLL_OUT, onStateRollOut);
@@ -279,6 +271,43 @@
 					updateState(state_normal);
 				}
 			}
+		}
+		
+		//获取皮肤的位图数据
+		private function getSkinBitmapData(value:Object):BitmapData
+		{
+			var skin:DisplayObject = super.getDisplayObjectInstance(value);
+			var skinBitmapData:BitmapData = new BitmapData(skin.width, skin.height);
+			skinBitmapData.draw(skin);
+			return skinBitmapData;
+		}
+		
+		//更换皮肤后更新
+		private function updateSkin():void
+		{
+			if (is_selected)
+			{
+				updateState(state_down);
+			} 
+			else 
+			{
+				if (hovering) 
+				{
+					updateState(state_hover);
+				} 
+				else
+				{
+					updateState(state_normal);
+				}
+			}
+			resize();
+		}
+		
+		private function resize():void
+		{
+			_textLabel.width = _textLabel.textWidth + 4;
+			_textLabel.x = (instance.width - _textLabel.width) * 0.5;
+			_textLabel.y = (instance.height - _textLabel.height) * 0.5;
 		}
 		
 		/**

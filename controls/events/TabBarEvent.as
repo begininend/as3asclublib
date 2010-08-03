@@ -3,24 +3,24 @@
 	import flash.events.Event;
 	public class TabBarEvent extends Event
 	{
-		private var _index:int;
+		public var index:int;
+		public var item:Object;
 		public static const CHANGE:String = "change";
 		public static const ITEM_CLICK:String = "itemClick";
 		public static const ITEM_ROLL_OUT:String = "itemRollOut";
 		public static const ITEM_ROLL_OVER:String = "itemRollOver";
 		
-		public function TabBarEvent(type:String,index:int)
+		public function TabBarEvent(type:String,index:int,item:Object)
 		{
-			_index = index;
+			this.index = index;
+			this.item = item;
 			super(type);
 		}
 		
-		/**
-		 * 获取标签页索引
-		 */
-		public function get tabBarIndex():int
+		override public function clone():TabBarEvent
 		{
-			return _index;
+			return new TabBarEvent(this.type, this.index, this.item);
 		}
+		
 	}//end of class
 }

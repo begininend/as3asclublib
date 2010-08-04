@@ -17,7 +17,7 @@
 			super(type);
 		}
 		
-		override public function clone():TabBarEvent
+		override public function clone():Event
 		{
 			return new TabBarEvent(this.type, this.index, this.item);
 		}

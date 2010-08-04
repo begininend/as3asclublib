@@ -1,5 +1,6 @@
 ﻿package org.asclub.controls
 {
+	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.utils.getDefinitionByName;
@@ -59,6 +60,23 @@
 			}
 			trace("classDef is Object");
             return new classDef as DisplayObject;
+		}
+		
+		/**
+		 * 获取皮肤的位图数据
+		 * @param	value
+		 * @return
+		 */
+		protected function getSkinBitmapData(value:Object):BitmapData
+		{
+			if (value is BitmapData)
+			{
+				return value as BitmapData;
+			}
+			var skin:DisplayObject = getDisplayObjectInstance(value);
+			var skinBitmapData:BitmapData = new BitmapData(skin.width, skin.height);
+			skinBitmapData.draw(skin);
+			return skinBitmapData;
 		}
 		
 		/**

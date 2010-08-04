@@ -73,7 +73,14 @@
 			this.tabEnabled = _enabled;
 			if (_enabled)
 			{
-				updateState(state_normal);
+				if (is_selected)
+				{
+					updateState(state_down);
+				}
+				else
+				{
+					updateState(state_normal);
+				}
 			}
 			else
 			{
@@ -271,15 +278,6 @@
 					updateState(state_normal);
 				}
 			}
-		}
-		
-		//获取皮肤的位图数据
-		private function getSkinBitmapData(value:Object):BitmapData
-		{
-			var skin:DisplayObject = super.getDisplayObjectInstance(value);
-			var skinBitmapData:BitmapData = new BitmapData(skin.width, skin.height);
-			skinBitmapData.draw(skin);
-			return skinBitmapData;
 		}
 		
 		//更换皮肤后更新

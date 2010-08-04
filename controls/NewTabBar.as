@@ -46,6 +46,8 @@
 		//水平方向上的个数
 		private var _numHorizontal:int = 0;
 		
+		//默认索引
+		private var _defaultIndex:int = 0;
 		//当前选中项的索引
 		private var _selectedIndex:int = -1;
 		
@@ -97,6 +99,25 @@
 		}
 		
 		/**
+         * 获取tabBar默认选定项目的索引。
+		 */
+		public function get defaultIndex():int
+		{
+			return _defaultIndex;
+		}
+		
+		/**
+         * 设置tabBar默认选定项目的索引。
+		 */
+		public function set defaultIndex(value:int):void
+		{
+			if (value >= 0 && value < this._dataProvider.length)
+			{
+				_defaultIndex = value;
+			}
+		}
+		
+		/**
 		 * 获取tabBar选定项目的索引。
 		 */
 		public function get selectedIndex():int
@@ -109,7 +130,7 @@
 		 */
 		public function set selectedIndex(value:int):void
 		{
-			if(value < 0 || value >= this._dataProvider.length)
+			if(value < 0 || value >= this._buttons.length)
 			{
 				return;
 			}
@@ -123,6 +144,7 @@
 				}
 				_buttons[value].selected = true;
 				this._selectedIndex = value;
+				this._defaultIndex = value;
 				dispatchEvent(new TabBarEvent(TabBarEvent.CHANGE, value, item));
 			}
 		}
@@ -191,16 +213,101 @@
 		
 		/**
 		 * 添加项
+		 * 请在调用此方法之后调用update 方法进行更新
 		 * @param	item
+		 * @example
+		 * <code>
+		 * 		newTabBar.addItem({label:"私聊"});
+		 * </code>
 		 */
 		public function addItem(item:Object):void
 		{
 			_dataProvider.addItem(item);
 		}
 		
+		/**
+		 * 添加项到某个索引位
+		 * 请在调用此方法之后调用update 方法进行更新
+		 * @param	item    要添加的项
+		 * @param	index   索引位
+		 * @example
+		 * <code>
+		 * 		newTabBar.addItemAt({label:"楼麽"},2);
+		 * </code>
+		 */
 		public function addItemAt(item:Object, index:int):void
 		{
 			_dataProvider.addItemAt(item, index);
+			if (index <= _selectedIndex)
+			{
+				selectedIndex = _selectedIndex + 1;
+			}
+		}
+		
+		/**
+		 * 添加多个项
+		 * 请在调用此方法之后调用update 方法进行更新
+		 * @param	items
+		 * @example
+		 * <code>
+		 * 		newTabBar.addItems([{label:"登机牌"},{label:"JPEG"}]);
+		 * </code>
+		 */
+		public function addItems(items:Object):void
+		{
+			_dataProvider.addItems(items);
+		}
+		
+		/**
+		 * 添加若干项到指定索引处
+		 * 请在调用此方法之后调用update 方法进行更新
+		 * @param	items
+		 * @param	index
+		 * @example
+		 * <code>
+		 * 		newTabBar.addItemsAt([{label:"addItemsAt3"},{label:"addItemsAt4"}],3);
+		 * </code>
+		 */
+		public function addItemsAt(items:Object, index:uint):void
+		{
+			_dataProvider.addItemsAt(items, index);
+			if (index <= _selectedIndex)
+			{
+				selectedIndex = _selectedIndex + (items as Array).length;
+			}
+		}
+		
+		/**
+		 * 删除全部项
+		 * 请在调用此方法之后调用update 方法进行更新
+		 */
+		public function removeAll():void
+		{
+			_dataProvider.removeAll();
+		}
+		
+		/**
+		 * 删除指定索引处的项
+		 * 请在调用此方法之后调用update 方法进行更新
+		 * @param	index  索引位置
+		 * @return
+		 */
+		public function removeItemAt(index:uint):void
+		{
+			_dataProvider.removeItemAt(index);
+			//selectedIndex = _selectedIndex >= _dataProvider.length ? _dataProvider.length - 1 : _selectedIndex;
+			_defaultIndex = _selectedIndex = (_selectedIndex >= _dataProvider.length ? _dataProvider.length - 1 : _selectedIndex);
+		}
+		
+		/**
+		 * 替换指定索引处的项目
+		 * @param	newItem
+		 * @param	index
+		 * @return
+		 */
+		public function replaceItemAt(newItem:Object, index:uint):void
+		{
+			_dataProvider.replaceItemAt(newItem, index);
 		}
 		
 		/**
@@ -212,10 +319,40 @@
 		{
 			switch(name)
 			{
-				
 				case "textFormat":
+				{
 					_textFormat = value as TextFormat;
-				break;
+					updateSkin("textFormat",_textFormat);
+					break;
+				}
+				case "upSkin":
+				{
+					_stateNormal = getSkinBitmapData(value);
+					updateSkin("upSkin", _stateNormal);
+					realign();
+					break;
+				}
+				case "overSkin":
+				{
+					_stateHover = getSkinBitmapData(value);
+					updateSkin("overSkin",_stateHover);
+					realign();
+					break;
+				}
+				case "downSkin":
+				{
+					_stateDown = getSkinBitmapData(value);
+					updateSkin("downSkin",_stateDown);
+					realign();
+					break;
+				}
+				case "disabledSkin":
+				{
+					_stateDisabled = getSkinBitmapData(value);
+					updateSkin("disabledSkin",_stateDisabled);
+					realign();
+					break;
+				}
 			}
 		}
 		
@@ -229,6 +366,7 @@
 			{
 				_buttons[i].removeEventListener(MouseEvent.CLICK, tabItemClickedHandler);
 				this.removeChildAt(i);
+				_buttons[i] = null;
 			}
 			_buttons.length = 0;
 			trace("移除之后：" + this.numChildren);
@@ -251,30 +389,42 @@
 					tabItem.setStyle("textFormat", _textFormat);
 				}
 				tabItem.addEventListener(MouseEvent.CLICK, tabItemClickedHandler);
+				
+				_buttons.push(tabItem);
+				addChild(tabItem);
+			}
+			trace("添加之后：" + this.numChildren);
+			realign();
+			selectedIndex = this._defaultIndex;
+		}
+		
+		//重新排列
+		private function realign():void
+		{
+			var numItem:int = _buttons.length;
+			var tabItem:SimpleStateButton;
+			for (var i:int = 0; i < numItem; i++)
+			{
+				tabItem = _buttons[i];
 				//水平排列
 				if (_direction == TabBarDirection.HORIZONTAL)
 				{
-					tabItem.x = (tabItem.width + spaceWidth) * j >> 0;
+					tabItem.x = (tabItem.width + spaceWidth) * i >> 0;
 					tabItem.y = 0;
 				}
 				//垂直排列
 				else if (_direction == TabBarDirection.VERTICAL)
 				{
 					tabItem.x = 0;
-					tabItem.y = (tabItem.height + spaceHeight) * j >> 0;
+					tabItem.y = (tabItem.height + spaceHeight) * i >> 0;
 				}
 				//交错排列
 				else if (_direction == TabBarDirection.ALTERNATE)
 				{
-					tabItem.x = ((tabItem.width + spaceWidth) * (j % _numHorizontal)) >> 0;
-					tabItem.y = ((tabItem.height + spaceHeight) * Math.floor(j / _numHorizontal)) >> 0;
+					tabItem.x = ((tabItem.width + spaceWidth) * (i % _numHorizontal)) >> 0;
+					tabItem.y = ((tabItem.height + spaceHeight) * Math.floor(i / _numHorizontal)) >> 0;
 				}
-				_buttons.push(tabItem);
-				addChild(tabItem);
 			}
-			trace("添加之后：" + this.numChildren);
-			
-			selectedIndex = 0;
 		}
 		
 		/**
@@ -303,6 +453,16 @@
 				return item[this.labelField];
 			}
 			return "";
+		}
+		
+		//更新皮肤
+		private function updateSkin(name:String, skin:Object):void
+		{
+			var numItem:int = _buttons.length;
+			for (var i:int = 0; i < numItem; i++)
+			{
+				_buttons[i].setStyle(name,skin);
+			}
 		}
 		
 		//标签被点击

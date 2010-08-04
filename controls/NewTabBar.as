@@ -296,7 +296,19 @@
 		{
 			_dataProvider.removeItemAt(index);
 			//selectedIndex = _selectedIndex >= _dataProvider.length ? _dataProvider.length - 1 : _selectedIndex;
-			_defaultIndex = _selectedIndex = (_selectedIndex >= _dataProvider.length ? _dataProvider.length - 1 : _selectedIndex);
+			//_defaultIndex = _selectedIndex = (_selectedIndex >= _dataProvider.length ? _dataProvider.length - 1 : _selectedIndex);
+			if (_selectedIndex >= _dataProvider.length)
+			{
+				selectedIndex = _dataProvider.length - 1;
+			}
+			else if (index <= _selectedIndex)
+			{
+				selectedIndex = _selectedIndex - 1;
+			}
+			else
+			{
+				_defaultIndex = _selectedIndex;
+			}
 		}
 		
 		/**

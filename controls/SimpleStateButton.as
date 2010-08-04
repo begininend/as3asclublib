@@ -8,12 +8,13 @@
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
 	
+	import org.asclub.core.IDestroyable;
 	
 	/**
 	 * 此类为一个简单的按钮，有up,over,down,disabled四个状态。。selectedUp,selectedOver,selectedDown,selectedDisabled还在考虑中
 	 * 可用于tabmenu、有选中状态的按钮
 	 */
-	public class SimpleStateButton extends CustomUIComponent
+	public class SimpleStateButton extends CustomUIComponent implements IDestroyable
 	{
 		
 		/**
@@ -200,7 +201,15 @@
 			}
 		}
 		
-		
+		//销毁
+		public function destroy():void
+		{
+			removeEventListener(MouseEvent.ROLL_OVER, onStateRollOver);
+			removeEventListener(MouseEvent.ROLL_OUT, onStateRollOut);
+			removeEventListener(MouseEvent.MOUSE_DOWN, onStateMouseDown);
+			removeEventListener(MouseEvent.MOUSE_UP, onStateMouseUp);
+			instance.bitmapData.dispose();
+		}
 		//************************************private function******************************************************
 		
 		/**

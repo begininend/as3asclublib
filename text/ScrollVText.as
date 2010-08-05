@@ -146,6 +146,7 @@
 			//在这里时间要设为1.3，之所以要比缓动的总时间1.2长0.1秒的原因其实我也不知道，但是缓动结束回调的时间如果设为跟缓动的总时间一样长
 			//的话，会出现缓动尚未完全结束，缓动结束回调函数就被调用,从而产生干扰
 			TweenLite.delayedCall(1.3,tweenLiteFinishHandler,null);
+			//var t:TweenMax = TweenMax.to(mc, 1, {x:300,onComplete:completeHandler,onCompleteParams:["sss"]});
 		}
 		
 		//tween

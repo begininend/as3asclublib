@@ -73,7 +73,7 @@
 		 * 
 		 * @return 如果目标对象是静态类,则为true.
 		 */	
-		public static function getIsStaticClass(arg:Object):Boolean
+		public static function isStaticClass(arg:Object):Boolean
 		{
 			return describeType(arg).@isStatic == true;
 		}
@@ -87,7 +87,7 @@
 		 * 
 		 * @return 目标对象基类的类名.
 		 */	
-		public function getSuperClassShortName(arg:Object):String
+		public static function getSuperClassShortName(arg:Object):String
 		{
 			return getQualifiedSuperclassName(arg).split(":").pop();
 		}
@@ -99,7 +99,7 @@
 		 * 
 		 * @return 目标对象现实过的接口列表.
 		 */	
-		public function getClassImplementedList(arg:Object):Array
+		public static function getClassImplementedList(arg:Object):Array
 		{
 			var result:Array = new Array;
 			var list:XMLList = describeType(arg is Class ? arg : arg.constructor).factory.implementsInterface;
@@ -117,7 +117,7 @@
 		 * 
 		 * @return 目标对象的类名.
 		 */	
-		public function getClassShortName(arg:Object):String
+		public static function getClassShortName(arg:Object):String
 		{
 			return getQualifiedClassName(arg).split(":").pop();
 		}
@@ -140,7 +140,7 @@
 		 * 
 		 * @return 目标对象构造函数的详细资料.
 		 */	
-		public function getConstructorDetails(arg:Object):Array
+		public static function getConstructorDetails(arg:Object):Array
 		{
 			var result:Array = new Array;
 			var list:XMLList = arg is Class ? describeType(arg).factory.constructor.parameter : describeType(arg).constructor.parameter;
@@ -156,7 +156,7 @@
 		 * 
 		 * @return 目标对象构造函数的参数长度.
 		 */	
-		public function getConstructorLength(arg:Object):uint
+		public static function getConstructorLength(arg:Object):uint
 		{
 			return describeType(arg is Class ? arg : arg.constructor).factory.constructor.parameter.length();
 		}
@@ -168,7 +168,7 @@
 		 * 
 		 * @return 如果目标对象是动态类,则为true.
 		 */	
-		public function getIsDynamicClass(arg:Object):Boolean
+		public static function getIsDynamicClass(arg:Object):Boolean
 		{
 			return describeType(arg).@isDynamic == true;
 		}

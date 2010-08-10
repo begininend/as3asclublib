@@ -1,11 +1,32 @@
 ﻿package org.asclub.display
 {
+	import flash.display.FrameLabel;
 	import flash.display.MovieClip;
+	
 	public final class FrameUtil
 	{
 		public function FrameUtil()
 		{
 			
+		}
+		
+		/**
+		 * 从一个对象中创建
+		 * 
+		 * @param obj	键为帧标签，值为开始帧数（以1开始）
+		 * @return 
+		 * 
+		 */
+		public static function createFromObject(obj:Object):Array
+		{
+			var result:Array = [];
+			for (var key:String in obj)
+			{
+				var f:FrameLabel = new FrameLabel(key,obj[key]);
+				result.push(f);
+			}
+			result.sortOn("frame",Array.NUMERIC);
+			return result;
 		}
 		
 		/**

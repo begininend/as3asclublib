@@ -1,4 +1,4 @@
-package com.riaoo.events
+﻿package org.asclub.events
 {
 	import flash.events.Event;
 

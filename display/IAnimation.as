@@ -1,4 +1,4 @@
-package com.riaoo.display
+﻿package org.asclub.display
 {
 	public interface IAnimation
 	{

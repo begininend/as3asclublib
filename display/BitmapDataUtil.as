@@ -1,5 +1,6 @@
-package com.riaoo.utils
+﻿package org.asclub.display
 {
+	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
@@ -36,5 +37,38 @@ package com.riaoo.utils
 			return bmd;
 		}
 		
-	}
+		/**
+		 * 切分位图为一组较小的位图
+		 * 
+		 * @param source
+		 * @param width
+		 * @param height
+		 * @param toBitmap	转换为Bitmap（而非BitmapData）
+		 * @return 
+		 * 
+		 */
+		public static function separateBitmapData(source:BitmapData,width:int,height:int,toBitmap:Boolean = false):Array
+		{
+			var result:Array = [];
+			for (var j:int = 0;j < Math.ceil(source.height / height);j++)
+			{
+				for (var i:int = 0;i < Math.ceil(source.width / width);i++)
+				{
+					var bitmap:BitmapData = new BitmapData(width,height,true,0);
+					bitmap.copyPixels(source,new Rectangle(i*width,j*height,width,height),new Point());
+					if (toBitmap)
+					{
+						var bp:Bitmap = new Bitmap(bitmap);
+						bp.x = i * width;
+						bp.y = j * height;
+						result.push(bp);
+					}
+					else
+						result.push(bitmap)
+				}	
+			}
+			return result;
+		}
+		
+	}//end of class
 }

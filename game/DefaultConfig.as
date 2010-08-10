@@ -22,7 +22,7 @@
 			stageReference.showDefaultContextMenu = false;
 			stageReference.scaleMode = StageScaleMode.NO_SCALE;
 			stageReference.align = StageAlign.TOP_LEFT;
-			stageReference.frameRate = 12;
+			//stageReference.frameRate = 12;
 		}
 		
 		/**

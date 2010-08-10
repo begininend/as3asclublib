@@ -1,6 +1,6 @@
-package com.riaoo.display
+﻿package org.asclub.display
 {
-	import com.riaoo.events.AnimationEvent;
+	import org.asclub.events.AnimationEvent;
 
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
@@ -8,9 +8,7 @@ package com.riaoo.display
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
 	import flash.utils.getTimer;
-
-	[Event(name="animationEnterFrame",type="com.sgf.events.AnimationEvent")]
-	[Event(name="animationEnd",type="com.sgf.events.AnimationEvent")]
+	
 
 	/**
 	 * 此类用于播放位图序列。可按指定的时间间隔（delay 属性）来播放每一帧。动画的重复次数由 timer.repeatCount 指定。
@@ -67,6 +65,11 @@ package com.riaoo.display
 		public function Animation(timer:Timer, frameSequence:IFrameSequence = null, delay:Number = 100, cache:Boolean = false)
 		{
 			init(timer, frameSequence, delay, cache);
+			//显示第一帧内容
+			if (frameSequence != null)
+			{
+				this.bitmapData = frameSequence.getFrameAt(1);
+			}
 		}
 
 		// 初始化。
@@ -82,21 +85,37 @@ package com.riaoo.display
 			this.addEventListener(Event.REMOVED_FROM_STAGE, onRemovedFromStage);
 		}
 
+		
+		//--------------------------------------GETTER AND SETTER--------------------------------------------------------------
+		
+		/**
+		 * 获取当前帧编号。
+		 */
 		public function get currentFrame():uint
 		{
 			return _currentFrame;
 		}
 
+		/**
+		 * 获取当前片段的帧数目
+		 */
 		public function get numFrames():int
 		{
 			return this.frameSequence ? this.frameSequence.length : 0;
 		}
 
+		/**
+		 * 获取是否在播放
+		 */
 		public function get isPlaying():Boolean
 		{
 			return _isPlaying;
 		}
 
+		/**
+		 * 从指定帧编号开始播放 SWF 文件。
+		 * @param	frameIndex
+		 */
 		public function gotoAndPlay(frameIndex:uint):void
 		{
 			if (this.frameSequence == null || frameIndex < 0 || frameIndex >= this.frameSequence.length) // 参数超出范围时返回
@@ -119,12 +138,18 @@ package com.riaoo.display
 			setBuffer(frameIndex);
 		}
 
+		/**
+		 * 下一帧
+		 */
 		public function nextFrame():void
 		{
 			nextFrameWithoutStop();
 			stop();
 		}
 
+		/**
+		 * 上一帧
+		 */
 		public function prevFrame():void
 		{
 			prevFrameWithoutStop();
@@ -137,7 +162,8 @@ package com.riaoo.display
 			{
 				_isPlaying = true;
 				this.timer.addEventListener(TimerEvent.TIMER, onTimer);
-				this.timer.start();
+				//onTimer(null);
+				//this.timer.start();
 			}
 		}
 
@@ -150,6 +176,8 @@ package com.riaoo.display
 			}
 		}
 
+		//--------------------------------------------------------PROTECTED FUNCTION---------------------------------------------------
+		
 		/**
 		 * 设置缓冲区（Bitmap.bitmapData）。
 		 * @param frameIndex 帧编号。
@@ -235,6 +263,8 @@ package com.riaoo.display
 			}
 			setBuffer(_currentFrame);
 		}
+		
+		//--------------------------------------------------PRIVATE FUNCTION----------------------------------------------------
 
 		// tick...
 		private function onTimer(event:TimerEvent):void

@@ -1,20 +1,11 @@
-package com.riaoo.utils
+﻿package org.asclub.engine
 {
-	import com.riaoo.events.TickerEvent;
+	import org.asclub.events.TickerEvent;
 	
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
 	import flash.utils.getTimer;
 	
-	/**
-	 * @eventType com.riaoo.events.TickerEvent
-	 */	
-	[Event(name="ticker",type="com.riaoo.events.TickerEvent")]
-	
-	/**
-	 * @eventType com.riaoo.events.TickerEvent
-	 */	
-	[Event(name="tickerComplete",type="com.riaoo.events.TickerEvent")]
 	
 	/**
 	 * Ticker 类是 Timer 类的扩展。可获知每个 TickerEvent.TICKER 事件触发所需要的<strong>实际</strong>延迟间隔（通过 TimerEvent.realDelay 属性可知）。
@@ -82,5 +73,5 @@ package com.riaoo.utils
 			removeEventListener(TimerEvent.TIMER_COMPLETE, onTimerComplete);
 		}
 		
-	}
+	}//end class
 }

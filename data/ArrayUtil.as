@@ -363,10 +363,15 @@ package org.asclub.data
 		
 		/**
 			Returns the value of the specified property for every element where the key is present.
-			在数组中查找与key相对于的value
+			在数组中查找与key相对应的value
+			获得数组中某个键的所有值
 			@param inArray: Array to get the values from.
 			@param key: Name of the property to retrieve the value of.
 			@return Returns all the present key values.
+			@example 
+			<code>
+				trace(ArrayUtil.getValuesByKey([{x:0,y:0},{x:-2,y:4},{x:4,y:2}],"x"));	//[0,-2,4]);
+			</code>
 		*/
 		public static function getValuesByKey(inArray:Array, key:String):Array {
 			var k:Array = [];

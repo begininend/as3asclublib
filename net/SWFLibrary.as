@@ -72,6 +72,7 @@ package org.asclub.net
 	import flash.media.Sound;
 	import flash.net.URLRequest;
 	import flash.system.LoaderContext;
+	import flash.system.ApplicationDomain;
 	import flash.text.Font;
 
 	public class SWFLibrary extends EventDispatcher
@@ -104,7 +105,17 @@ package org.asclub.net
 			loaderInfo = _loader.contentLoaderInfo;
 			_loaded = false;
 			
-			_loaderContext = new LoaderContext(false);
+			//加载器自己的 ApplicationDomain
+			_loaderContext = new LoaderContext(false, ApplicationDomain.currentDomain);
+			
+			//加载器的 ApplicationDomain 的子级
+			//_loaderContext = new LoaderContext(false,new ApplicationDomain(ApplicationDomain.currentDomain));
+			
+			//系统 ApplicationDomain 的子级
+			//_loaderContext = new LoaderContext(false,new ApplicationDomain(null));  
+			
+			//其它 ApplicationDomain 的子级。
+			//_loaderContext = new LoaderContext(false, new ApplicationDomain(ApplicationDomain.currentDomain.parentDomain.parentDomain));
 		}
 		
 		// === A P I ===

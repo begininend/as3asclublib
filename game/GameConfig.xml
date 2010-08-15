@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<game-config>
+	<!--游戏版本-->
+	<version>1.0.0.2</version>
+	<!--游戏语言-->
+	<lang>zh_cn</lang>
+	<!--游戏地址-->
+	<gameURL>http://s42.as.yaowan.com/</gameURL>
+	<!--游戏服务端地址-->
+	<serviceURL>http://s42.as.yaowan.com/root/</serviceURL>
+</game-config>

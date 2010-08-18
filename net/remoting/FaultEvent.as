@@ -1,5 +1,5 @@
-﻿package com.klstudio.events {
-	import com.klstudio.net.remoting.Fault;
+﻿package org.asclub.events {
+	import org.asclub.net.remoting.Fault;
 
 	import flash.events.Event;
 

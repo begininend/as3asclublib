@@ -1,4 +1,4 @@
-﻿package com.klstudio.net.remoting {
+﻿package org.asclub.net.remoting {
 
 	/**
 	 * Fault

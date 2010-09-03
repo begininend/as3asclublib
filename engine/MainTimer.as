@@ -1,97 +1,186 @@
 ﻿package org.asclub.engine
 {
-	import flash.events.EventDispatcher;
-	import flash.events.TimerEvent;
+	import flash.utils.Dictionary;
 	import flash.utils.Timer;
-	public class MainTimer extends EventDispatcher
+	import org.asclub.engine.Ticker;
+	
+	public final class MainTimer
 	{
-		private static var _instance:MainTimer = null;
-		private static var _mainTimer:Timer;
+		public static const TIMER_DEFAULT:String = "timerDefault";
+		private static var _timerMap:Dictionary;
 		
-		//获取 计时器从 0 开始后触发的总次数。 如果已重置了计时器，则只会计入重置后的触发次数。
-		public static function get currentCount():int
+		
+		public function MainTimer()
 		{
-			return _mainTimer.currentCount;
+			throw new Error("静态方法，请勿实例化");
 		}
 		
-		//获取 计时器的当前状态；如果计时器正在运行，则为 true，否则为 false。
-		public static function get running():Boolean
-		{
-			return _mainTimer.running;
-		}
+		//===========================================================================================================
+		//  Public method
+		//===========================================================================================================
 		
-		//获取 计时器事件间的延迟（以毫秒为单位）。 
-		public static function get delay():Number
-		{
-			return _mainTimer.delay;
-		}
 		
-		//设置 计时器事件间的延迟（以毫秒为单位）。 
-		public static function set delay(value:Number):void
+		/**
+		 * 添加并启动计时器
+		 * @param	id      		计时器id
+		 * @param	delay   		延迟时间（以毫秒为单位）。 
+		 * @param	repeatCount		运行总次数。
+		 * @return  返回添加的计时器的引用
+		 */
+		public static function addTimer(id:String = MainTimer.TIMER_DEFAULT, delay:Number = 1000, repeatCount:int = 0):Timer
 		{
-			_mainTimer.delay = value;
-		}
-		
-		//获取 计时器运行总次数。
-		public static function get repeatCount():int
-		{
-			return _mainTimer.repeatCount;
-		}
-		
-		//设置 计时器运行总次数。
-		public static function set repeatCount(value:int):void
-		{
-			_mainTimer.repeatCount = value;
-		}
-		
-		public function MainTimer(privateClass:PrivateClass)
-		{
+			if (!(id in MainTimer._getMap()))
+			{
+				var timer:Ticker = new Ticker(delay,repeatCount);
+				timer.start();
+				MainTimer._getMap()[id] = timer;
+			}
+			else
+			{
+				if (delay != MainTimer._getMap()[id]["delay"])
+				{
+					MainTimer._getMap()[id]["delay"] = delay;
+				}
+				else if (repeatCount != MainTimer._getMap()[id]["repeatCount"])
+				{
+					MainTimer._getMap()[id]["repeatCount"] = repeatCount;
+				}
+			}
 			
+			return MainTimer._getMap()[id];
 		}
 		
-		//获取单例
-		public static function getInstance():MainTimer
+		/**
+		 * 获取定义的计时器
+		 * @param	id
+		 * @return
+		 */
+		public static function getTimer(id:String = MainTimer.TIMER_DEFAULT):Timer
 		{
-			if ( _instance == null ) _instance = new MainTimer(new PrivateClass());
-            return _instance;
-		}
-		
-		//如果计时器尚未运行，则启动计时器。
-		public static function start(delay:Number, repeatCount:int = 0):void
-		{
-			if (_instance == null) _instance = new MainTimer(new PrivateClass());
-			if (_mainTimer != null) return;
-			_mainTimer = new Timer(delay, repeatCount);
-			_mainTimer.addEventListener(TimerEvent.TIMER, timerHandler);
-			_mainTimer.addEventListener(TimerEvent.TIMER_COMPLETE, timerCompleteHandler);
-            _mainTimer.start();
+			if (!(id in MainTimer._getMap()))
+			{
+				return null;
+			}
+			return MainTimer._getMap()[id];
         }
 		
-		//如果计时器正在运行，则停止计时器，并将 currentCount 属性设回为 0.
-		public static function reset():void
+		/**
+		 * 返回Timer在字典表里的id名称
+		 * 
+		 * @param timer	Timer对象
+		 * @return 
+		 * 
+		 */
+		public static function getTimerID(timer:Timer):String
 		{
-			_mainTimer.reset();
+			for (var key:* in MainTimer._getMap())
+			{
+				if (MainTimer._getMap()[key] == timer)
+					return key.toString();
+			}
+			return null;
+		}
+		/**
+		 * 获取 计时器事件间的延迟（以毫秒为单位）。
+		 * @param	id    计时器id
+		 * @return
+		 */ 
+		public static function getTimerDelay(id:String = MainTimer.TIMER_DEFAULT):Number
+		{
+			if (!(id in MainTimer._getMap()))
+			{
+				throw new Error("未找到ID为:" + id + "的计时器");
+			}
+			
+			return MainTimer._getMap()[id]["delay"];
+		}
+		
+		/**
+		 * 设置 计时器事件间的延迟（以毫秒为单位）。 
+		 * @param	delayValue    延迟
+		 * @param	id            计时器id
+		 */
+		public static function setTimerDelay(delay:Number, id:String = MainTimer.TIMER_DEFAULT):void
+		{
+			if (!(id in MainTimer._getMap()))
+			{
+				throw new Error("未找到ID为:" + id + "的计时器");
+			}
+			MainTimer._getMap()[id]["delay"] = delay;
+		}
+		
+		/**
+		 * 获取 计时器运行总次数。
+		 * @return
+		 */
+		public static function getTimerRepeatCount(id:String = MainTimer.TIMER_DEFAULT):int
+		{
+			if (!(id in MainTimer._getMap()))
+			{
+				throw new Error("未找到ID为:" + id + "的计时器");
+			}
+			
+			return MainTimer._getMap()[id]["repeatCount"];
+		}
+		
+		/**
+		 * 设置 计时器运行总次数。
+		 * @param	repeatCountValue   运行总次数。
+		 * @param	id            	   计时器id
+		 */
+		public static function setTimerRepeatCount(repeatCount:int, id:String = MainTimer.TIMER_DEFAULT):void
+		{
+			if (!(id in MainTimer._getMap()))
+			{
+				throw new Error("未找到ID为:" + id + "的计时器");
+			}
+			
+			MainTimer._getMap()[id]["repeatCount"] = repeatCount;
+		}
+		
+		/**
+		 * 移除计时器
+		 * @param	id
+		 * @return  如果移除成功返回true，否则返回false
+		 */
+		public static function removeStage(id:String = MainTimer.TIMER_DEFAULT):Boolean {
+			if (!(id in MainTimer._getMap()))
+				return false;
+			
+			MainTimer._getMap()[id] = null;
+			
+			return true;
+		}
+		
+		//如果计时器正在运行，则停止计时器，并将 currentCount 属性设回为 0.
+		public static function reset(id:String = MainTimer.TIMER_DEFAULT):void
+		{
+			if (id in MainTimer._getMap())
+			{
+				MainTimer._getMap()[id].reset();
+			}
 		}
 		
 		//停止计时器。
-		public static function stop():void
+		public static function stop(id:String = MainTimer.TIMER_DEFAULT):void
 		{
-			_mainTimer.stop();
+			if (id in MainTimer._getMap())
+			{
+				MainTimer._getMap()[id].stop();
+			}
 		}
-
-		//timerHandler
-        private static function timerHandler(evt:TimerEvent):void 
-		{
-			_instance.dispatchEvent(evt);
-        }
 		
-		//timer 完成
-		private static function timerCompleteHandler(evt:TimerEvent):void
-		{
-			_instance.dispatchEvent(evt);
+		//===========================================================================================================
+		//  Private method
+		//===========================================================================================================
+		
+		
+		private static function _getMap():Dictionary {
+			if (MainTimer._timerMap == null)
+				MainTimer._timerMap = new Dictionary();
+			
+			return MainTimer._timerMap;
 		}
 		
 	}//end of class
 }
-
-class PrivateClass{}

@@ -42,8 +42,8 @@
 			}
 	 * </code>
 	 */
-	[Event(name="fault", type="com.klstudio.events.FaultEvent")]
-	[Event(name="result", type="com.klstudio.events.ResultEvent")]
+	[Event(name="fault", type="org.asclub.events.FaultEvent")]
+	[Event(name="result", type="org.asclub.events.ResultEvent")]
 	
 	[Event(name="netStatus", type="flash.events.NetStatusEvent")]
 	[Event(name="ioError", type="flash.events.IOErrorEvent")]

@@ -1,7 +1,7 @@
 ﻿package org.asclub.net.remoting {
 
-	import com.klstudio.events.FaultEvent;
-	import com.klstudio.events.ResultEvent;
+	import org.asclub.events.FaultEvent;
+	import org.asclub.events.ResultEvent;
 	import flash.net.Responder;
 	import flash.events.EventDispatcher;
 
@@ -10,8 +10,6 @@
 	 * @author Kinglong(kinglong@gmail.com)
 	 * @since:2010-8-3
 	 */
-	[Event(name="fault", type="com.klstudio.events.FaultEvent")]	
-	[Event(name="result", type="com.klstudio.events.ResultEvent")]
 	
 	public class Operation extends EventDispatcher {
 		private var _service:Service;

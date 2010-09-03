@@ -37,7 +37,7 @@
 		 * @param	amfURL     连接地址
 		 * @param	encoding   对象编码
 		 */
-		public function connect(amfURL:String, encoding:uint = ObjectEncoding.AMF3):void
+		public function connect(amfURL:String, encoding:uint = 3):void
 		{
 			_damfNetConnection.objectEncoding = encoding;
 			_damfNetConnection.connect(amfURL);
@@ -48,7 +48,7 @@
 		 * @param	amfURL     连接地址
 		 * @param	encoding   对象编码
 		 */
-		public static function connect(amfURL:String,encoding:uint = ObjectEncoding.AMF3):void
+		public static function connect(amfURL:String,encoding:uint = 3):void
 		{
 			if (_amfNetConnection == null)
 			{

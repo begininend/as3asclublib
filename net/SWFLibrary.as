@@ -60,6 +60,8 @@
  */
 package org.asclub.net
 {
+	import flash.display.Bitmap;
+	import flash.display.BitmapData;
 	import flash.display.Loader;
 	import flash.display.LoaderInfo;
 	import flash.display.MovieClip;
@@ -203,6 +205,32 @@ package org.asclub.net
 			var Asset:Class = getAsset( linkage );
 			
 			if ( Asset ) return Font( new Asset() );
+			return null;
+		}
+		
+		/**
+		 * 获取一个指定的位图数据实例
+		 * @param	linkage   
+		 * @return  位图数据实例
+		 */
+		public function getBitmapData(linkage:String):BitmapData
+		{
+			var Asset:Class = getAsset( linkage );
+			
+			if ( Asset ) return BitmapData( new Asset(0,0) );
+			return null;
+		}
+		
+		/**
+		 * 获取一个指定的位图据实例
+		 * @param	linkage
+		 * @return  位图实例
+		 */
+		public function getBitmap(linkage:String):Bitmap
+		{
+			var Asset:Class = getAsset( linkage );
+			
+			if ( Asset ) return new Bitmap(BitmapData( new Asset(0,0) ));
 			return null;
 		}
 		

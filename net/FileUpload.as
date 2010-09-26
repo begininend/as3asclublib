@@ -1,4 +1,4 @@
-package com.riaoo.net
+﻿package org.asclub.net
 {
 	import flash.net.URLLoader;
 	import flash.net.URLLoaderDataFormat;

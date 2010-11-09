@@ -93,10 +93,8 @@ package org.asclub.net
 		 * @param						none
 		 * @return						nothing
 		 */
-		public function SWFLibrary()
+		public function SWFLibrary(level:uint = 0)
 		{
-			super();			
-			
 			_request = new URLRequest();
 			_loader = new Loader();
 			_loader.contentLoaderInfo.addEventListener( Event.COMPLETE, loadCompleteHandler );
@@ -107,17 +105,34 @@ package org.asclub.net
 			loaderInfo = _loader.contentLoaderInfo;
 			_loaded = false;
 			
-			//加载器自己的 ApplicationDomain
-			_loaderContext = new LoaderContext(false, ApplicationDomain.currentDomain);
+			switch(level)
+			{
+				case 0:
+				{
+					//加载器自己的 ApplicationDomain
+					_loaderContext = new LoaderContext(false, ApplicationDomain.currentDomain);
+					break;
+				}
+				case 1:
+				{
+					//加载器的 ApplicationDomain 的子级
+					_loaderContext = new LoaderContext(false,new ApplicationDomain(ApplicationDomain.currentDomain));
+					break;
+				}
+				case 2:
+				{
+					//系统 ApplicationDomain 的子级
+					_loaderContext = new LoaderContext(false,new ApplicationDomain(null));  
+					break;
+				}
+				default:
+				{
+					//其它 ApplicationDomain 的子级。
+					_loaderContext = new LoaderContext(false, new ApplicationDomain(ApplicationDomain.currentDomain.parentDomain.parentDomain));
+					break;
+				}
+			}
 			
-			//加载器的 ApplicationDomain 的子级
-			//_loaderContext = new LoaderContext(false,new ApplicationDomain(ApplicationDomain.currentDomain));
-			
-			//系统 ApplicationDomain 的子级
-			//_loaderContext = new LoaderContext(false,new ApplicationDomain(null));  
-			
-			//其它 ApplicationDomain 的子级。
-			//_loaderContext = new LoaderContext(false, new ApplicationDomain(ApplicationDomain.currentDomain.parentDomain.parentDomain));
 		}
 		
 		// === A P I ===

@@ -16,7 +16,7 @@
 		 */
 		public static function hasOverFlow(field:TextField):Boolean 
 		{
-			return field.maxScrollV > 1 || field.maxScrollH > 1;
+			return field.maxScrollV > 1 || field.maxScrollH > 0;
 		}
 		
 		/**
@@ -53,6 +53,42 @@
 			
 			textField.text = shorteningStr;
 			return shorteningStr;
+		}
+		
+		/**
+		 * 根据文本框大小自动缩小字体
+		 * @param textField
+		 * 
+		 */
+		public static function autoFontSize(textField:TextField,adjustY:Boolean = false):void
+		{
+			var text:String = textField.text;
+			var f:TextFormat = textField.getTextFormat();
+			var old_size:int = int(f.size);
+			
+			if (text == null || text.length == 0)
+				return;
+			
+			//如果文本未溢出则返回
+			if (! hasOverFlow(textField))
+			{
+				return;
+			}
+			
+			while (hasOverFlow(textField))
+			{
+				f = textField.getTextFormat();
+				f.size = int(f.size) - 1;
+				if (f.size == 0)
+					return;
+				
+				textField.setTextFormat(f,0,text.length);
+				
+				//firstLine = textField.getLineMetrics(0);
+			}
+			
+			if (adjustY)
+				textField.y += (old_size - int(f.size)) / 2;
 		}
 		
 		/**

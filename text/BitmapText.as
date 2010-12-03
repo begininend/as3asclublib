@@ -14,6 +14,9 @@
 	
 	public class BitmapText extends Sprite
 	{
+		//根据文本框大小自动缩小字体
+		private var _autoFontSize:Boolean;
+		
 		private var _text:String = "";
 		
 		// 用于缓存的Bitmap
@@ -30,7 +33,7 @@
 		private function init():void
 		{
 			_textField = new TextField();
-			//_textField.multiline = false;
+			_textField.multiline = false;
 			_textField.selectable = false;
 			var textFormat:TextFormat = new TextFormat();
 			textFormat.size = 26;
@@ -67,8 +70,8 @@
 			_textBitmap.y = _textField.y;
 			this.addChild(_textBitmap);
 			_textBitmap.bitmapData.draw(_textField);
-			_textBitmap.visible = false;
-			addChild(_textField);
+			//_textBitmap.visible = false;
+			//addChild(_textField);
 			//_textBitmap.bitmapData.draw(_textField,null,null,null,null,true);
 			
 			var size:int = int(getTextFormat().size);
@@ -76,7 +79,7 @@
 			{
 				var rect:Rectangle = new Rectangle(0, 0, _textBitmap.bitmapData.width, _textBitmap.bitmapData.height);
 				var pt:Point = new Point(0, 0);
-				var filter:BlurFilter = new BlurFilter(size / 127 * 1.5,size / 127 * 1.5);
+				var filter:BlurFilter = new BlurFilter(size / 127 * 2,size / 127 * 2);
 				_textBitmap.bitmapData.applyFilter(_textBitmap.bitmapData, rect, pt, filter);
 			}
 		}
@@ -85,9 +88,24 @@
 		// GETTER AND SETTER
 		//------------------------------------------------------------------------------------------------
 		
+		/**
+		 * 控制文本字段的自动大小调整和对齐。 
+		 */
 		public function set autoSize(value:String):void
 		{
 			_textField.autoSize = value;
+		}
+		
+		/**
+		 * 根据文本框大小自动缩小字体
+		 */
+		public function set autoFontSize(value:Boolean):void
+		{
+			if (value)
+			{
+				TextUtil.autoFontSize(_textField);
+			}
+			_autoFontSize = value;
 		}
 		
 		/**
@@ -145,6 +163,11 @@
 			_text = value;
 			_textField.text = value;
 			
+			if (_autoFontSize)
+			{
+				TextUtil.autoFontSize(_textField);
+				_textField.defaultTextFormat = _textField.getTextFormat();
+			}
 			rerenderTextBitmap();
 		}
 		

@@ -1,5 +1,6 @@
 ﻿package org.asclub.text
 {
+	import flash.display.DisplayObjectContainer;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
 	public class TextUtil
@@ -16,7 +17,8 @@
 		 */
 		public static function hasOverFlow(field:TextField):Boolean 
 		{
-			return field.maxScrollV > 1 || field.maxScrollH > 0;
+			//return field.maxScrollV > 1 || field.maxScrollH > 0;
+			return field.textHeight > field.height || field.textWidth > field.width || field.maxScrollV > 1 || field.maxScrollH > 0;
 		}
 		
 		/**
@@ -68,27 +70,94 @@
 			
 			if (text == null || text.length == 0)
 				return;
-			
-			//如果文本未溢出则返回
-			if (! hasOverFlow(textField))
+			trace("文本溢出:" + hasOverFlow(textField));
+			//如果文本溢出则缩小字号以适应文本框
+			if (hasOverFlow(textField))
 			{
-				return;
+				while (hasOverFlow(textField))
+				{
+					f = textField.getTextFormat();
+					f.size = int(f.size) - 1;
+					if (f.size == 0)
+						return;
+					
+					//textField.setTextFormat(f,0,text.length);
+					textField.setTextFormat(f);
+				}
 			}
-			
-			while (hasOverFlow(textField))
+			//如果文本未溢出则放大字号以适应文本框
+			else
 			{
+				trace(hasOverFlow(textField));
+				while ( ! hasOverFlow(textField))
+				{
+					f = textField.getTextFormat();
+					f.size = int(f.size) + 1;
+					trace(f.size);
+					if (f.size > 126)
+					{	
+						return;
+					}
+					
+					//textField.setTextFormat(f,0,text.length);
+					textField.setTextFormat(f);
+				}
+				
+				trace("文本溢出:" + hasOverFlow(textField));
 				f = textField.getTextFormat();
 				f.size = int(f.size) - 1;
-				if (f.size == 0)
-					return;
-				
-				textField.setTextFormat(f,0,text.length);
-				
-				//firstLine = textField.getLineMetrics(0);
+				textField.setTextFormat(f);
+				//textField.setTextFormat(f,0,text.length);
+				trace("文本溢出:" + hasOverFlow(textField));
 			}
 			
 			if (adjustY)
 				textField.y += (old_size - int(f.size)) / 2;
+		}
+		
+		/**
+		 * 复制文本框 
+		 * @param v
+		 * @param replace 是否替换到父对象中
+		 * @return 
+		 * 
+		 */
+		public static function clone(v:TextField,replace:Boolean = false):TextField
+		{
+			var c:TextField = new TextField();
+			c.name = v.name;
+			c.type = v.type;
+			c.autoSize = v.autoSize;
+			c.embedFonts = v.embedFonts;
+			c.defaultTextFormat = v.defaultTextFormat;
+			c.text = v.text;
+			for (var i:int = 0;i < v.text.length;i++)
+			{
+				c.setTextFormat(v.getTextFormat(i,i + 1),i,i + 1);
+			}
+			c.x = v.x;
+			c.y = v.y;
+			c.scaleX = v.scaleX;
+			c.scaleY = v.scaleY;
+			c.width = v.width;
+			c.height = v.height;
+			c.rotation = v.rotation;
+			c.multiline = v.multiline;
+			c.selectable = v.selectable;
+			c.wordWrap = v.wordWrap;
+			c.transform.colorTransform = v.transform.colorTransform;
+			c.filters = v.filters;
+			c.mouseEnabled = v.mouseEnabled;
+			c.mouseWheelEnabled = v.mouseWheelEnabled;
+			
+			if (replace && v.parent)
+			{
+				var p:DisplayObjectContainer = v.parent;
+				var index:int = p.getChildIndex(v);
+				p.removeChild(v);
+				p.addChildAt(c,index);
+			}
+			return c;
 		}
 		
 		/**

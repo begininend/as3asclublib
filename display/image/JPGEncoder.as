@@ -47,7 +47,7 @@
  * @link http://www.usacd.com
  */
 
-package com.meitu.lincan.display {
+package org.asclub.display.image {
 	import flash.display.BitmapData;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;

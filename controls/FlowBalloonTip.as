@@ -36,6 +36,8 @@
 			_textField.height = 6 + _textField.textHeight;
 			addChild(_textField);
 			updateView();
+			this.mouseEnabled = false;
+			this.mouseChildren = false;
 		}
 		
 		/**

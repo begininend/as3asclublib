@@ -50,14 +50,14 @@ package org.asclub.controls
 		}
 		
 		//添加一个气泡
-		public static function add(msg:String, delay:Number = 1.5, level:String = "normal"):void
+		public static function add(msg:String, delay:Number = 1, level:String = "normal"):void
 		{
 			var balloonTip:FlowBalloonTip = createBalloonTip(msg);
 			_balloonList.push( { balloonTip:balloonTip, delay : delay, level:level } );
 			if (!_running)
 			{
 				_running = true;
-				addBalloonTipToStage(balloonTip);
+				addBalloonTipToStage(balloonTip, delay);
 			}
 		}
 		
@@ -75,7 +75,7 @@ package org.asclub.controls
 		}
 		
 		//添加一个气泡到舞台进行冒泡
-		private static function addBalloonTipToStage(balloonTip:FlowBalloonTip, delay:Number = 1.5):void
+		private static function addBalloonTipToStage(balloonTip:FlowBalloonTip, delay:Number = 1):void
 		{
 			var containerWidth:int = _container is Stage ? (_container as Stage).stageWidth : _container.width;
 			var containerHeight:int = _container is Stage ? (_container as Stage).stageHeight : _container.height;

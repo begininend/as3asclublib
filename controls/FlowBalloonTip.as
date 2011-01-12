@@ -11,7 +11,7 @@
 	/**
 	 * 浮动的气球提示（通常在舞台中央漂浮而上,而后消失）
 	 */
-	public class FlowBalloonTip extends Sprite
+	internal final class FlowBalloonTip extends Sprite
 	{
 		private var _textFormat:TextFormat;
 		private var _textField:TextField;

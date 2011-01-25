@@ -2,6 +2,7 @@
 {
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
+	import flash.display.Stage;
 	import flash.geom.Rectangle;
 	import flash.geom.Point;
 	
@@ -134,6 +135,34 @@
 			return rot;
 		}
 		
+		/**
+		 * 移除所有子对象
+		 * @param container	目标
+		 * 
+		 */
+		public static function removeAllChildren(container:DisplayObjectContainer):void
+        {
+            while (container.numChildren) 
+                container.removeChildAt(0);
+        }
+		
+		public static function linkToStage(obj:DisplayObject):Boolean
+		{
+			var current:DisplayObject = obj;
+			while (current)
+			{
+				if (current is Stage)
+				{
+					return true;
+				}
+				else
+				{
+					current = current.parent;
+				}
+				trace(current);
+			}
+			return false;
+		}
 		
 	}//end of class
 }

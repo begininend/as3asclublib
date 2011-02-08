@@ -1,4 +1,4 @@
-package org.asclub.net
+﻿package org.asclub.net
 {
 	import flash.utils.ByteArray;
 	/**
@@ -128,7 +128,12 @@ package org.asclub.net
 		 */
 		public static function isPCX(fileData:ByteArray):Boolean
 		{
-			
+			fileData.position = 0;
+			if (fileData.bytesAvailable < 1)
+			{
+				return false;
+			}
+			return fileData.readInt() == 10;
 		}
 		
 		/**
@@ -139,7 +144,18 @@ package org.asclub.net
 		 */
 		public static function isTIFF(fileData:ByteArray):Boolean
 		{
-			
+			_fileData = fileData;
+			_fileData.position = 0;
+			if (_fileData.bytesAvailable < 2)
+			{
+				return false;
+			}
+			// tiff  - 文件头标识 (6 bytes)   4D 4D 或 49 49
+			var regular1:Array = [77, 77];
+			var regular2:Array = [73, 73];
+			var res1:Boolean = regular1.every(everyCallBack);
+			var res2:Boolean = regular2.every(everyCallBack);
+			return (res1 || res2);
 		}
 		
 		/**
@@ -150,7 +166,15 @@ package org.asclub.net
 		 */
 		public static function isICO(fileData:ByteArray):Boolean
 		{
-			
+			_fileData = fileData;
+			_fileData.position = 0;
+			if (_fileData.bytesAvailable < 8)
+			{
+				return false;
+			}
+			//ico   文件头标识 (8 bytes)   00 00 01 00 01 00 20 20
+			var regular:Array = [0,0,1,0,1,0,32,32];
+			return regular.every(everyCallBack);
 		}
 		
 		/**
@@ -172,7 +196,15 @@ package org.asclub.net
 		 */
 		public static function isIFF(fileData:ByteArray):Boolean
 		{
-			
+			_fileData = fileData;
+			_fileData.position = 0;
+			if (_fileData.bytesAvailable < 8)
+			{
+				return false;
+			}
+			//iff   文件头标识 (4 bytes)   46 4F 52 4D
+			var regular:Array = [70, 79, 82, 77];
+			return regular.every(everyCallBack);
 		}
 		
 		/**
@@ -183,7 +215,15 @@ package org.asclub.net
 		 */
 		public static function isANI(fileData:ByteArray):Boolean
 		{
-			
+			_fileData = fileData;
+			_fileData.position = 0;
+			if (_fileData.bytesAvailable < 8)
+			{
+				return false;
+			}
+			//ani   文件头标识 (4 bytes)   52 49 46 46
+			var regular:Array = [82, 73, 70, 70];
+			return regular.every(everyCallBack);
 		}
 		
 		//检查是否复合文件头标识

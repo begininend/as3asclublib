@@ -8,10 +8,20 @@
 		}
 		
 		/**
-		 * 色彩合成     alpha,red,green,blue都是0~255之间的数
+		 * 24位色彩合成     alpha,red,green,blue都是0~255之间的数
 		 * @return
 		 */
-		public static function colorComposite(a:int,r:int,g:int,b:int):int
+		public static function colorComposite(r:int, g:int, b:int):int
+		{
+			return r << 16 | g << 8 | b;
+		}
+		
+		
+		/**
+		 * 32位色彩合成     alpha,red,green,blue都是0~255之间的数
+		 * @return
+		 */
+		public static function colorComposite32(a:int,r:int,g:int,b:int):int
 		{
 			return a << 24 | r << 16 | g << 8 | b;
 		}
@@ -21,7 +31,21 @@
 		 * @param	color32
 		 * @return  一个包含a,r,g,b的数组
 		 */
-		public static function colorPickUp(color32:int):Array
+		public static function colorPickUp(color24:int):Array
+		{
+			var r:int = color24 >> 16;
+			var g:int = color24 >> 8 & 0xFF;
+			var b:int = color24 & 0xFF;
+			var colors:Array = [r,g,b];
+			return colors;
+		}
+		
+		/**
+		 * 色彩提取
+		 * @param	color32
+		 * @return  一个包含a,r,g,b的数组
+		 */
+		public static function colorPickUp32(color32:int):Array
 		{
 			var a:int = color32 >> 24;
 			var r:int = color32 >> 16 & 0xFF;

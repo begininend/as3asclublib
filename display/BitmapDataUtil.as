@@ -2,6 +2,7 @@
 {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
+	import flash.display.Shape;
 	import flash.geom.Matrix;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
@@ -239,6 +240,21 @@
 			}
 				// return BMP file
 			return bmpBytes;
+		}
+		
+		 /**
+		* 获取透明背景纹理
+		*/
+		public static function getAlphaTextureBitmapData() : BitmapData 
+		{
+			var shape : Shape = new Shape();
+			shape.graphics.beginFill(0xDFDFDF);
+			shape.graphics.drawRect(8, 0, 8, 8);
+			shape.graphics.drawRect(0, 8, 8, 8);
+			shape.graphics.endFill();
+			var data : BitmapData = new BitmapData(16, 16, false, 0xFFFFFF);
+			data.draw(shape);
+			return data;
 		}
 		
 	}//end of class

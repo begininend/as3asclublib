@@ -479,6 +479,33 @@ package org.asclub.effect
 		}
 		
 		/**
+		 * 晶格效果(马赛克效果2)
+		 * @param	bitmapData   位图数据
+		 * @param	block    晶格大小
+		 */
+		public static function mosaic(bitmapData:BitmapData, block:uint = 5) : void
+        {
+            var matrix1:Matrix;
+            var matrix2:Matrix;
+            var sample:BitmapData;
+            var shape:Shape;
+            if (block < 1)
+            {
+                block = 5;
+            }
+            matrix1 = new Matrix();
+            matrix1.scale(1 / block, 1 / block);
+            matrix2 = new Matrix();
+            matrix2.scale(block, block);
+            sample = new BitmapData(bitmapData.width / block, bitmapData.height / block, false);
+            sample.draw(bitmapData, matrix1);
+            shape = new Shape();
+            shape.graphics.beginBitmapFill(sample, matrix2);
+            shape.graphics.drawRect(0, 0, bitmapData.width, bitmapData.height);
+            bitmapData.draw(shape);
+        }// end function
+		
+		/**
 		 * 油画效果
 		 * @param	source          位图数据
 		 * @param	brushSize       笔刷大小  1-8

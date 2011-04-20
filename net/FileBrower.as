@@ -1,4 +1,4 @@
-package org.asclub.net
+﻿package org.asclub.net
 {
 	import flash.display.Bitmap;
 	import flash.display.Loader;
@@ -8,6 +8,8 @@ package org.asclub.net
 	import flash.net.FileReference;
 	import flash.net.FileReferenceList;
 	import flash.utils.ByteArray;
+	
+	import org.asclub.events.FileBrowerEvent;
 	
 	public class FileBrower extends EventDispatcher
 	{
@@ -28,9 +30,15 @@ package org.asclub.net
 		//打开的所有位图文件
 		public var bitmaps:Array = [];
 		
+		//打开的所有文件的文件名
+		public var fileNames:Array = [];
+		
 		private var _bitmapFileFilter:FileFilter = new FileFilter("图像格式(*.jpg,*.jpeg,*.gif,*.png)", "*.jpg;*.jpeg;*.gif;*.png;");
 		
 		private var _bitmapFileIndex:Array = [];
+		
+		//图片打开完成回调
+		private var _imageCompleteFun:Function;
 		
 		//全部文件
 		private var _numTotalFile:int;
@@ -78,8 +86,9 @@ package org.asclub.net
 		 * 
 		 * @param	typeFilter
 		 */
-		public function browse(typeFilter:Array = null,imageCompleteHandler:Function = null):void
+		public function browse(typeFilter:Array = null,imageCompleteFun:Function = null):void
 		{
+			_imageCompleteFun = imageCompleteFun;
 			if (_allowMultipleSelection)
 			{
 				_fileReferenceList.browse(typeFilter);
@@ -131,6 +140,7 @@ package org.asclub.net
 			_numTotalBitmapFile = 0;
 			_bitmapFileIndex.length = 0;
 			datas.length = 0;
+			fileNames.length = 0;
 			bitmaps.length = 0;
 			var fileReference:FileReference;
 			for (var i:int = 0; i < _numTotalFile; i++)
@@ -153,6 +163,7 @@ package org.asclub.net
 				_numTotalBitmapFile = 0;
 				_bitmapFileIndex.length = 0;
 				datas.length = 0;
+				fileNames.length = 0;
 				bitmaps.length = 0;
 				_fileReference.load();
 				_status = "load";
@@ -162,17 +173,18 @@ package org.asclub.net
 		//单文件加载完成
 		private function fileReferenceCompleteHandler(event:Event):void
 		{
+			var fileReference:FileReference = event.currentTarget as FileReference;
 			if (_status == "load")
 			{
-				var fileReference:FileReference = event.currentTarget as FileReference;
-				//检索是否是图片(通过后缀名)
-				if (_bitmapFileFilter.extension.indexOf(fileReference["type"]) != -1)
+				//检索是否是图片(通过文件头)
+				if (FileTypeCheck.isJPEG(fileReference.data) || FileTypeCheck.isPNG(fileReference.data) || FileTypeCheck.isGIF(fileReference.data))
 				{
 					_bitmapFileIndex.push(datas.length);
 					_numTotalBitmapFile ++;
 				}
 				
 				datas.push(fileReference.data);
+				fileNames.push(fileReference.name);
 				_numLoadedFile ++;
 				
 				
@@ -185,8 +197,9 @@ package org.asclub.net
 			}
 			else if(_status == "save")
 			{
-				this.dispatchEvent(new Event("saveComplete"));
-				//_status = "load";
+				var fileBrowerEvent:FileBrowerEvent = new FileBrowerEvent(FileBrowerEvent.SAVE_COMPLETE);
+				fileBrowerEvent.fileName = fileReference.name;
+				this.dispatchEvent(fileBrowerEvent);
 			}
 		}
 		
@@ -213,7 +226,15 @@ package org.asclub.net
 			//当所有文件加载完成后调度事件
 			if (_numLoadedBitmapFile == _numTotalBitmapFile)
 			{
-				this.dispatchEvent(new Event("imageComplete"));
+				if (_imageCompleteFun != null)
+				{
+					_imageCompleteFun();
+					_imageCompleteFun = null;
+				}
+				else
+				{
+					this.dispatchEvent(new FileBrowerEvent(FileBrowerEvent.IMAGE_COMPLETE));
+				}
 			}
 		}
 		

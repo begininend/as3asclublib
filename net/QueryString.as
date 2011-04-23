@@ -3,9 +3,9 @@
 	import flash.external.ExternalInterface;
 	import flash.utils.Dictionary;
 	
-	public class MyQueryString
+	public class QueryString
 	{
-		public function MyQueryString()
+		public function QueryString()
 		{
 			
 		}

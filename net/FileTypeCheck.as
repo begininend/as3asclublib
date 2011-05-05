@@ -185,7 +185,7 @@
 		 */
 		public static function isCUR(fileData:ByteArray):Boolean
 		{
-			
+			return false;
 		}
 		
 		/**

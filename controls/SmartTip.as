@@ -1,10 +1,19 @@
-﻿package
+﻿package org.asclub.controls
 {
-    import flash.display.*;
-    import flash.events.*;
-    import flash.geom.*;
-    import flash.text.*;
-    import flash.utils.*;
+    import flash.display.DisplayObjectContainer;
+    import flash.display.DisplayObject;
+    import flash.display.LineScaleMode;
+    import flash.display.Sprite;
+    import flash.events.Event;
+    import flash.events.MouseEvent;
+    import flash.events.TimerEvent;
+    import flash.geom.Rectangle;
+    import flash.geom.Point;
+    import flash.text.TextField;
+    import flash.text.TextFieldAutoSize;
+    import flash.text.TextFormat;
+    import flash.utils.ByteArray;
+    import flash.utils.Timer;
 
     final public class SmartTip extends Sprite
     {
@@ -132,6 +141,16 @@
             var arrowHeight:Number;
             var arrowWidth:Number;
             var arrowIndentPercent:int;
+			
+			//画关闭按钮
+            //closeMC.graphics.lineStyle(1, bgLineColor, bgAlpha);
+            closeMC.graphics.beginFill(bgColor, 0);
+            closeMC.graphics.drawCircle(0, 0, 4);
+            closeMC.graphics.beginFill(4294967295 - bgColor, bgAlpha);
+            closeMC.graphics.drawRect(-1, -6, 2, 12);
+            closeMC.graphics.beginFill(4294967295 - bgColor, bgAlpha);
+            closeMC.graphics.drawRect(-6, -1, 12, 2);
+			
             var drawTip:Function = function (param1:String) : void
             {
                 var _loc_7:Point;
@@ -197,7 +216,7 @@
                 }
                 _loc_5 = _content.getRect(_content.parent);
                 _loc_5.left = _loc_5.left - bgGap;
-                _loc_5.right = _loc_5.right + bgGap;
+                _loc_5.right = _loc_5.right + bgGap + closeMC.width;
                 _loc_5.top = _loc_5.top - bgGap;
                 _loc_5.bottom = _loc_5.bottom + bgGap;
 				
@@ -250,7 +269,7 @@
             arrowIndentPercent = getStyle("arrowIndentPercent");
             arrowIndentPercent = Math.max(-100, Math.min(100, arrowIndentPercent));
             drawTip(_location.toLocaleLowerCase());
-            var targetRect:* = _target.getRect(_root);
+            var targetRect:Rectangle = _target.getRect(_root);
             switch(_location)
             {
                 case TOP:
@@ -282,15 +301,8 @@
                     break;
                 }
             }
-            //closeMC.graphics.lineStyle(1, bgLineColor, bgAlpha);
-            closeMC.graphics.beginFill(bgColor, 0);
-            closeMC.graphics.drawCircle(0, 0, 4);
-            closeMC.graphics.beginFill(4294967295 - bgColor, bgAlpha);
-            closeMC.graphics.drawRect(-1, -6, 2, 12);
-            closeMC.graphics.beginFill(4294967295 - bgColor, bgAlpha);
-            closeMC.graphics.drawRect(-6, -1, 12, 2);
             var tipRect:Rectangle = _content.getRect(_content.parent);
-            closeMC.x = tipRect.right + bgGap - 10;
+            closeMC.x = tipRect.right + bgGap;
             closeMC.y = tipRect.top - bgGap + 10;
             return;
         }

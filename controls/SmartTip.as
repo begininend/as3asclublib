@@ -43,6 +43,16 @@
             }
             _style = defaultStyle;
             closeMC = new Sprite();
+			
+			//画关闭按钮
+            //closeMC.graphics.lineStyle(1, 0xff0000, 1);
+            closeMC.graphics.beginFill(0xffffff, 0);
+            closeMC.graphics.drawCircle(0, 0, 6);
+            closeMC.graphics.beginFill(0x000000, 1);
+            closeMC.graphics.drawRect(-1, -6, 2, 12);
+            closeMC.graphics.beginFill(0x000000, 1);
+            closeMC.graphics.drawRect( -6, -1, 12, 2);
+			
             closeMC.buttonMode = true;
             closeMC.rotation = 45;
             closeMC.visible = false;
@@ -53,17 +63,6 @@
             addEventListener(MouseEvent.ROLL_OUT, mouseEventsHandler);
             addEventListener(MouseEvent.ROLL_OVER, mouseEventsHandler);
             _root.addEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler, false, 0, true);
-            return;
-        }
-
-        public function get content() : DisplayObject
-        {
-            return _content;
-        }
-
-        private function autoCloseHandler(param1:TimerEvent) : void
-        {
-            close();
             return;
         }
 
@@ -86,34 +85,6 @@
             }
         }
 
-        private function mouseEventsHandler(event:MouseEvent) : void
-        {
-            switch(event.type)
-            {
-                case MouseEvent.ROLL_OUT:
-                {
-                    if (autoCloseTimer)
-                    {
-                        autoCloseTimer.reset();
-                        autoCloseTimer.start();
-                    }
-                    break;
-                }
-                case MouseEvent.ROLL_OVER:
-                {
-                    if (autoCloseTimer)
-                    {
-                        autoCloseTimer.stop();
-                    }
-                    break;
-                }
-                default:
-                {
-                    break;
-                }
-            }
-        }
-
         public function get showCloseButton() : Boolean
         {
             return closeMC.visible;
@@ -123,11 +94,6 @@
         private function closeMCClickHandler(param1:MouseEvent) : void
         {
             close();
-        }
-
-        public function get target() : DisplayObject
-        {
-            return _target;
         }
 
         private function adjustLayout() : void
@@ -142,14 +108,6 @@
             var arrowWidth:Number;
             var arrowIndentPercent:int;
 			
-			//画关闭按钮
-            //closeMC.graphics.lineStyle(1, bgLineColor, bgAlpha);
-            closeMC.graphics.beginFill(bgColor, 0);
-            closeMC.graphics.drawCircle(0, 0, 4);
-            closeMC.graphics.beginFill(4294967295 - bgColor, bgAlpha);
-            closeMC.graphics.drawRect(-1, -6, 2, 12);
-            closeMC.graphics.beginFill(4294967295 - bgColor, bgAlpha);
-            closeMC.graphics.drawRect(-6, -1, 12, 2);
 			
             var drawTip:Function = function (param1:String) : void
             {
@@ -193,7 +151,7 @@
                     }
                     case LEFT:
                     {
-                        _content.x = -_loc_5.x - _loc_5.width - arrowHeight - bgGap;
+                        _content.x = -_loc_5.x - _loc_5.width - arrowHeight - bgGap - closeMC.getRect(closeMC).width;
                         _content.y = -_loc_5.y - _loc_5.height / 2 - _loc_2;
                         _loc_4.push(new Point(-arrowHeight, (-arrowWidth) / 2 - _loc_3));
                         _loc_4.push(new Point(-arrowHeight, arrowWidth / 2 - _loc_3));
@@ -215,11 +173,10 @@
                     }
                 }
                 _loc_5 = _content.getRect(_content.parent);
-                _loc_5.left = _loc_5.left - bgGap;
-                _loc_5.right = _loc_5.right + bgGap + closeMC.width;
+				_loc_5.left = _loc_5.left - bgGap;
+                _loc_5.right = _loc_5.right + bgGap + closeMC.getRect(closeMC).width;
                 _loc_5.top = _loc_5.top - bgGap;
                 _loc_5.bottom = _loc_5.bottom + bgGap;
-				
 				
                 graphics.clear();
 				
@@ -307,27 +264,41 @@
             return;
         }
 
-        public function set showCloseButton(param1:Boolean) : void
+		/**
+		 * 设置是否显示关闭按钮
+		 */
+        public function set showCloseButton(value:Boolean) : void
         {
-            closeMC.visible = param1;
-            return;
+            closeMC.visible = value;
         }
 
+		/**
+		 * 刷新
+		 */
         public function refresh() : void
         {
             adjustLayout();
             return;
         }
 
-        public function set target(param1:DisplayObject) : void
+		/**
+		 * 获取目标对象
+		 */
+        public function get target() : DisplayObject
         {
-            if (_target == param1)
+            return _target;
+        }
+
+		/**
+		 * 设置目标对象
+		 */
+        public function set target(value:DisplayObject) : void
+        {
+            if (_target != value)
             {
-                return;
+				_target = value;
+				adjustLayout();
             }
-            _target = param1;
-            adjustLayout();
-            return;
         }
 
 		/**
@@ -342,47 +313,55 @@
             }
         }
 
-        public function set location(param1:String) : void
+		/**
+		 * 设置tip在目标对象的方位
+		 */
+        public function set location(value:String) : void
         {
-            if (_location == param1)
+            if (_location != value)
             {
-                return;
+				_location = value.toLowerCase();
+				adjustLayout();
             }
-            _location = param1.toLowerCase();
-            adjustLayout();
-            return;
         }
 
+		/**
+		 * 获取tip在目标对象的方位
+		 */
+        public function get location() : String
+        {
+            return _location;
+        }
+		
+		/**
+		 * 获取点击舞台其它地方时自动关闭
+		 */
         public function get closeOnClickOutside() : Boolean
         {
             return _closeOnClickOutside;
         }
 
-        public function setStyle(param1:String, param2:*) : void
+		/**
+		 * 设置点击舞台其它地方时自动关闭
+		 */
+        public function set closeOnClickOutside(value:Boolean) : void
         {
-            if (_style.hasOwnProperty(param1))
-            {
-                if (_style[param1] != param2)
-                {
-                    _style[param1] = param2;
-                    adjustLayout();
-                }
-            }
+            _closeOnClickOutside = value;
             return;
         }
 
-        public function get location() : String
+		/**
+		 * 获取tip内容
+		 */
+        public function get content() : DisplayObject
         {
-            return _location;
+            return _content;
         }
 
-        public function set closeOnClickOutside(param1:Boolean) : void
-        {
-            _closeOnClickOutside = param1;
-            return;
-        }
-
-        public function set content(param1:DisplayObject) : void
+		/**
+		 * 设置tip内容
+		 */
+        public function set content(value:DisplayObject) : void
         {
             if (_content)
             {
@@ -391,7 +370,7 @@
             {
                 removeChild(_content);
             }
-            _content = param1;
+            _content = value;
             if (!contains(_content))
             {
                 addChildAt(_content, 0);
@@ -400,11 +379,36 @@
             return;
         }
 
-        public function getStyle(param1:String):*
+		/**
+		 * 通过样式名称获取样式
+		 * @param	styleName 样式名称
+		 * @return
+		 */
+        public function getStyle(styleName:String):*
         {
-            return _style[param1];
+            return _style[styleName];
         }
 
+		/**
+		 * 设置样式
+		 * @param	param1
+		 * @param	param2
+		 */
+        public function setStyle(styleName:String, value:*) : void
+        {
+            if (_style.hasOwnProperty(styleName))
+            {
+                if (_style[styleName] != value)
+                {
+                    _style[styleName] = value;
+                    adjustLayout();
+                }
+            }
+        }
+
+		/**
+		 * 关闭tip
+		 */
         public function close() : void
         {
             _root.removeEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler, false);
@@ -422,34 +426,34 @@
                 _root.removeChild(this);
             }
             dispatchEvent(new Event(Event.CLOSE));
-            return;
         }
 
-        public static function getTipByContent(param1:DisplayObject) : SmartTip
+		/**
+		 * 根据tip内容关闭tip
+		 * @param	content   tip内容,必须为DisplayObject
+		 * @return  tip
+		 */
+        public static function getTipByContent(content:DisplayObject) : SmartTip
         {
-            var _loc_2:int;
-            var _loc_3:uint;
-            var _loc_4:Object;
+            var displayObject:DisplayObject;
             if (_root)
             {
-                _loc_2 = -1;
-                _loc_3 = _root.numChildren;
-                while (_loc_2++ < _loc_3 - 1)
+                var num:int = _root.numChildren;
+                while (num --)
                 {
-                    
-                    _loc_4 = _root.getChildAt(_loc_2);
-                    if (_loc_4 as SmartTip && (_loc_4 as SmartTip).content == param1)
+                    displayObject = _root.getChildAt(num);
+                    if (displayObject as SmartTip && (displayObject as SmartTip).content == content)
                     {
-                        return _loc_4 as SmartTip;
+                        return displayObject as SmartTip;
                     }
                 }
             }
             return null;
         }
 
-        public static function set root(param1:DisplayObjectContainer) : void
+        public static function set root(value:DisplayObjectContainer) : void
         {
-            if (_root == param1)
+            if (_root == value)
             {
                 return;
             }
@@ -457,31 +461,31 @@
             {
                 throw new Error("You had set the root!");
             }
-            _root = param1;
-            return;
+            _root = value;
         }
 
-        public static function getTipsByTarget(param1:DisplayObject) : Array
+		/**
+		 * 目标对象的所有tip
+		 * @param	target	目标对象
+		 * @return
+		 */
+        public static function getTipsByTarget(target:DisplayObject) : Array
         {
-            var _loc_3:uint;
-            var _loc_4:uint;
-            var _loc_5:Object;
-            var _loc_2:Array;
+            var displayObject:DisplayObject;
+            var tips:Array = [];
             if (_root)
             {
-                _loc_3 = 0;
-                _loc_4 = _root.numChildren;
-                while (_loc_3++ < _loc_4)
+                var num:int = _root.numChildren;
+                while (num --)
                 {
-                    
-                    _loc_5 = _root.getChildAt(_loc_3);
-                    if ((_loc_5 as SmartTip).target == param1)
+                    displayObject = _root.getChildAt(num);
+                    if ((displayObject as SmartTip).target == target)
                     {
-                        _loc_2.push(_loc_5);
+                        tips.push(displayObject);
                     }
                 }
             }
-            return _loc_2;
+            return tips;
         }
 
 		/**
@@ -553,33 +557,76 @@
             return _tipDefaultStyle;
         }
 
-        public static function closeTipByContent(param1:DisplayObject) : void
+        public static function set tipDefaultStyle(style:Object) : void
         {
-            var _loc_2:* = getTipByContent(param1);
-            if (_loc_2)
+            _tipDefaultStyle = style;
+        }
+
+		/**
+		 * 根据tip内容关闭tip。如果内容为String时，不可通过该方法删除对应的tip
+		 * @param	content
+		 */
+        public static function closeTipByContent(content:DisplayObject) : void
+        {
+            var smartTip:SmartTip = getTipByContent(content);
+            if (smartTip)
             {
-                _loc_2.close();
+                smartTip.close();
             }
-            return;
         }
 
-        public static function closeTipsByTarget(param1:DisplayObject) : void
+		/**
+		 * 关闭某个显示对象上的所有tip
+		 * @param	target
+		 */
+        public static function closeTipsByTarget(target:DisplayObject) : void
         {
-            var _loc_2:* = getTipsByTarget(param1);
-            var _loc_3:uint;
-            var _loc_4:* = _loc_2.length;
-            while (_loc_3++ < _loc_4)
+            var tips:Array = getTipsByTarget(target);
+            var numTips:int = tips.length;
+            while (numTips --)
             {
-                
-                (_loc_2[_loc_3] as SmartTip).close();
+                (tips[numTips] as SmartTip).close();
             }
-            return;
         }
-
-        public static function set tipDefaultStyle(param1:Object) : void
+		
+		
+		/**
+		 * 自动关闭
+		 * @param	param1
+		 */
+        private function autoCloseHandler(param1:TimerEvent) : void
         {
-            _tipDefaultStyle = param1;
+            close();
         }
 
-    }
+		//鼠标在root上的事件
+        private function mouseEventsHandler(event:MouseEvent) : void
+        {
+            switch(event.type)
+            {
+                case MouseEvent.ROLL_OUT:
+                {
+                    if (autoCloseTimer)
+                    {
+                        autoCloseTimer.reset();
+                        autoCloseTimer.start();
+                    }
+                    break;
+                }
+                case MouseEvent.ROLL_OVER:
+                {
+                    if (autoCloseTimer)
+                    {
+                        autoCloseTimer.stop();
+                    }
+                    break;
+                }
+                default:
+                {
+                    break;
+                }
+            }
+        }
+
+    }//end class
 }

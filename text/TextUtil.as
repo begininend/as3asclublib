@@ -3,8 +3,16 @@
 	import flash.display.DisplayObjectContainer;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
+	import flash.utils.Dictionary;
+	
+	
+	
 	public class TextUtil
 	{
+		
+		private static var _textFieldMaps:Dictionary = new Dictionary();
+		
+		
 		public function TextUtil()
 		{
 			
@@ -200,6 +208,20 @@
 			t.defaultTextFormat = format;
 			t.text = v;
 			return t.htmlText;
+		}
+		
+		/**
+		 * 文本框最多可输入中文数
+		 * @param	textField    文本框
+		 * @param	value        限制数
+		 */
+		public static function maxChineseChars(textField:TextField,value:int):void
+		{
+			if (! _textFieldMaps[textField])
+			{
+				
+			}
+			
 		}
 		
 		

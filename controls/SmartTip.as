@@ -33,7 +33,7 @@
         public static const RIGHT:String = "right";
 		
         private static var _tipDefaultStyle:Object;
-        private static var _defaultStyle:Object = {arrowHeight:10, arrowWidth:10, arrowIndentPercent:0, backgroundGap:4, backgroundCornerRadius:4, backgroundIndentPercent:0, backgroundColor:0xffffff, backgroundAlpha:1, backgroundLineColor:0xffffff};
+        private static var _defaultStyle:Object = {arrowHeight:10, arrowWidth:10, arrowIndentPercent:0, backgroundGap:4, backgroundCornerRadius:4, backgroundIndentPercent:0, backgroundColor:0xffffff, backgroundAlpha:1, backgroundLineColor:0xffffff,locationSpaceX:0};
 
         public function SmartTip(param1:Object)
         {
@@ -90,12 +90,6 @@
             return closeMC.visible;
         }
 
-		//关闭按钮被点击
-        private function closeMCClickHandler(param1:MouseEvent) : void
-        {
-            close();
-        }
-
         private function adjustLayout() : void
         {
             var bgGap:Number;
@@ -107,7 +101,7 @@
             var arrowHeight:Number;
             var arrowWidth:Number;
             var arrowIndentPercent:int;
-			
+			var locationSpaceX:int;
 			
             var drawTip:Function = function (param1:String) : void
             {
@@ -128,7 +122,7 @@
                     _loc_3 = (_loc_2 * (arrowIndentPercent > 0 ? (1) : (-1)) + _content.height / 2 + bgGap - bgCornerRadius / 2 - arrowWidth / 2) * arrowIndentPercent / 100;
                 }
                 var _loc_4:Array = [];
-                var _loc_5:* = _content.getRect(_content);
+                var _loc_5:Rectangle = _content.getRect(_content);
                 switch(param1)
                 {
                     case TOP:
@@ -225,6 +219,7 @@
             arrowWidth = getStyle("arrowWidth");
             arrowIndentPercent = getStyle("arrowIndentPercent");
             arrowIndentPercent = Math.max(-100, Math.min(100, arrowIndentPercent));
+            locationSpaceX = getStyle("locationSpaceX");
             drawTip(_location.toLocaleLowerCase());
             var targetRect:Rectangle = _target.getRect(_root);
             switch(_location)
@@ -588,7 +583,12 @@
                 (tips[numTips] as SmartTip).close();
             }
         }
-		
+
+		//关闭按钮被点击
+        private function closeMCClickHandler(param1:MouseEvent) : void
+        {
+            close();
+        }
 		
 		/**
 		 * 自动关闭

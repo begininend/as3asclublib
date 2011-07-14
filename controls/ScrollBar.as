@@ -207,8 +207,8 @@
 			scrollBar_mc.x = displayRectWidth + spacebetween;
 			scrollBar_mc.y = content.y;
 			bg_sprite.height = displayRectHeight;
-			down_btn.y = (displayRectHeight - down_btn.height);
-			scrollThumb_mc.height = (contentHeight > displayRectHeight ? displayRectHeight / contentHeight : 1) * (displayRectHeight - up_btn.height - down_btn.height);
+			down_btn.y = int(displayRectHeight - down_btn.height);
+			scrollThumb_mc.height = (contentHeight > displayRectHeight ? displayRectHeight / contentHeight : 1) * (displayRectHeight - up_btn.height - down_btn.height) >> 0;
 			if (scrollThumb_mc.height < scrollThumbHeightLowerLimit ) scrollThumb_mc.height = scrollThumbHeightLowerLimit;
 			scrollThumbScrollSpace.height = displayRectHeight - scrollThumb_mc.height - up_btn.height - down_btn.height;
 			updateContent();

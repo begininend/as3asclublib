@@ -6,8 +6,6 @@ package org.asclub.ui
 	import flash.events.MouseEvent;
 	import flash.ui.Mouse;
 	
-	import org.asclub.display.DisplayObjectUtil;
-	
 	public class MouseCursorControler
 	{
 		private static var _cursor:DisplayObject;
@@ -58,7 +56,8 @@ package org.asclub.ui
 			{
 				Mouse.hide();
 				_cursor = value as DisplayObject;
-				if (! DisplayObjectUtil.linkToStage(_cursor))
+				//如果为添加到显示列表中
+				if (! _cursor.stage)
 				{
 					_base.addChild(_cursor);
 				}

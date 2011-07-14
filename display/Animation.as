@@ -68,7 +68,7 @@
 			//显示第一帧内容
 			if (frameSequence != null)
 			{
-				this.bitmapData = frameSequence.getFrameAt(1);
+				this.bitmapData = frameSequence.getFrameAt(0);
 			}
 		}
 
@@ -163,8 +163,8 @@
 			{
 				_isPlaying = true;
 				this.timer.addEventListener(TimerEvent.TIMER, onTimer);
-				//onTimer(null);
-				//this.timer.start();
+				onTimer(null);
+				this.timer.start();
 			}
 		}
 
@@ -173,6 +173,7 @@
 			if (_isPlaying)
 			{
 				_isPlaying = false;
+				this.timer.reset();
 				this.timer.removeEventListener(TimerEvent.TIMER, onTimer);
 			}
 		}

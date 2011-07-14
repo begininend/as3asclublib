@@ -373,7 +373,6 @@
 		{
 			//先移除以前的标签按钮
 			var numButtons:int = _buttons.length;
-			trace("numButtons:" + numButtons);
 			for (var i:int = numButtons - 1; i > -1; i--)
 			{
 				_buttons[i].removeEventListener(MouseEvent.CLICK, tabItemClickedHandler);
@@ -381,7 +380,6 @@
 				_buttons[i] = null;
 			}
 			_buttons.length = 0;
-			trace("移除之后：" + this.numChildren);
 			//
 			var numItem:int = _dataProvider.length;
 			for (var j:int = 0; j < numItem; j++)
@@ -405,7 +403,6 @@
 				_buttons.push(tabItem);
 				addChild(tabItem);
 			}
-			trace("添加之后：" + this.numChildren);
 			realign();
 			selectedIndex = this._defaultIndex;
 		}

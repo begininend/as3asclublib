@@ -44,7 +44,7 @@
         /**
          * Create post data to send in a UrlRequest
          */
-        public static function getPostData(fileName:String, byteArray:ByteArray, parameters:Object = null, uploadDataFieldName:String = "Filedata"):ByteArray {
+        public static function getPostData(fileName:String, byteArray:ByteArray, parameters:Object = null, uploadDataFieldName:String = "Filedata", mime:String = "application/octet-stream"):ByteArray {
 
             var i: int;
             var bytes:String;
@@ -82,7 +82,7 @@
             postData.writeUTFBytes(fileName);
             postData = QUOTATIONMARK(postData);
             postData = LINEBREAK(postData);
-            bytes = 'Content-Type: application/octet-stream';
+            bytes = 'Content-Type: ' + mime;
             for ( i = 0; i < bytes.length; i++ ) {
                 postData.writeByte( bytes.charCodeAt(i) );
             }

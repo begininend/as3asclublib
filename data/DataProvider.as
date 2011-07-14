@@ -132,17 +132,9 @@
 		{
 			
 			var l:int = data.length;
-			trace("data1:" + data.length);
-			trace("l1:" + l);
 			dispatchPreChangeEvent(DataChangeEvent.ADD, [item], l--, l--);
-			trace("data2:" + data.length);
-			trace("l2:" + l);
             data.push(item);
-			trace("data3:" + data.length);
-			trace("l3:" + l);
             dispatchChangeEvent(DataChangeEvent.ADD, [item], l--, l--);
-			trace("data4:" + data.length);
-			trace("l4:" + l);
 		}
 		
 		/**

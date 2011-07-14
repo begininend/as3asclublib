@@ -1,8 +1,9 @@
-package util
+package org.asclub.utils
 {
-    import flash.geom.*;
+    import flash.geom.Rectangle;
+    import flash.geom.Point;
 
-    public class RectUtil extends Object
+    public class RectUtil
     {
         public static const LEFT:Number = 2;
         public static const BELOW:Number = 1;
@@ -14,7 +15,7 @@ package util
             return;
         }// end function
 
-        public static function ApplyPadding(param1:Rectangle, param2:Object, param3:Boolean = true) : Rectangle
+        public static function applyPadding(param1:Rectangle, param2:Object, param3:Boolean = true) : Rectangle
         {
             var _loc_4:* = param1.clone();
             if (param2 != null)
@@ -41,7 +42,7 @@ package util
             return _loc_4;
         }// end function
 
-        static function ApplyRules(param1:Rectangle, param2:Array, param3:Point, param4:Number) : Object
+        static function applyRules(param1:Rectangle, param2:Array, param3:Point, param4:Number) : Object
         {
             var obRet:Object;
             var obConst:Object;
@@ -67,7 +68,7 @@ package util
                 }
                 if (aobConstraints.length > i + 1)
                 {
-                    obRet = ApplyRules(rc, aobConstraints, ptSize, i + 1);
+                    obRet = applyRules(rc, aobConstraints, ptSize, i + 1);
                 }
                 if (!obRet)
                 {
@@ -88,7 +89,7 @@ package util
                 obRet = null;
                 if (aobConstraints.length > i + 1)
                 {
-                    obRet = ApplyRules(rc2, aobConstraints, ptSize, i + 1);
+                    obRet = applyRules(rc2, aobConstraints, ptSize, i + 1);
                 }
                 if (obRet == null)
                 {
@@ -131,28 +132,28 @@ package util
                     nDir = ABOVE;
                     rc2 = rcIn.clone();
                     rc2.bottom = Math.min(rc2.bottom, rcOutside.top);
-                    this.fnCommon();
+                    fnCommon();
                 }
                 if (rcIn.bottom - rcOutside.bottom >= ptSize.y - 0.5)
                 {
                     nDir = BELOW;
                     rc2 = rcIn.clone();
                     rc2.top = Math.max(rc2.top, rcOutside.bottom);
-                    this.fnCommon();
+                    fnCommon();
                 }
                 if (rcOutside.left - rcIn.left >= ptSize.x - 0.5)
                 {
                     nDir = LEFT;
                     rc2 = rcIn.clone();
                     rc2.right = Math.min(rc2.right, rcOutside.left);
-                    this.fnCommon();
+                    fnCommon();
                 }
                 if (rcIn.right - rcOutside.right >= ptSize.x - 0.5)
                 {
                     nDir = RIGHT;
                     rc2 = rcIn.clone();
                     rc2.left = Math.max(rc2.left, rcOutside.right);
-                    this.fnCommon();
+                    fnCommon();
                 }
             }
             aobRet.sortOn("depth", Array.NUMERIC | Array.DESCENDING);
@@ -165,7 +166,7 @@ package util
             return null;
         }// end function
 
-        public static function PlaceRect(param1:Array, param2:Point) : Point
+        public static function placeRect(param1:Array, param2:Point) : Point
         {
             var _loc_3:Rectangle;
             if (param1 == null || param1.length == 0)
@@ -183,18 +184,40 @@ package util
             }
             param2.x = Math.min(param2.x, _loc_3.width);
             param2.y = Math.min(param2.y, _loc_3.height);
-            var _loc_5:* = ApplyRules(_loc_3, param1, param2, _loc_4++);
-            if (ApplyRules(_loc_3, param1, param2, _loc_4++) == null)
+            var _loc_5:* = applyRules(_loc_3, param1, param2, _loc_4++);
+            if (applyRules(_loc_3, param1, param2, _loc_4++) == null)
             {
                 return new Point(0, 0);
             }
             return _loc_5.pt;
         }// end function
 
-        public static function Integerize(param1:Rectangle) : Rectangle
+		/**
+		 * 区域数值取整
+		 * @param	param1
+		 * @return
+		 */
+        public static function integerize(param1:Rectangle) : Rectangle
         {
             return new Rectangle(int(param1.x), int(param1.y), Math.ceil(param1.right) - int(param1.left), Math.ceil(param1.bottom) - int(param1.top));
         }// end function
 
-    }
+		/**
+		 * 通过填充n个矩形之间的水平和垂直空间，将这n个矩形组合在一起以创建一个新的 Rectangle 对象。
+		 * @param	rects
+		 * @return
+		 */
+		public static function unions(rects:Array):Rectangle
+		{
+			var num:int = rects.length;
+			var newRect:Rectangle = new Rectangle();
+			for (var i:int = 0; i < num; i++)
+			{
+				newRect = newRect.union(rects[i] as Rectangle);
+			}
+			return newRect;
+		}
+		
+		
+    }//end class
 }

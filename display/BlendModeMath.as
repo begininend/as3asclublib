@@ -1,6 +1,5 @@
-package util
+package org.asclub.display
 {
-
     public class BlendModeMath extends Object
     {
         public static const kaobFuncs:Array = [{label:"Normal", fn:Normal}, {label:"Lighten", fn:Lighten}, {label:"Darken", fn:Darken}, {label:"Multiply", fn:Multiply}, {label:"Average", fn:Average}, {label:"Add", fn:Add}, {label:"Subtract", fn:Subtract}, {label:"Difference", fn:Difference}, {label:"Negation", fn:Negation}, {label:"Screen", fn:Screen}, {label:"Exclusion", fn:Exclusion}, {label:"Overlay", fn:Overlay}, {label:"SoftLight", fn:SoftLight}, {label:"HardLight", fn:HardLight}, {label:"ColorDodge", fn:ColorDodge}, {label:"ColorBurn", fn:ColorBurn}, {label:"LinearDodge", fn:LinearDodge}, {label:"LinearBurn", fn:LinearBurn}, {label:"LinearLight", fn:LinearLight}, {label:"VividLight", fn:VividLight}, {label:"PinLight", fn:PinLight}, {label:"HardMix", fn:HardMix}, {label:"Reflect", fn:Reflect}, {label:"Glow", fn:Glow}, {label:"Phoenix", fn:Phoenix}];

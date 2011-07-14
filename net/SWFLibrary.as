@@ -75,6 +75,7 @@ package org.asclub.net
 	import flash.net.URLRequest;
 	import flash.system.LoaderContext;
 	import flash.system.ApplicationDomain;
+	import flash.system.SecurityDomain;
 	import flash.text.Font;
 
 	public class SWFLibrary extends EventDispatcher
@@ -125,6 +126,13 @@ package org.asclub.net
 					_loaderContext = new LoaderContext(false,new ApplicationDomain(null));  
 					break;
 				}
+				case 3:
+				{
+					//系统 ApplicationDomain 的子级
+					//_loaderContext = new LoaderContext(false,loaderInfo.applicationDomain,SecurityDomain.currentDomain);  
+					_loaderContext = new LoaderContext(false, new ApplicationDomain(null),SecurityDomain.currentDomain);  
+					break;
+				}
 				default:
 				{
 					//其它 ApplicationDomain 的子级。
@@ -154,6 +162,7 @@ package org.asclub.net
 		public function unload():void
 		{
 			_loader.unload();
+			//_loader.unloadAndStop();
 			// (_loader.content as IDispose).dispose();
 		}
 		

@@ -15,7 +15,6 @@
 	public class FlashCookie
 	{
 		private static var _so:SharedObject;
-		public static var Name:String;
 		
 		public function FlashCookie()
 		{
@@ -27,8 +26,7 @@
 		 */
 		public static function init(cookieName:String):void
 		{
-			Name = cookieName;
-			_so = SharedObject.getLocal(Name, "/");
+			_so = SharedObject.getLocal(cookieName, "/");
 		}
 		
 		/**
@@ -83,9 +81,9 @@
 		  * @param	 key    属性名
 		  * @return  *      属性值
 		  */
-		public static function GetValue(key:String):*
+		public static function getValue(key:String):*
 		{		
-			return contains(key) ? _so.data.cookie["key_"+key] : null;
+			return contains(key) ? _so.data.cookie["key_"+key]["values"] : null;
 		}
 		
 		//删除Cookie值;

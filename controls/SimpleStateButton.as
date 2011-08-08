@@ -248,7 +248,8 @@
 		
 		private function onStateRollOver(evt:MouseEvent):void {
 			hovering = true;
-			if(!is_selected) {
+			if (!is_selected && enabled) 
+			{
 				updateState(state_hover);
 			}
 		}
@@ -260,7 +261,8 @@
 		
 		private function onStateRollOut(evt:MouseEvent):void {
 			hovering = false;
-			if(!is_selected) {
+			if (!is_selected && enabled) 
+			{
 				updateState(state_normal);
 			}
 		}
@@ -270,8 +272,12 @@
 		 * On Mouse Down
 		 */
 		
-		private function onStateMouseDown(evt:MouseEvent):void {
-			updateState(state_down);
+		private function onStateMouseDown(evt:MouseEvent):void 
+		{
+			if (enabled)
+			{
+				updateState(state_down);
+			}
 		}
 		
 		/**
@@ -280,7 +286,7 @@
 		 */
 		
 		private function onStateMouseUp(evt:MouseEvent):void {
-			if(!selected) {
+			if(!selected && enabled) {
 				if(hovering) {
 					updateState(state_hover);
 				} else {

@@ -2,6 +2,7 @@
 {
 	import flash.display.Bitmap;
 	import flash.display.Loader;
+	import flash.errors.IllegalOperationError;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.net.FileFilter;
@@ -9,6 +10,7 @@
 	import flash.net.FileReferenceList;
 	import flash.utils.ByteArray;
 	
+	//import com.meitu.events.FileBrowerEvent;
 	import org.asclub.events.FileBrowerEvent;
 	
 	public class FileBrower extends EventDispatcher
@@ -91,23 +93,32 @@
 			_imageCompleteFun = imageCompleteFun;
 			if (_allowMultipleSelection)
 			{
-				_fileReferenceList.browse(typeFilter);
-				_status = "load";
+				try
+				{
+					_fileReferenceList.browse(typeFilter);
+					_status = "load";
+				}
+				catch (error:IllegalOperationError)
+				{
+					this.dispatchEvent(new FileBrowerEvent(FileBrowerEvent.ILLEGAL_OPERATION));
+				}
 			}
 			else
 			{
-				if (_fileReference)
-				{
-					_fileReference.browse(typeFilter);
-					_status = "load";
-				}
-				else
+				if (! _fileReference)
 				{
 					_fileReference = new FileReference();
 					_fileReference.addEventListener(Event.SELECT, fileReferenceSelectHandler);
 					_fileReference.addEventListener(Event.COMPLETE, fileReferenceCompleteHandler);
+				}
+				try
+				{
 					_fileReference.browse(typeFilter);
 					_status = "load";
+				}
+				catch (error:IllegalOperationError)
+				{
+					this.dispatchEvent(new FileBrowerEvent(FileBrowerEvent.ILLEGAL_OPERATION));
 				}
 			}
 		}
@@ -125,8 +136,15 @@
 				_fileReference.addEventListener(Event.SELECT, fileReferenceSelectHandler);
 				_fileReference.addEventListener(Event.COMPLETE, fileReferenceCompleteHandler);
 			}
-			_fileReference.save(datas, defaultFileName);
-			_status = "save";
+			try
+			{
+				_fileReference.save(datas, defaultFileName);
+				_status = "save";
+			}
+			catch (error:IllegalOperationError)
+			{
+				this.dispatchEvent(new FileBrowerEvent(FileBrowerEvent.ILLEGAL_OPERATION));
+			}
 		}
 		
 		
@@ -187,12 +205,16 @@
 				fileNames.push(fileReference.name);
 				_numLoadedFile ++;
 				
-				
 				//当所有文件加载完成后调度事件
 				if (_numLoadedFile == _numTotalFile)
 				{
 					loadImage();
 					this.dispatchEvent(event);
+					//载入的文件没有图片格式
+					if (_numTotalBitmapFile == 0)
+					{
+						//this.dispatchEvent(new FileBrowerEvent(FileBrowerEvent.IMAGE_FORMAT_ERROR));
+					}
 				}
 			}
 			else if(_status == "save")

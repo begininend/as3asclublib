@@ -38,6 +38,7 @@
 		private var _textLabel:TextField;
 		private var _label:String;
 		private var _textFormat = new TextFormat("宋体", 12, 0x000000);
+		private var _disabledTextFormat:TextFormat;
 		
 		/**
 		 * Boolean "selected" allows to toggle the button. 
@@ -46,15 +47,22 @@
 		public function set selected(value:Boolean):void 
 		{
 			is_selected = value;
-			if(is_selected) {
+			var textFormat:TextFormat = _textLabel.defaultTextFormat;
+			if (is_selected) 
+			{
 				updateState(state_down);
-			} else {
+				textFormat.bold = true;
+			} 
+			else 
+			{
 				if(hovering) {
 					updateState(state_hover);
 				} else {
 					updateState(state_normal);
 				}
+				textFormat.bold = false;
 			}
+			_textLabel.setTextFormat(textFormat);
 		}
 		
 		/**
@@ -72,6 +80,7 @@
 			_enabled = value;
 			this.mouseEnabled = _enabled;
 			this.tabEnabled = _enabled;
+			var textFormat:TextFormat;
 			if (_enabled)
 			{
 				if (is_selected)
@@ -82,12 +91,14 @@
 				{
 					updateState(state_normal);
 				}
+				textFormat = _textLabel.defaultTextFormat;
 			}
 			else
 			{
 				updateState(state_disabled);
+				textFormat = _disabledTextFormat ? _disabledTextFormat : _textLabel.defaultTextFormat;
 			}
-			
+			_textLabel.setTextFormat(textFormat);
 		}
 		
 		/**
@@ -172,6 +183,11 @@
 					_textLabel.setTextFormat(_textFormat);
 					_textLabel.defaultTextFormat = _textFormat;
 					resize();
+					break;
+				}
+				case "disabledTextFormat":
+				{
+					_disabledTextFormat = value as TextFormat;
 					break;
 				}
 				case "upSkin":

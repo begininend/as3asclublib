@@ -15,6 +15,9 @@ package org.asclub.events
 		//图像加载完成
 		public static const IMAGE_COMPLETE:String = "imageComplete";
 		
+		//异常操作
+		public static const ILLEGAL_OPERATION:String = "illegalOperation";
+		
 		public var fileName:String;
 		
 		

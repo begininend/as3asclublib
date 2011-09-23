@@ -10,6 +10,9 @@ package org.asclub.controls
 	
 	public final class PopUpManager
 	{
+		public static var bgAlpha:Number = 0.2;
+		
+		
 		private static var _mask:Shape;
 		
 		public static function addPopUp(window:DisplayObject, parent:DisplayObjectContainer, modal:Boolean = false, childList:String = null):void
@@ -17,7 +20,7 @@ package org.asclub.controls
 			if (! _mask)
 			{
 				_mask = new Shape();
-				DrawUtil.drawRoundRect(_mask.graphics, 1, 1, 0x000000, -1, 0, 0, 0.2, 0);
+				DrawUtil.drawRoundRect(_mask.graphics, 1, 1, 0x000000, -1, 0, 0, bgAlpha, 0);
 			}
 			var stage:Stage = window.stage || parent.stage;
 			if (stage)

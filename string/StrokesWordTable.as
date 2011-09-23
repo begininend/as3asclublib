@@ -3,7 +3,7 @@ package org.asclub.string
 	/**
 	 * 通用字表(按笔画排序)
 	 */
-	public final class UniversalWordTable
+	public final class StrokesWordTable
 	{
 		//1画
 		private static const STROKES_1:String = "一乙";
@@ -99,7 +99,7 @@ package org.asclub.string
 												{str:STROKES_25, num:25 }, { str:STROKES_26, num:26 }, { str:STROKES_30, num:30 }, { str:STROKES_36, num:36 }
 												];
 		
-		public function UniversalWordTable()
+		public function StrokesWordTable()
 		{
 			
 		}

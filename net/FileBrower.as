@@ -35,7 +35,7 @@
 		//打开的所有文件的文件名
 		public var fileNames:Array = [];
 		
-		private var _bitmapFileFilter:FileFilter = new FileFilter("图像格式(*.jpg,*.jpeg,*.gif,*.png)", "*.jpg;*.jpeg;*.gif;*.png;");
+		private var _bitmapFileFilter:FileFilter = new FileFilter("图像格式(*.jpg,*.jpe,*.jpeg,*.gif,*.png)", "*.jpg;*.jpe;*.jpeg;*.gif;*.png;");
 		
 		private var _bitmapFileIndex:Array = [];
 		

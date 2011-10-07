@@ -39,7 +39,11 @@ package org.asclub.utils
 		//默认字体样式
 		private var _defaultTextFormat:TextFormat;
 		
+		//最小高度
+		private var _minHeight:int;
 		
+		//最小宽度
+		private var _minWidth:int = 100;
 		
 		//是否显示
 		private var _show:Boolean;
@@ -87,6 +91,8 @@ package org.asclub.utils
 			_resizeBtn = new SimpleButton(resizeBtnUpstate, resizeBtnUpstate, resizeBtnUpstate, resizeBtnUpstate);
 			_resizeBtn.addEventListener(MouseEvent.MOUSE_DOWN, resizeBtnClickedHandler);
 			addChild(_resizeBtn);
+			
+			_minHeight = _titleBar.height + _resizeBtn.height;
 			
 			width = 200;
 		}
@@ -152,17 +158,60 @@ package org.asclub.utils
 		 */
 		public function trace(...rest):void
 		{
-			var msg:String = "";
-			for (var i:int = 0; i < rest.length; i++)
+			if (! _show)
 			{
-				msg += ((rest[i]) ? (rest[i]).toString() : String(rest[i])) + " ";
+				return;
 			}
-			_logTxt.appendText(msg + "\n");
+			_logTxt.appendText(parse(rest) + "\n");
 		}
 		
 		public static function trace(...rest):void
 		{
 			CLogger.getInstance().trace(rest);
+		}
+		
+		private static function parse(data:Array):String
+		{
+			var args:Array;
+			//args = data;
+			if (data.length == 1 && data[0] is Array)
+			{
+				args = data[0] as Array;
+			}
+			else
+			{
+				args = data;
+			}
+			
+			
+			var items:Array = [];
+			var item:*;
+			var info:String = "";
+			for (var i:int = 0; i < args.length; i++)
+			{
+				item = args[i];
+				if (item)
+				{
+					info = item.toString();
+					if (item == "[object Object]")
+					{
+						info += "=>";
+						var objCount:int;
+						for (var key:String in item)
+						{
+							info += ((objCount > 0 ? "," : "") + key + ":" + item[key]);
+							objCount ++;
+						}
+					}
+					items.push(info);
+				}
+				else
+				{
+					info = String(item);
+					items.push(info);
+				}
+			}
+			return items.join(" ");
 		}
 		
 		//重绘
@@ -271,9 +320,8 @@ package org.asclub.utils
 		private function stageMouseMoveForResizeBtnHandler(event:MouseEvent):void
 		{
 			var clickPoint:Point = this.globalToLocal(new Point(event.stageX, event.stageY));
-			var w:int = clickPoint.x > 100 ? clickPoint.x : 100;
-			var h:int = clickPoint.y > 100 ? clickPoint.y : 100;
-			//trace("width:", clickPoint.x, "height:", clickPoint.y);
+			var w:int = clickPoint.x > _minWidth ? clickPoint.x : _minWidth;
+			var h:int = clickPoint.y > _minHeight ? clickPoint.y : _minHeight;
 			width = w;
 			height = h;
 		}

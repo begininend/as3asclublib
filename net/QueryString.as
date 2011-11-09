@@ -1,7 +1,7 @@
 ﻿package org.asclub.net
 {
 	import flash.external.ExternalInterface;
-	import flash.utils.Dictionary;
+	import flash.net.URLVariables;
 	
 	public class QueryString
 	{
@@ -10,7 +10,10 @@
 			
 		}
 		
-		//获取页面地址
+		/**
+		 * 获取页面地址
+		 * @return
+		 */
 		public static function getPageURL():String
 		{
 			if(ExternalInterface.available)
@@ -34,49 +37,38 @@
 		}
 		
 		//获取值对集合
-		private static function parseValues(pageURL:String):Dictionary
+		private static function parseValues(pageURL:String):Object
 		{
-			if(pageURL == "" || pageURL == null)
+			if(pageURL == "" || pageURL == null || pageURL.indexOf("?") == -1)
 			{
 				return null;
 			}
-			var pairDict:Dictionary = new Dictionary(true);
-            var pairs:Array = (pageURL.split("?")[1] == undefined ? [] : pageURL.split("?")[1].split("&"));
-            
-            var pairName:String;
-            var pairValue:String;
-            if(pairs.length == 0)
+			var param:Object = { };
+			try
+			{
+				var urlVariables:URLVariables = new URLVariables(pageURL.split("?")[1]);
+			}
+			catch (error:Error)
 			{
 				return null;
-			}
-            for (var i:int = 0; i < pairs.length; i++)
-            {
-                pairName = pairs[i].split("=")[0];
-                pairValue = pairs[i].split("=")[1];
-                
-                pairDict[pairName] = pairValue;
-            }
-			return pairDict;
-		}
-		
-		//获取对应键值
-		public static function getValue(key:String):String
-		{
-			if(parseValues(getPageURL()) == null)
-			{
-				return "";
 			}
 			
-			var pairDict:Dictionary = new Dictionary(true);
-			pairDict = parseValues(getPageURL());
-			if (pairDict[key] == null || pairDict[key] == undefined)
-        	{
-                return "";
-       		}
-        	else
-        	{
-          		 return pairDict[key];
-       		}
+			for (var key:String in urlVariables)
+			{
+				param[key] = urlVariables[key];
+			}
+			return param;
+		}
+		
+		/**
+		 * 获取对应键值
+		 * @param	key
+		 * @return
+		 */
+		public static function getValue(key:String):String
+		{
+			var param:Object = parseValues(getPageURL());
+			return param ? (param[key] || "") : "";
 		}
 	}//end of class
 }

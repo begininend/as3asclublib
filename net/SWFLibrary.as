@@ -110,19 +110,19 @@ package org.asclub.net
 			{
 				case 0:
 				{
-					//加载器自己的 ApplicationDomain
+					//加载器自己的 ApplicationDomain(同域)
 					_loaderContext = new LoaderContext(false, ApplicationDomain.currentDomain);
 					break;
 				}
 				case 1:
 				{
-					//加载器的 ApplicationDomain 的子级
+					//加载器的 ApplicationDomain 的子级(子域)
 					_loaderContext = new LoaderContext(false,new ApplicationDomain(ApplicationDomain.currentDomain));
 					break;
 				}
 				case 2:
 				{
-					//系统 ApplicationDomain 的子级
+					//系统 ApplicationDomain 的子级(新域)
 					_loaderContext = new LoaderContext(false,new ApplicationDomain(null));  
 					break;
 				}

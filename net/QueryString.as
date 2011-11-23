@@ -44,18 +44,28 @@
 				return null;
 			}
 			var param:Object = { };
+			var source:String = pageURL.split("?")[1];
 			try
 			{
-				var urlVariables:URLVariables = new URLVariables(pageURL.split("?")[1]);
+				var urlVariables:URLVariables = new URLVariables(source);
+				for (var key:String in urlVariables)
+				{
+					param[key] = urlVariables[key];
+				}
 			}
 			catch (error:Error)
 			{
-				return null;
-			}
-			
-			for (var key:String in urlVariables)
-			{
-				param[key] = urlVariables[key];
+				var params:Array = source.split("&");
+				var num:int = params.length;
+				var item:Array;
+				var value:String;
+				for (var i:int = 0; i < num; i++)
+				{
+					item = params[i].split("=");
+					key = item[0];
+					value = item.length > 1 ? item[1] : "";
+					param[key] = value;
+				}
 			}
 			return param;
 		}

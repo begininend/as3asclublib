@@ -8,6 +8,7 @@ package org.asclub.ui
 	import flash.utils.setTimeout;
 	import flash.utils.clearTimeout;
 	import flash.utils.getTimer;
+	import flash.utils.Dictionary;
 	
 	
 	
@@ -21,7 +22,7 @@ package org.asclub.ui
 	 */
 	public class ClickControl
 	{
-		static public var list:Array;
+		static public var list:Dictionary;
 		public function ClickControl()
 		{
 			
@@ -48,7 +49,7 @@ package org.asclub.ui
 		 */
 		static public function enable(target:DisplayObject,delay:uint = 200):void
 		{
-			if (!list) list = [];
+			if (!list) list = new Dictionary();
 			target.addEventListener(MouseEvent.CLICK, l4cd_click, false, 10, true);
 			var obj:Object = {}
 			obj.l4cd_last_click = 0;

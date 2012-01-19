@@ -30,8 +30,8 @@
 		{
 			graphics.lineStyle(NaN);
 			if(lineColor >= 0) graphics.lineStyle(thickness,lineColor,alpha);
-			graphics.beginFill(bgColor,alpha);
-			if(bgColor >= 0) graphics.drawCircle(x, y, radius);
+			if (bgColor >= 0) graphics.beginFill(bgColor, alpha);
+			graphics.drawCircle(x, y, radius);
 			graphics.endFill();
 		}
 		
@@ -52,7 +52,8 @@
 			graphics.beginFill(bgColor, alpha);
 			graphics.lineStyle(NaN);
 			if(lineColor >= 0) graphics.lineStyle(thickness,lineColor,alpha,true);
-			if(bgColor >= 0) graphics.drawEllipse(x,y,w,h);
+			if (bgColor >= 0) graphics.beginFill(bgColor, alpha);
+			graphics.drawEllipse(x,y,w,h);
 			graphics.endFill();
 		}
 		
@@ -75,7 +76,8 @@
 			graphics.beginFill(bgColor, alpha);
 			graphics.lineStyle(NaN);
 			if(lineColor >= 0) graphics.lineStyle(thickness,lineColor,alpha,true);
-			if(bgColor >= 0) graphics.drawRoundRect(x,y,w,h,ellipse);
+			if (bgColor >= 0) graphics.beginFill(bgColor, alpha);
+			graphics.drawRoundRect(x,y,w,h,ellipse);
 			graphics.endFill();
 		}
 		
@@ -100,7 +102,8 @@
 			graphics.beginFill(bgColor, alpha);
 			graphics.lineStyle(NaN);
 			if (lineColor >= 0) graphics.lineStyle(thickness, lineColor, alpha, true);
-			if (bgColor >= 0) graphics.drawRoundRectComplex(x, y, w, h, ellipseTL, ellipseTR, ellipseBR, ellipseBL);
+			if (bgColor >= 0) graphics.beginFill(bgColor, alpha);
+			graphics.drawRoundRectComplex(x, y, w, h, ellipseTL, ellipseTR, ellipseBR, ellipseBL);
 			graphics.endFill();
 		}
 		

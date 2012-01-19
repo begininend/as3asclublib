@@ -5,7 +5,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-package com.riaoo.adjustDisplayObject.transformer
+package org.asclub.display
 {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;

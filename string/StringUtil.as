@@ -37,6 +37,20 @@ package org.asclub.string{
 		}
 		
 		/**
+		 * 转换字符编码;
+		 * @param	char        要转换的字符
+		 * @param	charset     编码类型
+		 * @return
+		 */
+		public static function getCharLengthByCharset(char:String, charset:String):int
+		{
+			var bytes:ByteArray = new ByteArray();
+			bytes.writeMultiByte(char, charset);
+			bytes.position = 0;
+			return bytes.length;
+		}
+		
+		/**
 		 * 是否为URL地址
 		 * @param	char
 		 * @return  Boolean

@@ -139,7 +139,7 @@ package org.asclub.net
 		
 		private function loaderFailHandler(event:IOErrorEvent):void
 		{
-			
+			this.dispatchEvent(event);
 		}
 		
 		//hack式加载完成
@@ -151,7 +151,7 @@ package org.asclub.net
 		//hack式加载失败
 		private function hackLoaderFailHandler(event:IOErrorEvent):void
 		{
-			
+			this.dispatchEvent(event);
 		}
 		
 	}//end class

@@ -44,7 +44,7 @@
         /**
          * Create post data to send in a UrlRequest
          */
-        public static function getPostData(fileName:String, byteArray:ByteArray, parameters:Object = null, uploadDataFieldName:String = "Filedata", mime:String = "application/octet-stream"):ByteArray {
+        public static function getPostData(fileName:String, byteArray:ByteArray, parameters:Object = null, uploadDataFieldName:String = "Filedata", mime:String = "application/octet-stream", fileNameFieldName:String = "filename"):ByteArray {
 
             var i: int;
             var bytes:String;
@@ -56,7 +56,7 @@
             if(parameters == null) {
                 parameters = new Object();
             }
-            parameters.Filename = fileName;
+			parameters[fileNameFieldName] = fileName;
 
             //add parameters to postData
             for(var name:String in parameters) {
@@ -75,7 +75,7 @@
             //add Filedata to postData
             postData = BOUNDARY(postData);
             postData = LINEBREAK(postData);
-            bytes = "Content-Disposition: form-data; name=\"" + uploadDataFieldName + "\"; filename=\"";
+            bytes = "Content-Disposition: form-data; name=\"" + uploadDataFieldName + "\"; " + fileNameFieldName + "=\"";
             for ( i = 0; i < bytes.length; i++ ) {
                 postData.writeByte( bytes.charCodeAt(i) );
             }

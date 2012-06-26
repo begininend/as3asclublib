@@ -10,6 +10,8 @@
 	public class CustomUIComponent extends Sprite
     {
 		
+		protected var _styles:Object = {};
+		
 		//抽象类(抽象类不允许实例化，只允许继承)
 		public function CustomUIComponent()
 		{

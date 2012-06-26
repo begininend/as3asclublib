@@ -33,7 +33,7 @@
         public static const RIGHT:String = "right";
 		
         private static var _tipDefaultStyle:Object;
-        private static var _defaultStyle:Object = {arrowHeight:10, arrowWidth:10, arrowIndentPercent:0, backgroundGap:4, backgroundCornerRadius:4, backgroundIndentPercent:0, backgroundColor:0xffffff, backgroundAlpha:1, backgroundLineColor:0xffffff,locationSpaceX:0};
+        private static var _defaultStyle:Object = {arrowHeight:10, arrowWidth:10, arrowIndentPercent:0, backgroundGap:4, backgroundCornerRadius:4, backgroundIndentPercent:0, backgroundColor:0xffffff, backgroundAlpha:1, backgroundLineColor:0xffffff,locationSpaceX:0, textFormat:{}};
 
         public function SmartTip(param1:Object)
         {
@@ -145,7 +145,7 @@
                     }
                     case LEFT:
                     {
-                        _content.x = -_loc_5.x - _loc_5.width - arrowHeight - bgGap - closeMC.getRect(closeMC).width;
+                        _content.x = -_loc_5.x - _loc_5.width - arrowHeight - bgGap - (showCloseButton ? closeMC.getRect(closeMC).width : 0);
                         _content.y = -_loc_5.y - _loc_5.height / 2 - _loc_2;
                         _loc_4.push(new Point(-arrowHeight, (-arrowWidth) / 2 - _loc_3));
                         _loc_4.push(new Point(-arrowHeight, arrowWidth / 2 - _loc_3));
@@ -168,7 +168,7 @@
                 }
                 _loc_5 = _content.getRect(_content.parent);
 				_loc_5.left = _loc_5.left - bgGap;
-                _loc_5.right = _loc_5.right + bgGap + closeMC.getRect(closeMC).width;
+                _loc_5.right = _loc_5.right + bgGap + (showCloseButton ? closeMC.getRect(closeMC).width : 0);
                 _loc_5.top = _loc_5.top - bgGap;
                 _loc_5.bottom = _loc_5.bottom + bgGap;
 				
@@ -503,10 +503,8 @@
             }
             if (content is String)
             {
-				var textFormat:TextFormat = new TextFormat("宋体", 12);
-				textFormat.leading = 5;
+				
                 var textField:TextField = new TextField();
-				textField.defaultTextFormat = textFormat;
 				textField.selectable = false;
 				textField.mouseEnabled = false;
                 textField.autoSize = TextFieldAutoSize.LEFT;
@@ -531,6 +529,23 @@
                     smartTip._style[i] = style[i];
                 }
             }
+			if (content is TextField)
+			{
+				var format:Object = smartTip.getStyle("textFormat");
+				var textFormat:TextFormat = new TextFormat("宋体", 12);
+				if (format)
+				{
+					for (var j:String in format)
+					{
+						if (textFormat.hasOwnProperty(j))
+						{
+							textFormat[j] = format[j];
+						}
+					}
+				}
+				(content as TextField).defaultTextFormat = textFormat;
+				(content as TextField).setTextFormat(textFormat);
+			}
             smartTip._content = content as DisplayObject;
             smartTip.addChild(content as DisplayObject);
             smartTip._target = target;

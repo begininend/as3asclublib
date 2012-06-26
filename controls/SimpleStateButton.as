@@ -4,6 +4,7 @@
 	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
 	import flash.events.MouseEvent;
+	import flash.geom.Matrix;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
@@ -25,6 +26,8 @@
 		private var state_down:BitmapData;
 		private var state_disabled:BitmapData;
 		
+		private var _states:Array;
+		
 		/**
 		 * 状态参数
 		 */
@@ -34,11 +37,28 @@
 		private var is_selected:Boolean = false;
 		private var _enabled:Boolean = false;
 		
-		private var instance:Bitmap;
-		private var _textLabel:TextField;
+		//文本和组件边缘之间的距离，以及文本和图标之间的距离（以像素为单位）。 默认值为 5.
+		private var _textPadding:int = 2;
+		
+		private var _adaptLabel:Boolean;
+		
+		private var _selectedBold:Boolean;
+		private var _selectedColor:int;
+		
 		private var _label:String;
 		private var _textFormat = new TextFormat("宋体", 12, 0x000000);
 		private var _disabledTextFormat:TextFormat;
+		
+		private var instance:Bitmap;
+		private var _textLabel:TextField;
+		
+		/**
+		 * 宽度根据文本适应
+		 */
+		public function set adaptLabel(value:Boolean):void
+		{
+			_adaptLabel = value;
+		}
 		
 		/**
 		 * Boolean "selected" allows to toggle the button. 
@@ -51,7 +71,8 @@
 			if (is_selected) 
 			{
 				updateState(state_down);
-				textFormat.bold = true;
+				textFormat.bold = _selectedBold;
+				textFormat.color = _selectedColor ? _selectedColor : textFormat.color;
 			} 
 			else 
 			{
@@ -60,7 +81,8 @@
 				} else {
 					updateState(state_normal);
 				}
-				textFormat.bold = false;
+				textFormat.bold = _selectedBold ? false : textFormat.bold;
+				textFormat.color = _selectedColor ? textFormat.color : _selectedColor;
 			}
 			_textLabel.setTextFormat(textFormat);
 		}
@@ -118,7 +140,19 @@
 		{
 			_label = value;
 			_textLabel.text = _label;
+			if (_adaptLabel)
+			{
+				stateBitmapDataAdapt();
+			}
 			resize();
+		}
+		
+		/**
+		 * 文本和组件边缘之间的距离，以及文本和图标之间的距离（以像素为单位）。 默认值为 5.
+		 */
+		public function set textPadding(value:int):void
+		{
+			_textPadding = value;
 		}
 		
 		/**
@@ -157,6 +191,11 @@
 				state_disabled = normal.clone();
 			}
 			
+			_states = [ { name:"state_normal", bitmapdata:state_normal },
+						{ name:"state_hover", bitmapdata:state_hover },
+						{ name:"state_down", bitmapdata:state_down },
+						{ name:"state_disabled", bitmapdata:state_disabled } ];
+			
 			if(state_normal.rect.equals(state_hover.rect) && state_normal.rect.equals(state_down.rect)) {
 				init();
 			} else {
@@ -188,6 +227,17 @@
 				case "disabledTextFormat":
 				{
 					_disabledTextFormat = value as TextFormat;
+					break;
+				}
+				case "selectedBold":
+				{
+					_selectedBold = Boolean(value);
+					break;
+				}
+				case "selectedColor":
+				{
+					_selectedColor = int(value);
+					selected = selected;
 					break;
 				}
 				case "upSkin":
@@ -257,6 +307,61 @@
 			}
 		}
 		
+		//更换皮肤后更新
+		private function updateSkin():void
+		{
+			if (is_selected)
+			{
+				updateState(state_down);
+			} 
+			else 
+			{
+				if (hovering) 
+				{
+					updateState(state_hover);
+				} 
+				else
+				{
+					updateState(state_normal);
+				}
+			}
+			resize();
+		}
+		
+		private function resize():void
+		{
+			_textLabel.width = _textLabel.textWidth + 4;
+			_textLabel.x = (instance.width - _textLabel.width) * 0.5;
+			_textLabel.y = (instance.height - _textLabel.height) * 0.5;
+		}
+		
+		/**
+		 * 更新按钮状态
+		 * @param	bitmapData
+		 */
+		private function updateState(bitmapData:BitmapData):void
+		{
+			instance.bitmapData = bitmapData;
+		}
+		
+		//宽度根据文本适应
+		private function stateBitmapDataAdapt():void
+		{
+			var num:int = _states.length;
+			var w:int = _textLabel.textWidth + 2 * _textPadding + 4;
+			var bitmapdata:BitmapData;
+			var state:BitmapData;
+			for (var i:int = 0; i < num; i ++)
+			{
+				state = _states[i]["bitmapdata"] as BitmapData;
+				var matrix:Matrix = new Matrix();
+				matrix.scale(w / state.width, 1);
+				bitmapdata = new BitmapData(w, state.height);
+				bitmapdata.draw(state, matrix);
+				this[_states[i]["name"]] = bitmapdata;
+			}
+		}
+		
 		/**
 		 * Event Handler
 		 * On Mouse Over
@@ -309,43 +414,6 @@
 					updateState(state_normal);
 				}
 			}
-		}
-		
-		//更换皮肤后更新
-		private function updateSkin():void
-		{
-			if (is_selected)
-			{
-				updateState(state_down);
-			} 
-			else 
-			{
-				if (hovering) 
-				{
-					updateState(state_hover);
-				} 
-				else
-				{
-					updateState(state_normal);
-				}
-			}
-			resize();
-		}
-		
-		private function resize():void
-		{
-			_textLabel.width = _textLabel.textWidth + 4;
-			_textLabel.x = (instance.width - _textLabel.width) * 0.5;
-			_textLabel.y = (instance.height - _textLabel.height) * 0.5;
-		}
-		
-		/**
-		 * 更新按钮状态
-		 * @param	bitmapData
-		 */
-		private function updateState(bitmapData:BitmapData):void
-		{
-			instance.bitmapData = bitmapData;
 		}
 	}//end of class
 }

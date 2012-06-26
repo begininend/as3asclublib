@@ -31,28 +31,38 @@
 		
 		/**
 		 * 开始下载 request 参数中指定的 URL。
-		 * @param	webPage
+		 * @param	url
 		 * @param	requestData
 		 * @param	requestMethod
 		 * @param	contentType
 		 * @param	requestHeaders
 		 */
-		public function load(webPage:String,requestData:Object = null,requestMethod:String = null,contentType:String = null,requestHeaders:Array = null,dataFormat:String = null):void
+		public function load(url:String, requestData:Object = null, requestMethod:String = URLRequestMethod.GET, contentType:String = null, requestHeaders:Array = null, dataFormat:String = URLLoaderDataFormat.TEXT):void
 		{
-			_urlRequest.url = webPage;
-			_urlRequest.method = (requestMethod == null ? URLRequestMethod.GET : requestMethod);
-			if (contentType != null) _urlRequest.contentType = contentType;
-			if (requestHeaders != null) _urlRequest.requestHeaders = requestHeaders;
-			if (requestData != null)
+			_urlRequest.url = url;
+			_urlRequest.method = requestMethod || URLRequestMethod.GET;
+			_urlRequest.contentType = contentType;
+			if (requestHeaders) 
 			{
-				var urlVariable:URLVariables = new URLVariables();
-				for (var i:String in requestData)
-				{
-					urlVariable[i] = requestData[i];
-				}
-				_urlRequest.data = urlVariable;
+				_urlRequest.requestHeaders = requestHeaders;
 			}
-			if(dataFormat != null) urlLoader.dataFormat = dataFormat;
+			if (requestData)
+			{
+				if (typeof(requestData) == "object")
+				{
+					var urlVariable:URLVariables = new URLVariables();
+					for (var i:String in requestData)
+					{
+						urlVariable[i] = requestData[i];
+					}
+					_urlRequest.data = urlVariable;
+				}
+				else
+				{
+					_urlRequest.data = requestData.toString();
+				}
+			}
+			urlLoader.dataFormat = dataFormat;
 			urlLoader.load(_urlRequest);
 		}
 		

@@ -8,8 +8,6 @@
 	import flash.utils.getDefinitionByName;
 	
 	import org.asclub.controls.events.TabBarEvent;
-	import org.asclub.controls.TabBarDirection;
-	import org.asclub.controls.SimpleStateButton;
 	import org.asclub.data.DataProvider;
 	
 	public class NewTabBar extends CustomUIComponent
@@ -50,6 +48,16 @@
 		private var _defaultIndex:int = 0;
 		//当前选中项的索引
 		private var _selectedIndex:int = -1;
+		
+		private var _adaptLabel:Boolean;
+		
+		/**
+		 * 宽度根据文本适应
+		 */
+		public function set adaptLabel(value:Boolean):void
+		{
+			_adaptLabel = value;
+		}
 		
 		/**
 		 * 获取 dataProvider 对象中的字段名称，该字段名称将显示为 标签。
@@ -135,7 +143,7 @@
 				return;
 			}
 			var item:Object = this._dataProvider.getItemAt(value);
-			dispatchEvent(new TabBarEvent(TabBarEvent.ITEM_CLICK, value, item));
+			dispatchEvent(new TabBarEvent(TabBarEvent.ITEM_CLICK, _selectedIndex, value, item));
 			if(this._selectedIndex != value)
 			{
 				if (_selectedIndex != -1)
@@ -145,7 +153,7 @@
 				_buttons[value].selected = true;
 				this._selectedIndex = value;
 				this._defaultIndex = value;
-				dispatchEvent(new TabBarEvent(TabBarEvent.CHANGE, value, item));
+				dispatchEvent(new TabBarEvent(TabBarEvent.CHANGE, _selectedIndex, value, item));
 			}
 		}
 		
@@ -329,6 +337,7 @@
 		 */
         override public function setStyle(name:String, value:Object):void
 		{
+			_styles[name] = value;
 			switch(name)
 			{
 				case "textFormat":
@@ -365,6 +374,11 @@
 					realign();
 					break;
 				}
+				case "selectedColor":
+				{
+					updateSkin("selectedColor", value);
+					break;
+				}
 			}
 		}
 		
@@ -385,6 +399,7 @@
 			for (var j:int = 0; j < numItem; j++)
 			{
 				var tabItem:SimpleStateButton = new SimpleStateButton(_stateNormal, _stateHover, _stateDown, _stateDisabled);
+				tabItem.adaptLabel = _adaptLabel;
 				var item:Object = _dataProvider.getItemAt(j);
 				if (item.hasOwnProperty(this.labelField))
 				{
@@ -394,9 +409,13 @@
 				tabItem.enabled = this._enabled;
 				tabItem.buttonMode = this.buttonMode;
 				tabItem.useHandCursor = this.useHandCursor;
-				if (_textFormat)
+				/*if (_textFormat)
 				{
 					tabItem.setStyle("textFormat", _textFormat);
+				}*/
+				for (var styleName:String in _styles)
+				{
+					tabItem.setStyle(styleName, _styles[styleName]);
 				}
 				tabItem.addEventListener(MouseEvent.CLICK, tabItemClickedHandler);
 				
@@ -415,22 +434,42 @@
 			for (var i:int = 0; i < numItem; i++)
 			{
 				tabItem = _buttons[i];
+				var prevButtonWidth:int;
+				var prevButtonX:int;
+				var currentSpaceWidth:int;
+				var prevButtonHeight:int;
+				var prevButtonY:int;
+				var currentSpaceHeight:int;
+				var prevButton:SimpleStateButton;
+				if (i > 0)
+				{
+					prevButton = _buttons[i - 1] as SimpleStateButton;
+					prevButtonWidth = prevButton.width;
+					prevButtonX = prevButton.x;
+					currentSpaceWidth = spaceWidth;
+					
+					prevButtonHeight = prevButton.height;
+					prevButtonY = prevButton.y;
+					currentSpaceHeight = spaceHeight;
+				}
+				
 				//水平排列
 				if (_direction == TabBarDirection.HORIZONTAL)
 				{
-					tabItem.x = (tabItem.width + spaceWidth) * i >> 0;
+					tabItem.x = prevButtonX + prevButtonWidth + currentSpaceWidth >> 0;
 					tabItem.y = 0;
 				}
 				//垂直排列
 				else if (_direction == TabBarDirection.VERTICAL)
 				{
 					tabItem.x = 0;
-					tabItem.y = (tabItem.height + spaceHeight) * i >> 0;
+					tabItem.y = prevButtonY + prevButtonHeight + currentSpaceHeight >> 0;
 				}
 				//交错排列
 				else if (_direction == TabBarDirection.ALTERNATE)
 				{
-					tabItem.x = ((tabItem.width + spaceWidth) * (i % _numHorizontal)) >> 0;
+					tabItem.x = (i % _numHorizontal == 0 ? 0 : prevButtonX + prevButtonWidth + currentSpaceWidth) >> 0;
+					//TODO 交错排列高度根据同一列上个对象的高度及坐标确定
 					tabItem.y = ((tabItem.height + spaceHeight) * Math.floor(i / _numHorizontal)) >> 0;
 				}
 			}
@@ -470,7 +509,7 @@
 			var numItem:int = _buttons.length;
 			for (var i:int = 0; i < numItem; i++)
 			{
-				_buttons[i].setStyle(name,skin);
+				_buttons[i].setStyle(name, skin);
 			}
 		}
 		

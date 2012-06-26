@@ -2,7 +2,7 @@ package org.asclub.controls
 {
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
-	import flash.display.Shape;
+	import flash.display.Sprite;
 	import flash.display.Stage;
 	
 	import org.asclub.display.DrawUtil;
@@ -13,13 +13,13 @@ package org.asclub.controls
 		public static var bgAlpha:Number = 0.2;
 		
 		
-		private static var _mask:Shape;
+		private static var _mask:Sprite;
 		
 		public static function addPopUp(window:DisplayObject, parent:DisplayObjectContainer, modal:Boolean = false, childList:String = null):void
 		{
 			if (! _mask)
 			{
-				_mask = new Shape();
+				_mask = new Sprite();
 				DrawUtil.drawRoundRect(_mask.graphics, 1, 1, 0x000000, -1, 0, 0, bgAlpha, 0);
 			}
 			var stage:Stage = window.stage || parent.stage;
@@ -27,14 +27,20 @@ package org.asclub.controls
 			{
 				_mask.width = stage.stageWidth;
 				_mask.height = stage.stageHeight;
-				stage.addChild(_mask);
+				if (modal)
+				{
+					stage.addChild(_mask);
+				}
 				stage.addChild(window);
 			}
 		}
 		
 		public static function centerPopUp(popUp:DisplayObject):void
 		{
-			//AlignUtil.alignCenterWithin(popUp);
+			if (popUp.parent)
+			{
+				//AlignUtil.alignMiddle(popUp, popUp.getBounds(popUp.parent));
+			}
 		}
 		
 		public static function removePopUp(popUp:DisplayObject, parent:DisplayObjectContainer):void

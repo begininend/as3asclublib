@@ -243,13 +243,13 @@
 		
 		/**
 		 * 多边花型
-		 * @param	param1
-		 * @param	param2
-		 * @param	y
-		 * @param	param4
-		 * @param	param5
-		 * @param	param6
-		 * @param	param7
+		 * @param	param1			绘制对象
+		 * @param	param2			x坐标
+		 * @param	y				y坐标
+		 * @param	param4			边数
+		 * @param	param5			内圆半径
+		 * @param	param6			外圆半径
+		 * @param	param7			旋转角度
 		 */
 		public static function burst(param1:Graphics, param2:Number, y:Number, param4:Number, param5:Number, param6:Number, param7:Number = 0) : void
         {
@@ -277,6 +277,7 @@
             return;
         }// end function
 
+		//绘制星形
         public static function star(param1:Graphics, param2:Number, param3:Number, param4:Number, param5:Number, param6:Number, param7:Number = 0) : void
         {
             var _loc_9:Number;
@@ -371,8 +372,163 @@
                 }
             }
             return;
-        }// end function
+        }
 		
+		/**
+		 * 绘制楔形（馅饼状）
+		 * @param	graphics		绘制对象
+		 * @param	arc				角度
+		 * @param	radius			半径
+		 * @param	bgColor			背景颜色
+		 * @param	lineColor		线条颜色
+		 * @param	x				x坐标
+		 * @param	y				y坐标
+		 * @param	alpha			透明度
+		 * @param	thickness		笔触
+		 * @param	startAngle		起始角度
+		 * @param	yRadius			另一边半径 
+		 */
+		public static function drawWedge(graphics:Graphics, arc:Number, radius:Number, bgColor:int = -1, lineColor:int = -1,
+									x:Number = 0, y:Number = 0, alpha:Number = 1, thickness:Number = 1,
+									startAngle	:Number = 0, 
+									yRadius		:Number = NaN):void 
+		{
+			// ==============
+			// mc.drawWedge() - by Ric Ewing (ric@formequalsfunction.com) - version 1.3 - 6.12.2002
+			//
+			// x, y = center point of the wedge.
+			// startAngle = starting angle in degrees.
+			// arc = sweep of the wedge. Negative values draw clockwise.
+			// radius = radius of wedge. If [optional] yRadius is defined, then radius is the x radius.
+			// yRadius = [optional] y radius for wedge.
+			// ==============
+			// Thanks to: Robert Penner, Eric Mueller and Michael Hurwicz for their contributions.
+			// ==============
+			//trace ("draw pie:"+ graphics + " x:" + x + " y:"+y +" startAngle:"+startAngle+" arc:"+arc +" radius:"+radius+" yRadius"+yRadius);
+			
+			graphics.lineStyle(NaN);
+			if(lineColor >= 0) graphics.lineStyle(thickness,lineColor,alpha);
+			if (bgColor >= 0) graphics.beginFill(bgColor, alpha);
+			// move to x,y position
+			graphics.moveTo(x, y);
+			// if yRadius is undefined, yRadius = radius
+			if (isNaN(yRadius)) {
+				yRadius = radius;
+			}
+			// Init vars
+			var segAngle, theta, angle, angleMid, segs, ax, ay, bx, by, cx, cy;
+			// limit sweep to reasonable numbers
+			if (Math.abs(arc)>360) {
+				arc = 360;
+			}
+			// Flash uses 8 segments per circle, to match that, we draw in a maximum
+			// of 45 degree segments. First we calculate how many segments are needed
+			// for our arc.
+			segs = Math.ceil(Math.abs(arc)/45);
+			// Now calculate the sweep of each segment.
+			segAngle = arc/segs;
+			// The math requires radians rather than degrees. To convert from degrees
+			// use the formula (degrees/180)*Math.PI to get radians.
+				theta = -(segAngle/180)*Math.PI;
+			// convert angle startAngle to radians
+			angle = -(startAngle/180)*Math.PI;
+			// draw the curve in segments no larger than 45 degrees.
+				if (segs>0) {
+					// draw a line from the center to the start of the curve
+					ax = x+Math.cos(startAngle/180*Math.PI)*radius;
+					ay = y+Math.sin(-startAngle/180*Math.PI)*yRadius;
+					graphics.lineTo(ax, ay);
+					// Loop for drawing curve segments
+					for (var i = 0; i<segs; i++) {
+						angle += theta;
+						angleMid = angle-(theta/2);
+						bx = x+Math.cos(angle)*radius;
+						by = y+Math.sin(angle)*yRadius;
+						cx = x+Math.cos(angleMid)*(radius/Math.cos(theta/2));
+						cy = y+Math.sin(angleMid)*(yRadius/Math.cos(theta/2));
+						graphics.curveTo(cx, cy, bx, by);
+					}
+					// close the wedge by drawing a line to the center
+					graphics.lineTo(x, y);
+				}
+		}
+		
+		/**
+		 * 绘制齿轮
+		 * @param	graphics			绘制对象
+		 * @param	sides				边数
+		 * @param	innerRadius			齿轮内径
+		 * @param	outerRadius			齿轮外径
+		 * @param	angle				角度
+		 * @param	holeSides			孔边数
+		 * @param	holeRadius			孔半径
+		 * @param	bgColor				填充颜色
+		 * @param	lineColor			线条颜色
+		 * @param	x					x坐标
+		 * @param	y					y坐标
+		 * @param	alpha				颜色
+		 * @param	thickness			笔触
+		 */
+		public static function drawGear(graphics:Graphics,
+										sides:Number, 
+										innerRadius:Number, outerRadius:Number, 
+										angle:Number, holeSides:Number, 
+										holeRadius:Number, bgColor:int = -1, lineColor:int = -1,
+										x:Number = 0, y:Number = 0, alpha:Number = 1, thickness:Number = 1 ) {
+			// ==============
+			// mc.drawGear() - by Ric Ewing (ric@formequalsfunction.com) - version 1.3 - 3.5.2002
+			// 
+			// x, y = center of gear.
+			// sides = number of teeth on gear. (must be > 2)
+			// innerRadius = radius of the indent of the teeth.
+			// outerRadius = outer radius of the teeth.
+			// angle = [optional] starting angle in degrees. Defaults to 0.
+			// holeSides = [optional] draw a polygonal hole with this many sides (must be > 2)
+			// holeRadius = [optional] size of hole. Default = innerRadius/3.
+			// ==============
+			graphics.lineStyle(NaN);
+			if(lineColor >= 0) graphics.lineStyle(thickness,lineColor,alpha);
+			if (bgColor >= 0) graphics.beginFill(bgColor, alpha);
+			
+			if (sides>2) {
+				// init vars
+				var step, qtrStep, start, n, dx, dy;
+				// calculate length of sides
+				step = (Math.PI*2)/sides;
+				qtrStep = step/4;
+				// calculate starting angle in radians
+				start = (angle/180)*Math.PI;
+				graphics.moveTo(x+(Math.cos(start)*outerRadius), y-(Math.sin(start)*outerRadius));
+				// draw lines
+				for (n=1; n<=sides; n++) {
+					dx = x+Math.cos(start+(step*n)-(qtrStep*3))*innerRadius;
+					dy = y-Math.sin(start+(step*n)-(qtrStep*3))*innerRadius;
+					graphics.lineTo(dx, dy);
+					dx = x+Math.cos(start+(step*n)-(qtrStep*2))*innerRadius;
+					dy = y-Math.sin(start+(step*n)-(qtrStep*2))*innerRadius;
+					graphics.lineTo(dx, dy);
+					dx = x+Math.cos(start+(step*n)-qtrStep)*outerRadius;
+					dy = y-Math.sin(start+(step*n)-qtrStep)*outerRadius;
+					graphics.lineTo(dx, dy);
+					dx = x+Math.cos(start+(step*n))*outerRadius;
+					dy = y-Math.sin(start+(step*n))*outerRadius;
+					graphics.lineTo(dx, dy);
+				}
+				// This is complete overkill... but I had it done already. :)
+				if (holeSides>2) {
+					if(isNaN(holeRadius)) {
+						holeRadius = innerRadius/3;
+					}
+					step = (Math.PI*2)/holeSides;
+					graphics.moveTo(x+(Math.cos(start)*holeRadius), y-(Math.sin(start)*holeRadius));
+					for (n=1; n<=holeSides; n++) {
+						dx = x+Math.cos(start+(step*n))*holeRadius;
+						dy = y-Math.sin(start+(step*n))*holeRadius;
+						graphics.lineTo(dx, dy);
+					}
+				}
+			}
+		}
 		
 	}//end of class
 }

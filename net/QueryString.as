@@ -37,14 +37,14 @@
 		}
 		
 		//获取值对集合
-		private static function parseValues(pageURL:String):Object
+		public static function parseValues(pageURL:String):Object
 		{
 			if(pageURL == "" || pageURL == null || pageURL.indexOf("?") == -1)
 			{
 				return null;
 			}
 			var param:Object = { };
-			var source:String = pageURL.split("?")[1];
+			var source:String = pageURL.substr(pageURL.indexOf("?") + 1);
 			try
 			{
 				var urlVariables:URLVariables = new URLVariables(source);
@@ -57,13 +57,15 @@
 			{
 				var params:Array = source.split("&");
 				var num:int = params.length;
-				var item:Array;
+				var item:String;
 				var value:String;
+				var delimiterIndex:int;
 				for (var i:int = 0; i < num; i++)
 				{
-					item = params[i].split("=");
-					key = item[0];
-					value = item.length > 1 ? item[1] : "";
+					item = params[i];
+					delimiterIndex = item.indexOf("=");
+					key = delimiterIndex == -1 ? item : item.substr(0, delimiterIndex);
+					value = delimiterIndex == -1 ? "" : item.substr(delimiterIndex + 1);
 					param[key] = value;
 				}
 			}

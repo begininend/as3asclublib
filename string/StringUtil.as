@@ -45,7 +45,7 @@ package org.asclub.string{
 		public static function getCharLengthByCharset(char:String, charset:String):int
 		{
 			var bytes:ByteArray = new ByteArray();
-			bytes.writeMultiByte(char, charset);
+			bytes.readMultiByte(bytes.length, "utf-8");
 			bytes.position = 0;
 			return bytes.length;
 		}
